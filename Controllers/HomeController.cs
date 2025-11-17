@@ -4,7 +4,7 @@ using System.Web.Mvc;
 using WEBVANDAP.Models;
 using System.Data.Entity;
 using System.Collections.Generic; // Cần thiết cho List
-//bautau
+//sybau
 namespace WEBVANDAP.Controllers
 {
     public class HomeController : Controller
