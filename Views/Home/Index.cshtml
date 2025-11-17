@@ -1,0 +1,332 @@
+﻿@model IEnumerable<WEBVANDAP.Models.Product>
+
+@{
+    ViewBag.Title = "Trang chủ - LogiT Shop";
+    Layout = null;
+
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+    string currentSort = ViewBag.CurrentSort;
+    int? currentCategory = ViewBag.CurrentCategory;
+    int? currentBrand = ViewBag.CurrentBrand;
+    List<WEBVANDAP.Models.Category> allCategories = ViewBag.Categories;
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: #f5f5f5;
+        }
+
+        .navbar-brand img {
+            height: 35px;
+            margin-right: 10px;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .price {
+            color: #d0021c;
+            font-weight: 600;
+        }
+
+        .list-group-item {
+            cursor: pointer;
+        }
+
+        .list-group-item.active {
+            background-color: #0d6efd;
+            color: #fff;
+        }
+
+        .filters-section {
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+
+        .footer-full {
+            width: 100%;
+        }
+
+        /* Thanh tìm kiếm kéo dài */
+        .search-container {
+            flex-grow: 1;
+            margin: 0 20px;
+        }
+
+        /* Nút lịch sử đặt hàng */
+        .btn-order-history {
+            white-space: nowrap;
+        }
+
+        @@media (max-width: 992px) {
+            .btn-order-history {
+                width: 100%;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm sticky-top">
+        <div class="container">
+
+            <!-- LOGO -->
+            <a class="navbar-brand d-flex align-items-center fw-bold text-danger" href="@Url.Action("Index","Home")">
+                <img src="@Url.Content("~/Content/IMG/logo.png")" style="height: 45px; margin-right: 8px; object-fit: contain;">
+                <span class="fs-3 fw-bold text-dark">LogiT</span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+
+                <!-- THANH TÌM KIẾM -->
+                <div class="search-container d-flex align-items-center">
+                    <form class="d-flex w-100" action="@Url.Action("Index","Home")" method="get">
+                        <input class="form-control me-2" type="search" name="search" placeholder="Tìm kiếm sản phẩm, thương hiệu..." aria-label="Search" />
+                        <button class="btn btn-outline-dark" type="submit"><i class="bi bi-search"></i></button>
+                    </form>
+                </div>
+
+                <!-- 🔹 Nút Lịch sử đặt hàng -->
+                <div class="d-flex align-items-center ms-2">
+                    <a href="@Url.Action("OrderHistory", "User")" class="btn btn-outline-primary btn-order-history">
+                        <i class="bi bi-clock-history me-1"></i> Lịch sử đặt hàng
+                    </a>
+                </div>
+
+                <!-- ACCOUNT / CART -->
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 fw-semibold d-flex align-items-center">
+
+                    <li class="nav-item d-none d-lg-block">
+                        <a class="nav-link" href="@Url.Action("Index", "Home")">TRANG CHỦ</a>
+                    </li>
+
+                    <li class="nav-item me-2">
+                        <a href="@Url.Action("Index", "Cart")" class="btn btn-outline-dark position-relative">
+                            <i class="bi bi-cart3"></i> Giỏ hàng
+                        </a>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="dropdown-toggle text-decoration-none text-dark nav-link" href="#" id="adminDropdown" data-bs-toggle="dropdown">
+                            @(Session["Username"] ?? "Tài khoản")
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            @if (Session["Username"] != null)
+                            {
+                                <li><a class="dropdown-item" href="@Url.Action("Index","User")">Thông tin cá nhân</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("DangXuat","Account")">Đăng xuất</a></li>
+                            }
+                            else
+                            {
+                                <li><a class="dropdown-item" href="@Url.Action("DangNhap","Account")">Đăng nhập</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("DangKy","Account")">Đăng ký</a></li>
+                            }
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========================================== -->
+    <!-- BANNER -->
+    <!-- ========================================== -->
+    <div class="container mt-5">
+        <div class="row g-4">
+            <div class="col-12 col-lg-8">
+                <a href="#"><img style="height:520px;" src="@Url.Content("~/Content/IMG/bannerlefttrue.png")" class="img-fluid rounded-3" /></a>
+            </div>
+            <div class="col-12 col-lg-4">
+                <div class="d-flex flex-column gap-4">
+                    <a href="#"><img src="@Url.Content("~/Content/IMG/banneright1.jpg")" class="img-fluid rounded-3" /></a>
+                    <a href="#"><img src="@Url.Content("~/Content/IMG/bannerright2.jpg")" class="img-fluid rounded-3" /></a>
+                    <a href="#"><img src="@Url.Content("~/Content/IMG/bannerright3.jpg")" class="img-fluid rounded-3" /></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- DANH SÁCH SẢN PHẨM -->
+    <!-- ========================================== -->
+    <div class="container my-5">
+        <div class="row g-4">
+            <!-- Sidebar -->
+            <div class="col-lg-3 col-md-4">
+                <h5 class="fw-bold mb-3">Lọc Sản Phẩm</h5>
+
+                @using (Html.BeginForm("Index", "Home", FormMethod.Get, new { id = "filterForm", @class = "mb-4" }))
+                {
+                    @Html.Hidden("page", 1)
+                    @Html.Hidden("sortBy", currentSort)
+
+                    <div class="card p-3 shadow-sm mb-4">
+                        <h6 class="fw-bold mb-3">Danh Mục</h6>
+                        <ul class="list-group list-group-flush" id="category-list">
+                            <li class="list-group-item category-item @(currentCategory == null || currentCategory == 0 ? "active" : "")" data-category-id="0">Tất cả sản phẩm</li>
+                            @if (allCategories != null)
+                            {
+                                foreach (var category in allCategories)
+                                {
+                                    <li class="list-group-item category-item @(currentCategory == category.Id ? "active" : "")" data-category-id="@category.Id">@category.Name</li>
+                                }
+                            }
+                        </ul>
+                        @Html.Hidden("filterCategory", currentCategory)
+                    </div>
+
+                    <div class="card p-3 shadow-sm">
+                        <h6 class="fw-bold mb-3">Thương Hiệu</h6>
+                        <ul class="list-group list-group-flush" id="brand-list">
+                            <li class="list-group-item text-muted">Vui lòng chọn Danh mục</li>
+                        </ul>
+                        @Html.Hidden("filterBrand", currentBrand, new { id = "filterBrandHidden" })
+                    </div>
+                }
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-9 col-md-8">
+                @using (Html.BeginForm("Index", "Home", FormMethod.Get, new { @class = "d-flex justify-content-end align-items-center mb-4 filters-section" }))
+                {
+                    @Html.Hidden("page", currentPage)
+                    @Html.Hidden("filterCategory", currentCategory)
+                    @Html.Hidden("filterBrand", currentBrand)
+
+                    <div class="d-flex align-items-center gap-2">
+                        <label for="sortBy" class="form-label mb-0 small text-muted">Sắp xếp theo:</label>
+                        <select id="sortBy" name="sortBy" class="form-select" onchange="this.form.submit();" style="width: 180px;">
+                            <option value="popular" selected="@(currentSort == null || currentSort == "popular")">Phổ biến</option>
+                            <option value="price-asc" selected="@(currentSort == "price-asc")">Giá tăng dần</option>
+                            <option value="price-desc" selected="@(currentSort == "price-desc")">Giá giảm dần</option>
+                        </select>
+                    </div>
+                }
+
+                <div class="row g-4">
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var product in Model)
+                        {
+                            var firstImage = product.ProductImages.FirstOrDefault();
+                            string imageUrl = firstImage != null ? Url.Content(firstImage.Url) : Url.Content("~/Content/IMG/default_placeholder.jpg");
+
+                            <div class="col-md-4 col-sm-6">
+                                <div class="card product-card h-100 position-relative">
+                                    <img src="@imageUrl" class="card-img-top" alt="@product.Name">
+                                    <div class="card-body">
+                                        <h6 class="card-title">@product.Name</h6>
+                                        <p class="price mb-0">@product.Price.ToString("N0") đ</p>
+                                    </div>
+                                    <div class="card-footer d-flex flex-column gap-2">
+                                        <a href="@Url.Action("Details","Product", new { id = product.Id })" class="btn btn-outline-primary btn-sm">Xem chi tiết</a>
+
+                                        @using (Html.BeginForm("AddToCart", "Cart", FormMethod.Post, new { @class = "w-100" }))
+                                        {
+                                            @Html.Hidden("productId", product.Id)
+                                            @Html.Hidden("quantity", 1)
+                                            <button type="submit" class="btn btn-danger btn-sm w-100">Thêm vào giỏ hàng</button>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="col-12"><div class="text-center py-5 text-muted">Không tìm thấy sản phẩm nào.</div></div>
+                    }
+                </div>
+
+                <nav class="mt-5">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                            @Html.ActionLink("«", "Index", "Home", new { page = currentPage - 1, sortBy = currentSort, filterCategory = currentCategory, filterBrand = currentBrand }, new { @class = "page-link" })
+                        </li>
+
+                        @for (int i = 1; i <= totalPages; i++)
+                        {
+                            <li class="page-item @(i == currentPage ? "active" : "")">
+                                @Html.ActionLink(i.ToString(), "Index", "Home", new { page = i, sortBy = currentSort, filterCategory = currentCategory, filterBrand = currentBrand }, new { @class = "page-link" })
+                            </li>
+                        }
+
+                        <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                            @Html.ActionLink("»", "Index", "Home", new { page = currentPage + 1, sortBy = currentSort, filterCategory = currentCategory, filterBrand = currentBrand }, new { @class = "page-link" })
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    @* (Phần footer giữ nguyên như bản gốc của bạn) *@
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            function loadBrands(categoryId, selectedBrandId) {
+                var brandList = $('#brand-list');
+                brandList.empty();
+
+                if (categoryId > 0) {
+                    $.get('@Url.Action("GetBrandsByCategory", "Home")', { categoryId: categoryId }, function (brands) {
+                        brandList.append('<li class="list-group-item brand-item ' + (selectedBrandId == 0 ? "active" : "") + '" data-brand-id="0">Tất cả Thương hiệu</li>');
+                        $.each(brands, function (_, brand) {
+                            var isActive = brand.Id == selectedBrandId ? "active" : "";
+                            brandList.append('<li class="list-group-item brand-item ' + isActive + '" data-brand-id="' + brand.Id + '">' + brand.Name + '</li>');
+                        });
+                    });
+                } else {
+                    brandList.append('<li class="list-group-item text-muted">Vui lòng chọn Danh mục</li>');
+                }
+            }
+
+            $('#category-list').on('click', '.category-item', function () {
+                var categoryId = $(this).data('category-id');
+                $('input[name="filterCategory"]').val(categoryId);
+                $('#filterBrandHidden').val(0);
+                $('#filterForm').submit();
+            });
+
+            $('#brand-list').on('click', '.brand-item', function () {
+                var brandId = $(this).data('brand-id');
+                $('#filterBrandHidden').val(brandId);
+                $('#filterForm').submit();
+            });
+
+            var initialCategoryId = @(currentCategory.HasValue ? currentCategory.Value : 0);
+            var initialBrandId = @(currentBrand.HasValue ? currentBrand.Value : 0);
+
+            if (initialCategoryId > 0) {
+                loadBrands(initialCategoryId, initialBrandId);
+            }
+        });
+    </script>
+</body>
+</html>

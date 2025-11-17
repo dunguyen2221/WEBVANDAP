@@ -1,0 +1,136 @@
+﻿@model WEBVANDAP.Models.Order
+
+@{
+    ViewBag.Title = "Đặt Hàng Thành Công";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <div class="card shadow-sm border-0 mb-4 text-center p-5">
+                <div class="mb-3">
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+                </div>
+                <h2 class="fw-bold text-success mb-3">ĐẶT HÀNG THÀNH CÔNG!</h2>
+                <p class="text-muted mb-4">
+                    Cảm ơn bạn đã mua sắm tại LogiT Shop.<br>
+                    Đơn hàng của bạn đang được xử lý và sẽ sớm được giao đến bạn.
+                </p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="@Url.Action("Index", "Home")" class="btn btn-outline-secondary">
+                        <i class="bi bi-house-door"></i> Về Trang Chủ
+                    </a>
+                    <a href="@Url.Action("OrderHistory", "User")" class="btn btn-primary">
+                        <i class="bi bi-clock-history"></i> Xem Lịch Sử Đơn Hàng
+                    </a>
+                </div>
+            </div>
+
+            @if (Model != null)
+            {
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0 fw-bold">Chi tiết đơn hàng #@Model.OrderCode</h5>
+                    </div>
+                    <div class="card-body p-4">
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h6 class="fw-bold text-muted small text-uppercase">Thông tin người nhận</h6>
+                                @if (Model.Address != null)
+                                {
+                                    <p class="mb-1 fw-bold">@Model.Address.FullName</p>
+                                    <p class="mb-1">@Model.Address.Phone</p>
+                                    <p class="mb-0">
+                                        @Model.Address.Street, @Model.Address.Ward, @Model.Address.District, @Model.Address.City
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p class="text-muted">Không có thông tin địa chỉ.</p>
+                                }
+                            </div>
+                            <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                                <h6 class="fw-bold text-muted small text-uppercase">Thông tin đơn hàng</h6>
+                                <p class="mb-1"><strong>Ngày đặt:</strong> @(Model.OrderDate.HasValue ? Model.OrderDate.Value.ToString("dd/MM/yyyy HH:mm") : "N/A")</p>
+                                <p class="mb-1"><strong>Phương thức:</strong> @Model.PaymentMethod</p>
+                                <p class="mb-0">
+                                    <strong>Trạng thái:</strong>
+                                    <span class="badge bg-warning text-dark">@Model.Status</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <hr />
+
+                        <h6 class="fw-bold text-muted small text-uppercase mb-3">Sản phẩm đã mua</h6>
+                        <div class="table-responsive">
+                            <table class="table table-borderless align-middle">
+                                <thead class="table-light small">
+                                    <tr>
+                                        <th>Sản phẩm</th>
+                                        <th class="text-center">Số lượng</th>
+                                        <th class="text-end">Đơn giá</th>
+                                        <th class="text-end">Thành tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.OrderItems != null && Model.OrderItems.Any())
+                                    {
+                                        foreach (var item in Model.OrderItems)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        @{
+                                                            string imgUrl = "~/Content/ProductImages/no-image.png";
+                                                            if (item.Product?.ProductImages?.Any() == true)
+                                                            {
+                                                                imgUrl = item.Product.ProductImages.FirstOrDefault()?.Url ?? imgUrl;
+                                                            }
+                                                        }
+                                                        <img src="@Url.Content(imgUrl)" alt="@item.Product?.Name"
+                                                             class="rounded border me-3" style="width: 50px; height: 50px; object-fit: contain;">
+                                                        <div>
+                                                            <span class="fw-semibold">@item.Product?.Name</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="text-center">x @item.Quantity</td>
+                                                <td class="text-end">@item.UnitPrice.ToString("N0") đ</td>
+                                                <td class="text-end fw-bold">@((item.Quantity * item.UnitPrice).ToString("N0")) đ</td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                                <tfoot class="border-top">
+                                    <tr>
+                                        <td colspan="3" class="text-end pt-3"><strong>Tổng tiền:</strong></td>
+                                        <td class="text-end pt-3 text-danger fw-bold fs-5">@Model.TotalAmount.ToString("N0") đ</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(Model.Notes))
+                        {
+                            <div class="alert alert-light border mt-3 mb-0">
+                                <strong><i class="bi bi-sticky"></i> Ghi chú:</strong> @Model.Notes
+                            </div>
+                        }
+
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning text-center">
+                    Không tìm thấy thông tin đơn hàng.
+                </div>
+            }
+
+        </div>
+    </div>
+</div>

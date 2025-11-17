@@ -1,0 +1,224 @@
+﻿@model WEBVANDAP.Models.Product
+
+@{
+    ViewBag.Title = "Xóa Sản Phẩm: " + Model.Name;
+    Layout = null; // Giữ nguyên cấu trúc admin layout
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title - PMT Admin</title>
+
+    <!-- Font + Bootstrap + Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+    <style>
+        /* ======= CSS GIỐNG CÁC TRANG ADMIN KHÁC ======= */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        #sidebar {
+            width: 70px;
+            min-width: 70px;
+            background-color: #0e223e;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s ease-in-out;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+            #sidebar.expand {
+                width: 260px;
+            }
+
+        #toggle-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+            #toggle-btn i {
+                font-size: 22px;
+                color: #fff;
+            }
+
+        .sidebar-logo {
+            padding-left: 0.5rem;
+            font-weight: 600;
+            color: #fff;
+            font-size: 1.1rem;
+            white-space: nowrap;
+        }
+
+        .sidebar-nav {
+            flex-grow: 1;
+            padding: 1rem 0;
+        }
+
+        a.sidebar-link {
+            display: block;
+            color: #fff;
+            padding: 0.75rem 1.5rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+            a.sidebar-link:hover {
+                background-color: rgba(255,255,255,0.1);
+                border-left-color: #3b7dd3;
+            }
+
+        #sidebar:not(.expand) a.sidebar-link span,
+        #sidebar:not(.expand) .sidebar-logo {
+            display: none;
+        }
+
+        .sidebar-footer {
+            padding: 1rem 1.5rem;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 30px;
+            margin-left: 70px;
+            transition: margin-left 0.3s ease-in-out;
+            width: calc(100% - 70px);
+        }
+
+        #sidebar.expand + .main-content {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+        }
+
+        h2.dashboard-header {
+            color: #2c3e50;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 25px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <!-- ===== SIDEBAR ===== -->
+        <aside id="sidebar">
+            <div>
+                <button id="toggle-btn">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="sidebar-logo">PMT Admin</div>
+                <nav class="sidebar-nav">
+                    <a href="@Url.Action("Index", "Admin")" class="sidebar-link"><i class="fa fa-home me-2"></i><span>Dashboard</span></a>
+                    <a href="@Url.Action("Index", "Product")" class="sidebar-link"><i class="fa fa-box me-2"></i><span>Quản lý Sản phẩm</span></a>
+                    <a href="@Url.Action("Index", "Category")" class="sidebar-link"><i class="fa fa-list-alt me-2"></i><span>Danh mục</span></a>
+                    <a href="@Url.Action("Index", "Brand")" class="sidebar-link"><i class="fa fa-tags me-2"></i><span>Thương hiệu</span></a>
+                </nav>
+            </div>
+            <div class="sidebar-footer">
+                <a href="@Url.Action("DangXuat", "Account")" class="sidebar-link"><i class="fa fa-sign-out-alt me-2"></i><span>Đăng xuất</span></a>
+            </div>
+        </aside>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="main-content">
+            <h2 class="dashboard-header text-danger">XÁC NHẬN XÓA SẢN PHẨM</h2>
+            <hr />
+
+            <h4 class="text-danger mb-4 text-center">Bạn có chắc chắn muốn xóa sản phẩm này không?</h4>
+
+            <div class="card mb-4">
+                <dl class="row">
+                    <dt class="col-sm-3">ID Sản Phẩm</dt>
+                    <dd class="col-sm-9">@Html.DisplayFor(model => model.Id)</dd>
+
+                    <dt class="col-sm-3">Tên Sản Phẩm</dt>
+                    <dd class="col-sm-9">@Html.DisplayFor(model => model.Name)</dd>
+
+                    <dt class="col-sm-3">Giá Bán</dt>
+                    <dd class="col-sm-9 text-danger fw-bold">@Model.Price.ToString("N0") VNĐ</dd>
+
+                    <dt class="col-sm-3">Tồn Kho</dt>
+                    <dd class="col-sm-9">@Html.DisplayFor(model => model.StockQuantity)</dd>
+
+                    <dt class="col-sm-3">Danh Mục</dt>
+                    <dd class="col-sm-9">@Html.DisplayFor(model => model.Category.Name)</dd>
+
+                    <dt class="col-sm-3">Thương Hiệu</dt>
+                    <dd class="col-sm-9">@Html.DisplayFor(model => model.Brand.Name)</dd>
+                </dl>
+            </div>
+
+            <div class="card mb-4">
+                <h5>Ảnh Sản Phẩm Liên Quan</h5>
+                @if (Model.ProductImages != null && Model.ProductImages.Any())
+                {
+                    <div class="row g-3">
+                        @foreach (var image in Model.ProductImages)
+                        {
+                            <div class="col-6 col-sm-4 col-md-2">
+                                <img src="@Url.Content(image.Url)" class="img-fluid rounded shadow-sm" alt="Ảnh sản phẩm" />
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">Sản phẩm này không có ảnh đính kèm.</p>
+                }
+            </div>
+
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.Id)
+
+                <div class="text-center mt-4">
+                    <input type="submit" value="✅ XÁC NHẬN XÓA HOÀN TOÀN" class="btn btn-danger btn-lg me-3" />
+                    @Html.ActionLink("Hủy & Quay lại", "Index", null, new { @class = "btn btn-outline-secondary btn-lg" })
+                </div>
+            }
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('toggle-btn');
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('expand');
+        });
+    </script>
+</body>
+</html>

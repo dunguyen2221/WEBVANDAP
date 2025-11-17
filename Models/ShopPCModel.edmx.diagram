@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="4473e2ceb2774e0380bff3ae0a3625d4" Name="Diagram1" ZoomLevel="40">
+        <EntityTypeShape EntityType="ShopPCModel.Address" Width="1.5" PointX="13.25" PointY="7.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopPCModel.AspNetRole" Width="1.5" PointX="0.75" PointY="1.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopPCModel.AspNetUser" Width="1.5" PointX="8.75" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopPCModel.Brand" Width="1.5" PointX="1.375" PointY="5.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopPCModel.CartItem" Width="1.5" PointX="13" PointY="4" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopPCModel.Cart" Width="1.5" PointX="3.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopPCModel.Category" Width="1.5" PointX="8.75" PointY="1.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopPCModel.OrderItem" Width="1.5" PointX="11.5" PointY="2.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopPCModel.Order" Width="1.5" PointX="3.375" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopPCModel.ProductImage" Width="1.5" PointX="11.125" PointY="6" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopPCModel.Product" Width="1.5" PointX="6.75" PointY="5.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopPCModel.ProductSpec" Width="1.5" PointX="6.125" PointY="1.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ShopPCModel.Review" Width="1.5" PointX="3.625" PointY="5.125" IsExpanded="true" />
+        <AssociationConnector Association="ShopPCModel.FK_Addresses_User" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopPCModel.FK_Orders_Address" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopPCModel.FK_Carts_User" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopPCModel.FK_Orders_User" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopPCModel.FK_Reviews_User" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopPCModel.FK_Products_Brand" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopPCModel.FK_CartItems_Cart" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopPCModel.FK_CartItems_Product" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopPCModel.FK_Products_Category" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopPCModel.FK_OrderItems_Order" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopPCModel.FK_OrderItems_Product" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopPCModel.FK_ProductImages_Product" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopPCModel.FK_ProductSpecs_Product" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopPCModel.FK_Reviews_Product" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopPCModel.AspNetUserRoles" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

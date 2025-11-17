@@ -1,0 +1,22 @@
+﻿@{
+    ViewBag.Title = "Thêm Vào Giỏ Thành Công";
+    Layout =null;
+}
+
+<div class="container my-5 text-center">
+    <h2 class="text-success"><i class="fa fa-check-circle"></i> Sản phẩm đã được thêm vào giỏ hàng!</h2>
+    <hr />
+
+    <div class="mt-4">
+        <a href="@Url.Action("Index", "Home")" class="btn btn-outline-secondary">
+            <i class="fa fa-arrow-left"></i> Tiếp tục mua sắm
+        </a>
+        <a href="@Url.Action("Index", "Cart")" class="btn btn-primary ml-3">
+            <i class="fa fa-shopping-cart"></i> Xem Giỏ hàng
+        </a>
+    </div>
+
+    @* Hoặc hiển thị sản phẩm vừa thêm để người dùng xem lại *@
+    @* @if (Model != null) { ... } *@
+
+</div>

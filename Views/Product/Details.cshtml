@@ -1,0 +1,313 @@
+﻿@model WEBVANDAP.Models.Product
+@using System.Linq
+
+@{
+    ViewBag.Title = "Chi Tiết: " + Model.Name;
+    Layout = null;
+
+    bool isAuthenticated = System.Web.HttpContext.Current.User.Identity.IsAuthenticated;
+    bool isAdmin = isAuthenticated && System.Web.HttpContext.Current.User.IsInRole("Admin");
+
+    var firstImage = Model.ProductImages.FirstOrDefault();
+    string imageUrl = firstImage != null ? Url.Content(firstImage.Url) : Url.Content("~/Images/default_placeholder.jpg");
+
+    string currentUserName = isAuthenticated ? User.Identity.Name : "Tài Khoản";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - LogiT Shop / PMT Admin</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        .wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 220px;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 30px;
+            background-color: #f0f2f5;
+        }
+
+        .dashboard-header {
+            color: #2c3e50;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 25px;
+        }
+
+        .carousel-inner img {
+            border-radius: 12px;
+            width: 100%;
+            object-fit: contain;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .info-row {
+            margin-bottom: 1rem;
+        }
+
+        .top-bar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    @if (isAdmin)
+    {
+        <!-- ================== ADMIN DASHBOARD ================== -->
+        <div class="d-flex wrapper">
+            <div class="sidebar d-flex flex-column flex-shrink-0 p-3 text-white bg-primary position-sticky top-0" style="height: 100vh;">
+                <a class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none" href="@Url.Action("Index","Admin")">
+                    <img style="width: 32px; scale: 2.5;" class="img-fluid me-3"
+                         src="@Url.Content("~/Content/IMG/logo.png")" alt="LogiT Logo">
+                    <span class="fs-4 fw-bold">ADMIN</span>
+                </a>
+                <hr class="text-white opacity-25">
+                <ul class="nav nav-pills flex-column mb-auto">
+                    <li class="nav-item">
+                        <a href="@Url.Action("Index","Admin")" class="nav-link text-white fw-semibold">
+                            <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item mt-3">
+                        <span class="text-white-50 text-uppercase small fw-bold">Management</span>
+                    </li>
+                    <li class="nav-item">
+                        <a href="@Url.Action("Index","Product")" class="nav-link active bg-light text-dark fw-semibold">
+                            <i class="bi bi-box-seam me-2"></i> Sản Phẩm
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="@Url.Action("ManageUsers","User")" class="nav-link text-white">
+                            <i class="bi bi-people me-2"></i> Users
+                        </a>
+                    </li>
+                </ul>
+                <div class="mt-auto pt-3 border-top border-2 border-white-50">
+                    <a href="@Url.Action("DangXuat","Account")">
+                        <button class="btn btn-sm btn-outline-light rounded-circle">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                    </a>
+                </div>
+            </div>
+
+            <main class="main-content flex-grow-1">
+                <h2 class="dashboard-header">CHI TIẾT SẢN PHẨM: @Model.Name</h2>
+                <div class="top-bar">
+                    @Html.ActionLink("✏️ Sửa", "Edit", new { id = Model.Id }, new { @class = "btn btn-warning" })
+                    @Html.ActionLink("🗑️ Xóa", "Delete", new { id = Model.Id }, new { @class = "btn btn-danger" })
+                    @Html.ActionLink("🏠 Về Dashboard", "Index", "Admin", null, new { @class = "btn btn-info" })
+                    @Html.ActionLink("⬅️ Quản lý sản phẩm", "Index", "Product", null, new { @class = "btn btn-secondary" })
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div id="carouselProductAdmin" class="carousel slide">
+                                <div class="carousel-inner">
+                                    @if (Model.ProductImages != null && Model.ProductImages.Any())
+                                    {
+                                        int i = 0;
+                                        foreach (var img in Model.ProductImages)
+                                        {
+                                            <div class="carousel-item @(i==0?"active":"")">
+                                                <img src="@Url.Content(img.Url)" alt="@Model.Name">
+                                            </div>
+                                            i++;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="carousel-item active">
+                                            <img src="@imageUrl" alt="Placeholder">
+                                        </div>
+                                    }
+                                </div>
+                                @if (Model.ProductImages.Count > 1)
+                                {
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselProductAdmin" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon"></span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#carouselProductAdmin" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon"></span>
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="info-row"><strong>Tên sản phẩm:</strong> @Model.Name</div>
+                            <div class="info-row"><strong>Danh mục:</strong> @(Model.Category?.Name ?? "N/A")</div>
+                            <div class="info-row"><strong>Thương hiệu:</strong> @(Model.Brand?.Name ?? "N/A")</div>
+                            <div class="info-row"><strong>Giá:</strong> <span class="text-danger fw-bold">@Model.Price.ToString("N0") VNĐ</span></div>
+                            <div class="info-row"><strong>Tồn kho:</strong> @Model.Stock</div>
+                            <hr>
+                            <div class="info-row"><strong>Mô tả sản phẩm:</strong><br /> @Html.Raw(Model.Description)</div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    }
+    else
+    {
+        <!-- ================== CUSTOMER VIEW ================== -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm sticky-top">
+            <div class="container-fluid px-5">
+                <a class="navbar-brand fw-bold text-danger" href="@Url.Action("Index","Home")">LogiT</a>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 fw-semibold">
+                        <li class="nav-item"><a class="nav-link" href="@Url.Action("Index","Home")">TRANG CHỦ</a></li>
+                        <li class="nav-item"><a class="nav-link" href="@Url.Action("Contact","Home")">LIÊN HỆ</a></li>
+                    </ul>
+                    <div class="dropdown ms-3">
+                        <a class="dropdown-toggle text-decoration-none text-dark" href="#" id="userDropdown" data-bs-toggle="dropdown">@currentUserName</a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            @if (isAuthenticated)
+                            {
+                                <li><a class="dropdown-item" href="@Url.Action("Index","User")">Hồ sơ</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("DangXuat","Account")">Đăng xuất</a></li>
+                            }
+                            else
+                            {
+                                <li><a class="dropdown-item" href="@Url.Action("DangNhap","Account")">Đăng nhập</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("DangKy","Account")">Đăng ký</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container my-5">
+            <nav class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index","Home")">Trang chủ</a></li>
+                <li class="breadcrumb-item active">Chi tiết sản phẩm</li>
+            </nav>
+
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div id="carouselProductCustomer" class="carousel slide card p-3">
+                        <div class="carousel-inner">
+                            @if (Model.ProductImages != null && Model.ProductImages.Any())
+                            {
+                                int i = 0;
+                                foreach (var img in Model.ProductImages)
+                                {
+                                    <div class="carousel-item @(i==0?"active":"")">
+                                        <img src="@Url.Content(img.Url)" alt="@Model.Name">
+                                    </div>
+                                    i++;
+                                }
+                            }
+                            else
+                            {
+                                <div class="carousel-item active">
+                                    <img src="@imageUrl" alt="Placeholder">
+                                </div>
+                            }
+                        </div>
+                        @if (Model.ProductImages.Count > 1)
+                        {
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselProductCustomer" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon"></span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselProductCustomer" data-bs-slide="next">
+                                <span class="carousel-control-next-icon"></span>
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="card p-4">
+                        <h2>@Model.Name</h2>
+                        <p>Tình trạng: @(Model.Stock > 0 ? "Còn hàng" : "Hết hàng")</p>
+                        <h3 class="text-danger">@Model.Price.ToString("N0") VNĐ</h3>
+
+                        @if (Model.Stock > 0)
+                        {
+                            <form method="post" action="@Url.Action("AddToCart","Cart")">
+                                <input type="hidden" name="productId" value="@Model.Id" />
+                                <div class="input-group mb-3" style="width:130px;">
+                                    <button type="button" id="button-minus" class="btn btn-outline-secondary">-</button>
+                                    <input type="number" name="quantity" class="form-control text-center" value="1" min="1" max="@Model.StockQuantity" id="quantity-input" />
+                                    <input type="number" name="quantity" class="form-control text-center" value="1" min="1" max="@Model.StockQuantity" id="quantity-input" />
+                                    <button type="button" id="button-plus" class="btn btn-outline-secondary">+</button>
+                                </div>
+                                <button type="submit" class="btn btn-danger w-100">THÊM VÀO GIỎ</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <div class="alert alert-danger text-center">SẢN PHẨM TẠM THỜI HẾT HÀNG!</div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="card p-4 mt-4">
+                <h5>Mô tả sản phẩm</h5>
+                <p>@Html.Raw(Model.Description)</p>
+            </div>
+        </div>
+    }
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const quantityInput = document.getElementById('quantity-input');
+            const btnPlus = document.getElementById('button-plus');
+            const btnMinus = document.getElementById('button-minus');
+            if (quantityInput && btnPlus && btnMinus) {
+                btnPlus.addEventListener('click', () => {
+                    let val = parseInt(quantityInput.value);
+                    let max = parseInt(quantityInput.max);
+                    if (val < max) quantityInput.value = val + 1;
+                });
+                btnMinus.addEventListener('click', () => {
+                    let val = parseInt(quantityInput.value);
+                    if (val > 1) quantityInput.value = val - 1;
+                });
+            }
+        });
+    </script>
+</body>
+</html>

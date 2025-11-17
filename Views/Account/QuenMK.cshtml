@@ -1,0 +1,185 @@
+﻿@{
+    Layout = null;
+    ViewBag.Title = "QuenMK";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quên Mật Khẩu - PMT Shop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .forgot-container {
+            background-color: white;
+            padding: 2.5rem 2rem 2rem 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+        }
+
+            .forgot-container h2 {
+                margin-bottom: 1rem;
+                color: #333;
+                font-weight: 600;
+            }
+
+            .forgot-container p {
+                margin-bottom: 1.5rem;
+                color: #555;
+                font-size: 0.95rem;
+                line-height: 1.5;
+            }
+
+        .forgot-logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: skyblue;
+            margin-bottom: 0.5rem;
+            text-decoration: none;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            margin-bottom: 1.2rem;
+        }
+
+            .form-group label {
+                margin-bottom: 6px;
+                font-weight: 600;
+                color: #555;
+                font-size: 0.9rem;
+            }
+
+            .form-group input {
+                width: 100%;
+                padding: 12px 14px;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                font-size: 1rem;
+            }
+
+                .form-group input:focus {
+                    outline: none;
+                    border-color: skyblue;
+                    box-shadow: 0 0 5px rgba(135, 206, 235, 0.5);
+                }
+
+        .forgot-btn {
+            background-color: skyblue;
+            color: black;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+            .forgot-btn:hover {
+                background-color: #63bde0;
+            }
+
+        .login-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+            .login-link a {
+                color: skyblue;
+                text-decoration: none;
+                font-weight: 600;
+            }
+
+                .login-link a:hover {
+                    text-decoration: underline;
+                }
+
+        .back-to-home {
+            margin-top: 2rem;
+            font-size: 0.9rem;
+        }
+
+            .back-to-home a {
+                color: #555;
+                text-decoration: none;
+                font-weight: 500;
+            }
+
+                .back-to-home a:hover {
+                    text-decoration: underline;
+                }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+
+        .success-message {
+            color: green;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="forgot-container">
+        <a href="@Url.Action("Index", "Home")" class="forgot-logo">PMT Shop</a>
+        <h2>Quên Mật Khẩu</h2>
+        <p>Đừng lo lắng! Vui lòng nhập email của bạn và chúng tôi sẽ gửi một liên kết để đặt lại mật khẩu.</p>
+
+        <!-- FORM GỬI THẬT VỀ SERVER -->
+        <form action="@Url.Action("QuenMK", "Account")" method="post">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required placeholder="Nhập email của bạn...">
+            </div>
+
+            <!-- HIỂN THỈ LỖI / THÀNH CÔNG -->
+            @if (ViewBag.Error != null)
+            {
+                <div class="error-message">@ViewBag.Error</div>
+            }
+            @if (ViewBag.Success != null)
+            {
+                <div class="success-message">@ViewBag.Success</div>
+            }
+
+            <button type="submit" class="forgot-btn">Gửi liên kết đặt lại</button>
+
+            <p class="login-link">
+                Đã nhớ mật khẩu? @Html.ActionLink("Đăng nhập", "DangNhap", "Account")
+            </p>
+
+            <p class="back-to-home">
+                <a href="@Url.Action("Index", "Home")">&larr; Quay về trang chủ</a>
+            </p>
+        </form>
+    </div>
+
+</body>
+</html>
