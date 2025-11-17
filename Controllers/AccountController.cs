@@ -1,4 +1,4 @@
-﻿using BCrypt.Net;
+using BCrypt.Net;
 using System;
 using System.Data.Entity;
 using System.Linq;
