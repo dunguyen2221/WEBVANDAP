@@ -37,10 +37,16 @@
             margin-right: 10px;
         }
 
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        .product-card {
+            border: none;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
+
+            .product-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+            }
 
         .price {
             color: #d0021c;
@@ -51,10 +57,10 @@
             cursor: pointer;
         }
 
-        .list-group-item.active {
-            background-color: #0d6efd;
-            color: #fff;
-        }
+            .list-group-item.active {
+                background-color: #0d6efd;
+                color: #fff;
+            }
 
         .filters-section {
             margin-top: 20px;
@@ -92,8 +98,8 @@
 
             <!-- LOGO -->
             <a class="navbar-brand d-flex align-items-center fw-bold text-danger" href="@Url.Action("Index","Home")">
-                <img src="@Url.Content("~/Content/IMG/logo.png")" style="height: 45px; margin-right: 8px; object-fit: contain;">
-                <span class="fs-3 fw-bold text-dark">LogiT</span>
+                <img src="@Url.Content("~/Content/IMG/logo.png")" style="scale: 2.5;">
+                <span class="text-center fs-4 fw-bolder">LogiT</span>
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -157,9 +163,33 @@
     <!-- ========================================== -->
     <div class="container mt-5">
         <div class="row g-4">
-            <div class="col-12 col-lg-8">
-                <a href="#"><img style="height:520px;" src="@Url.Content("~/Content/IMG/bannerlefttrue.png")" class="img-fluid rounded-3" /></a>
+
+            <div id="carouselInterval" class="carousel slide carousel-fade col-12 col-lg-8" data-bs-ride="carousel"
+                 data-bs-pause="false">
+                <div class="carousel-inner h-100">
+                    <div class="carousel-item active h-100" data-bs-interval="3000">
+                        <img src="@Url.Content("~/Content/IMG/bannerlefttrue.png")" class="img-fluid rounded-3 h-100">
+                    </div>
+
+                    <div class="carousel-item h-100" data-bs-interval="3000">
+                        <img src="@Url.Content("~/Content/IMG/bannerleft2.png")" class="img-fluid rounded-3 h-100">
+                    </div>
+
+                    <div class="carousel-item h-100" data-bs-interval="3000">
+                        <img src="@Url.Content("~/Content/IMG/bannerleft3.png")" class="img-fluid rounded-3 h-100">
+                    </div>
+                </div>
+
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselInterval" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon rounded-3" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselInterval" data-bs-slide="next">
+                    <span class="carousel-control-next-icon rounded-3" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
+
             <div class="col-12 col-lg-4">
                 <div class="d-flex flex-column gap-4">
                     <a href="#"><img src="@Url.Content("~/Content/IMG/banneright1.jpg")" class="img-fluid rounded-3" /></a>

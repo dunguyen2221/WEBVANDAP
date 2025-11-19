@@ -314,8 +314,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\IMG\" />
-    <Folder Include="Views\Defauldddat\" />
-    <Folder Include="Views\Defaádult\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
