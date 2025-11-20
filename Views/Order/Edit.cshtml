@@ -1,0 +1,30 @@
+﻿@model WEBVANDAP.Models.Order
+
+@{
+    ViewBag.Title = "Cập nhật đơn hàng";
+}
+
+<h2>Cập nhật trạng thái đơn</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    @Html.HiddenFor(m => m.Id)
+
+    <div class="form-group">
+        <label>Trạng thái</label>
+        @Html.DropDownList("Status", new List<SelectListItem>
+        {
+            new SelectListItem { Text = "Chờ xác nhận", Value = "Pending" },
+            new SelectListItem { Text = "Đang xử lý", Value = "Processing" },
+            new SelectListItem { Text = "Đang giao hàng", Value = "Shipping" },
+            new SelectListItem { Text = "Đã giao hàng", Value = "Completed" },
+            new SelectListItem { Text = "Đã hủy", Value = "Cancelled" }
+        }, Model.Status, new { @class = "form-control" })
+    </div>
+
+
+    <button class="btn btn-primary" type="submit">Lưu</button>
+    <a href="@Url.Action("Index", "Order")" class="btn btn-secondary">Hủy</a>
+}

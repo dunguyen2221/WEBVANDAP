@@ -1,0 +1,25 @@
+﻿@model WEBVANDAP.Models.Address
+
+@{
+    ViewBag.Title = "Xóa địa chỉ";
+}
+
+<h2>Xóa địa chỉ</h2>
+
+<div class="alert alert-warning">
+    Bạn có chắc chắn muốn xóa địa chỉ sau?
+</div>
+
+<p>
+    <strong>
+        @(Model.Street + ", " + Model.Ward + ", " + Model.District + ", " + Model.City)
+    </strong>
+</p>
+
+@using (Html.BeginForm("Delete", "Address", new { id = Model.Id }, FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <button type="submit" class="btn btn-danger">Xóa</button>
+    <a href="@Url.Action("Index", "Address")" class="btn btn-secondary">Hủy</a>
+}

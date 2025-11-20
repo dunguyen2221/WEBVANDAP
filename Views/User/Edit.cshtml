@@ -1,0 +1,35 @@
+﻿@model WEBVANDAP.Models.AspNetUser
+@{
+    ViewBag.Title = "Chỉnh sửa thông tin cá nhân";
+}
+
+<h2>Chỉnh sửa thông tin cá nhân</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    @Html.HiddenFor(m => m.Id)
+
+    <div class="form-group mb-3">
+        <label>Email</label>
+        @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Email)
+    </div>
+
+    <div class="form-group mb-3">
+        <label>Số điện thoại</label>
+        @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.PhoneNumber)
+    </div>
+
+    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+    <a href="@Url.Action("Index", "User")" class="btn btn-secondary">Hủy</a>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success mt-3">
+        @TempData["SuccessMessage"]
+    </div>
+}

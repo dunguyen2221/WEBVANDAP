@@ -1,0 +1,66 @@
+﻿@model IEnumerable<WEBVANDAP.Models.Order>
+
+@{
+    ViewBag.Title = "Danh sách đơn hàng";
+}
+
+<h2>Danh sách đơn hàng</h2>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Mã đơn</th>
+            <th>Khách hàng</th>
+            <th>Địa chỉ</th>
+            <th>Ngày đặt</th>
+            <th>Trạng thái</th>
+            <th style="width:150px;">Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var o in Model)
+        {
+            <tr>
+                <td>@o.OrderCode</td>
+
+                <td>@o.AspNetUser?.Email</td>
+
+                <td>
+                    @(o.Address == null
+                        ? "Không có địa chỉ"
+                        : (o.Address.Street + ", "
+                            + o.Address.Ward + ", "
+                            + o.Address.District + ", "
+                            + o.Address.City))
+                </td>
+
+                <td>
+                    @(o.OrderDate.HasValue ? o.OrderDate.Value.ToString("dd/MM/yyyy") : "")
+                </td>
+
+                <td>
+                    @{
+                        string status = o.Status;
+                        string display = "";
+
+                        switch (status)
+                        {
+                            case "Pending": display = "Chờ xác nhận"; break;
+                            case "Processing": display = "Đang xử lý"; break;
+                            case "Shipping": display = "Đang giao hàng"; break;
+                            case "Completed": display = "Đã giao hàng"; break;
+                            case "Cancelled": display = "Đã hủy"; break;
+                        }
+                    }
+
+                    @display
+                </td>
+
+                <td>
+                    <a href="@Url.Action("Edit", "Order", new { id = o.Id })"
+                       class="btn btn-sm btn-warning">Sửa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

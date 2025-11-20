@@ -2,7 +2,6 @@
 
 @{
     ViewBag.Title = "Quản Lý Người Dùng";
-    // Đặt Layout = null nếu View này tự chứa toàn bộ HTML/Body/Sidebar
     Layout = null;
 }
 
@@ -17,62 +16,43 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
     <style>
-        /* CSS DUY NHẤT VÀ CỐ ĐỊNH CHO SIDEBAR */
         body {
             background-color: #f8fafc;
             font-family: "Segoe UI", sans-serif;
         }
 
-        .sidebar-wrapper {
-            min-height: 100vh;
-        }
-
         .sidebar {
             width: 220px;
         }
-        /* Chiều rộng Sidebar cố định */
+
         .main-content {
             padding: 30px;
             background-color: #f0f2f5;
-        }
-
-        .sort-icon-stack {
-            font-size: 0.8rem;
-        }
-
-        .form-control-plaintext {
-            background-color: transparent !important;
         }
     </style>
 </head>
 
 <body class="bg-body-tertiary">
-
     <div class="d-flex" style="min-height: 100vh;">
 
-        <!-- ======= SIDEBAR (CẤU TRÚC MỚI) ======= -->
         <div class="sidebar d-flex flex-column flex-shrink-0 p-3 text-white bg-primary position-sticky top-0" style="height: 100vh;">
-
-            <a class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none" href="@Url.Action("Index", "Admin")">
-                <img style="width: 32px; scale: 2.5;" class="img-fluid me-3"
-                     src="@Url.Content("~/Content/IMG/logo.png")" alt="LogiT Logo"> 
+            <a class="d-flex align-items-center mb-3 text-white text-decoration-none" href="@Url.Action("Index", "Admin")">
+                <img style="width: 32px; transform: scale(2.5);" class="img-fluid me-3"
+                     src="@Url.Content("~/Content/IMG/logo.png")" alt="LogiT Logo" />
                 <span class="fs-4 fw-bold">ADMIN</span>
             </a>
+
             <hr class="text-white opacity-25">
 
             <ul class="nav nav-pills flex-column mb-auto">
                 <li class="nav-item">
-                    <a href="@Url.Action("Index", "Admin")" class="nav-link text-white fw-semibold"
-                       aria-current="page">
+                    <a href="@Url.Action("Index", "Admin")" class="nav-link text-white fw-semibold">
                         <i class="bi bi-speedometer2 me-2"></i> Dashboard
                     </a>
                 </li>
 
-                <li class="nav-item mt-3">
-                    <span class="text-white-50 text-uppercase small fw-bold">Management</span>
-                </li>
+                <li class="nav-item mt-3 text-white-50 text-uppercase small fw-bold">Management</li>
 
-               
                 <li class="nav-item">
                     <a href="#submenu-sanpham" data-bs-toggle="collapse"
                        class="nav-link text-white d-flex justify-content-between align-items-center">
@@ -95,9 +75,7 @@
                     </a>
                     <div class="collapse" id="submenu-donhang">
                         <ul class="nav flex-column ps-4">
-                            <li>
-                                <a href="@Url.Action("OrderHistory", "User")" class="nav-link text-white-50">Lịch sử đơn hàng</a>
-                            </li>
+                            <li><a href="@Url.Action("Index", "Order")" class="nav-link text-white-50">Tất cả đơn hàng</a></li>
                         </ul>
                     </div>
                 </li>
@@ -105,6 +83,12 @@
                 <li class="nav-item">
                     <a href="@Url.Action("ManageUsers", "User")" class="nav-link active bg-light text-dark fw-semibold">
                         <i class="bi bi-people me-2"></i> Users
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="@Url.Action("Index", "Address")" class="nav-link text-white fw-semibold">
+                        <i class="bi bi-geo-alt-fill me-2"></i> Địa chỉ
                     </a>
                 </li>
             </ul>
@@ -117,80 +101,83 @@
                 </a>
             </div>
         </div>
-        <!-- ======= KẾT THÚC SIDEBAR ======= -->
-        <!-- MAIN CONTENT -->
-        <div class="flex-grow-1 p-4 d-flex flex-column main-content">
 
-            <!-- TOP BAR -->
+        <!-- MAIN CONTENT -->
+        <div class="flex-grow-1 p-4 main-content">
+
             <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-3 rounded-3 shadow-sm">
                 <h2 class="text-dark fw-bold h4 mb-0">Quản lý người dùng</h2>
-                <i style="scale: 3;" class="bi bi-people-fill me-4"></i>
+                <i style="transform: scale(3);" class="bi bi-people-fill me-4"></i>
             </div>
 
             <div class="card shadow-sm border-0 rounded-3 bg-white">
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div class="d-flex align-items-center gap-2">
-                            <h5 class="fw-bold mb-0">Danh sách Người Dùng</h5>
-                        </div>
+                        <h5 class="fw-bold mb-0">Danh sách Người Dùng</h5>
 
                         <div class="d-flex align-items-center gap-2" style="width: 250px;">
-                            <label for="tableSearch" class="form-label small mb-0">Search:</label>
-                            <input type="search" class="form-control form-control-sm" id="tableSearch">
+                            <label class="form-label small mb-0">Search:</label>
+                            <input type="search" class="form-control form-control-sm" id="tableSearch" />
                         </div>
                     </div>
 
                     <div class="table-responsive">
+
                         @if (Model != null && Model.Any())
                         {
                             <table class="table table-hover table-bordered align-middle small caption-top">
                                 <thead class="table-light">
                                     <tr>
-                                        <th class="text-center align-content-center" scope="col" style="width: 5%;">ID</th>
-                                        <th scope="col" style="width: 20%;">Tên Đăng Nhập</th>
-                                        <th scope="col" style="width: 25%;">Email</th>
-                                        <th scope="col" style="width: 15%;">Số ĐT</th>
-                                        <th class="text-center" scope="col" style="width: 15%;">Xác thực Email</th>
-                                        <th class="text-center" scope="col" style="width: 10%;">Trạng Thái</th>
-                                        <th class="text-center" scope="col" style="width: 10%;">Thao tác</th>
+                                        <th class="text-center">ID</th>
+                                        <th>Tên Đăng Nhập</th>
+                                        <th>Email</th>
+                                        <th>Số ĐT</th>
+                                        <th class="text-center">Xác thực Email</th>
+                                        <th class="text-center">Trạng Thái</th>
+                                        <th class="text-center">Thao tác</th>
                                     </tr>
                                 </thead>
+
                                 <tbody>
                                     @foreach (var item in Model)
                                     {
-                                        // Logic kiểm tra trạng thái khóa (Lockout)
-                                        string statusText = item.LockoutEnabled && item.LockoutEndDateUtc != null && item.LockoutEndDateUtc > DateTime.UtcNow
-                                                                ? "Đã Khóa" : "Hoạt động";
-                                        string statusClass = statusText == "Đã Khóa" ? "bg-danger" : "bg-success";
+                                        string statusText = item.LockoutEnabled ? "Đã Khóa" : "Hoạt động";
+                                        string statusClass = item.LockoutEnabled ? "bg-danger" : "bg-success";
 
                                         <tr>
                                             <td>@item.Id.Substring(0, 8)...</td>
                                             <td>@item.UserName</td>
                                             <td>@item.Email</td>
                                             <td>@(string.IsNullOrEmpty(item.PhoneNumber) ? "N/A" : item.PhoneNumber)</td>
+
                                             <td class="text-center">
                                                 <span class="badge @(item.EmailConfirmed ? "bg-success" : "bg-warning")">
                                                     @(item.EmailConfirmed ? "Đã X.Thực" : "Chưa X.Thực")
                                                 </span>
                                             </td>
-                                            <td class="text-center"><span class="badge @statusClass">@statusText</span></td>
+
                                             <td class="text-center">
-                                                @* Nút Chỉnh sửa (AdminEdit) *@
+                                                <span class="badge @statusClass">@statusText</span>
+                                            </td>
+
+                                            <td class="text-center">
                                                 @Html.ActionLink("Sửa", "AdminEdit", new { id = item.Id }, new { @class = "btn btn-sm btn-info me-1" })
 
-                                                @* Nút Khóa/Mở Khóa *@
-                                                @if (statusText == "Đã Khóa")
+                                                @if (item.LockoutEnabled)
                                                 {
-                                                    @Html.ActionLink("Mở Khóa", "UnlockUser", new { id = item.Id }, new { @class = "btn btn-sm btn-success", onclick = "return confirm('Bạn có chắc chắn muốn Mở khóa tài khoản này không?');" })
+                                                    @Html.ActionLink("Mở Khóa", "UnlockUser", new { id = item.Id },
+                                                       new { @class = "btn btn-sm btn-success", onclick = "return confirm('Bạn chắc muốn mở khóa?');" })
                                                 }
                                                 else
                                                 {
-                                                    @Html.ActionLink("Khóa", "LockUser", new { id = item.Id }, new { @class = "btn btn-sm btn-warning", onclick = "return confirm('Bạn có chắc chắn muốn Khóa tài khoản này không?');" })
+                                                    @Html.ActionLink("Khóa", "LockUser", new { id = item.Id },
+                                                       new { @class = "btn btn-sm btn-warning", onclick = "return confirm('Bạn chắc muốn khóa tài khoản?');" })
                                                 }
                                             </td>
                                         </tr>
                                     }
                                 </tbody>
+
                             </table>
                         }
                         else
@@ -198,37 +185,13 @@
                             <p class="text-center text-muted p-4">Không tìm thấy tài khoản người dùng nào.</p>
                         }
                     </div>
+
                 </div>
             </div>
+
         </div>
     </div>
 
-    @* MODAL CHỈNH SỬA (Đã giữ nguyên cấu trúc JS và HTML) *@
-    <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
-        @* ... Code Modal giữ nguyên ... *@
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // SCRIPT CHO SIDEBAR (Kích hoạt collapse)
-        document.addEventListener('DOMContentLoaded', function () {
-            // Script cho menu drop-down (sản phẩm, đơn hàng)
-            // Bootstrap tự xử lý collapse khi data-bs-toggle="collapse"
-        });
-
-        // SCRIPT CHO MODAL (Code lấy dữ liệu từ bảng)
-        document.querySelectorAll('.edit-btn').forEach(button => {
-            button.addEventListener('click', function () {
-                const row = this.closest('tr');
-
-                const idCell = row.cells[0].textContent.trim();
-                const emailCell = row.cells[2].textContent.trim();
-
-                document.getElementById('edit-id').value = idCell.substring(0, 8);
-                document.getElementById('edit-taikhoan').value = emailCell;
-                document.getElementById('edit-matkhau').value = "";
-            });
-        });
-    </script>
 </body>
 </html>

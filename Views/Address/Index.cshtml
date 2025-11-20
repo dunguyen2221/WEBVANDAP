@@ -1,0 +1,39 @@
+﻿@model IEnumerable<WEBVANDAP.Models.Address>
+
+@{
+    ViewBag.Title = "Danh sách địa chỉ";
+}
+
+<h2>Danh sách địa chỉ</h2>
+
+<p>
+    <a href="@Url.Action("Create", "Address")" class="btn btn-primary">+ Thêm địa chỉ</a>
+</p>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Địa chỉ</th>
+            <th style="width:150px;">Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+<td>
+    @(item.Street + ", " + item.Ward + ", " + item.District + ", " + item.City)
+</td>
+                <td>
+                    <a href="@Url.Action("Edit", "Address", new { id = item.Id })" class="btn btn-sm btn-warning">Sửa</a>
+                    <a href="@Url.Action("Delete", "Address", new { id = item.Id })" class="btn btn-sm btn-danger">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
