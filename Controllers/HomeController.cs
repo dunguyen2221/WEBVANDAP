@@ -22,7 +22,7 @@ namespace WEBVANDAP.Controllers
         // --------------------------------------------------------
         public ActionResult Index(string sortBy = "popular", int page = 1, int? filterCategory = null, int? filterBrand = null)
         {
-            int pageSize = 4;
+            int pageSize = 6;
 
             var products = _context.Products
                                    .Include(p => p.ProductImages)
