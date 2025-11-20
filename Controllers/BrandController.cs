@@ -3,23 +3,14 @@ using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using WEBVANDAP.Models;
-using System.Collections.Generic;
 
 namespace WEBVANDAP.Controllers
 {
-    // Bảo vệ toàn bộ Controller: Chỉ Admin mới có thể quản lý Thương hiệu
+    // Chỉ Admin mới được quản lý Thương hiệu
     [Authorize(Roles = "Admin")]
     public class BrandController : Controller
     {
         private readonly ShopPCEntities2 _context = new ShopPCEntities2();
-
-        // Phương thức hỗ trợ cho Dropdownlist
-        private void PopulateCategoriesDropdown(object selectedCategory = null)
-        {
-            var categoriesQuery = _context.Categories.OrderBy(c => c.Name);
-            // Tạo SelectList cho ViewBag
-            ViewBag.CategoryId = new SelectList(categoriesQuery, "Id", "Name", selectedCategory);
-        }
 
         // --------------------------------------------------------
         // READ: Brand/Index (Danh sách Thương hiệu)
@@ -35,7 +26,7 @@ namespace WEBVANDAP.Controllers
         // --------------------------------------------------------
         public ActionResult Create()
         {
-            PopulateCategoriesDropdown();
+            // Không còn Category dropdown nữa
             return View();
         }
 
@@ -53,8 +44,7 @@ namespace WEBVANDAP.Controllers
                 return RedirectToAction("Index");
             }
 
-            // Nếu validation thất bại, tải lại danh sách Category và trả về View
-            PopulateCategoriesDropdown(brand.CategoryId);
+            // Không còn PopulateCategoriesDropdown, chỉ trả lại view
             return View(brand);
         }
 
@@ -64,16 +54,13 @@ namespace WEBVANDAP.Controllers
         public ActionResult Edit(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+
             Brand brand = _context.Brands.Find(id);
             if (brand == null)
-            {
                 return HttpNotFound();
-            }
-            // Tải lại dropdown với Category đang được chọn
-            PopulateCategoriesDropdown(brand.CategoryId);
+
+            // Không cần dropdown Category
             return View(brand);
         }
 
@@ -91,8 +78,7 @@ namespace WEBVANDAP.Controllers
                 return RedirectToAction("Index");
             }
 
-            // Nếu validation thất bại, tải lại danh sách Category và trả về View
-            PopulateCategoriesDropdown(brand.CategoryId);
+            // Không còn PopulateCategoriesDropdown
             return View(brand);
         }
 
@@ -102,14 +88,12 @@ namespace WEBVANDAP.Controllers
         public ActionResult Delete(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+
             Brand brand = _context.Brands.FirstOrDefault(b => b.Id == id);
             if (brand == null)
-            {
                 return HttpNotFound();
-            }
+
             return View(brand);
         }
 
@@ -125,27 +109,34 @@ namespace WEBVANDAP.Controllers
 
             if (hasProducts)
             {
-                // ... (Logic chặn xóa và trả về View) ...
-                Brand brand = _context.Brands.Find(id); // Vẫn phải Find để trả về View
-                                                        // ... (Logic trả về View Delete)
+                // Nếu còn sản phẩm dùng brand này thì không cho xóa
+                Brand brand = _context.Brands.Find(id);
+                // Có thể set TempData báo lỗi ở đây nếu muốn
                 return View("Delete", brand);
             }
 
-            // 1. TÌM KIẾM ĐỐI TƯỢNG
+            // 1. Tìm brand
             Brand brandToDelete = _context.Brands.Find(id);
 
-            // 2. BỔ SUNG KIỂM TRA NULL (QUAN TRỌNG)
+            // 2. Nếu null thì quay về Index luôn
             if (brandToDelete == null)
-            {
-                // Nếu không tìm thấy (ví dụ: đã xóa), chuyển hướng về Index thay vì gây lỗi 500
                 return RedirectToAction("Index");
-            }
 
-            // 3. THỰC HIỆN XÓA
+            // 3. Xóa
             _context.Brands.Remove(brandToDelete);
             _context.SaveChanges();
 
             return RedirectToAction("Index");
+        }
+
+        // Giải phóng context
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _context.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }

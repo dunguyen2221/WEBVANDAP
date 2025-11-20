@@ -149,6 +149,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AddressController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\BrandController.cs" />
     <Compile Include="Controllers\CartController.cs" />
@@ -181,6 +182,7 @@
     <Compile Include="Models\Category.cs">
       <DependentUpon>ShopPCModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ChangePasswordViewModel.cs" />
     <Compile Include="Models\Order.cs">
       <DependentUpon>ShopPCModel.tt</DependentUpon>
     </Compile>
@@ -295,7 +297,6 @@
     <Content Include="Views\Category\Edit.cshtml" />
     <Content Include="Views\Category\Details.cshtml" />
     <Content Include="Views\Brand\Index.cshtml" />
-    <Content Include="Views\Brand\Create.cshtml" />
     <Content Include="Views\Brand\Edit.cshtml" />
     <Content Include="Views\Brand\Delete.cshtml" />
     <Content Include="Views\Product\Delete.cshtml" />
@@ -310,6 +311,15 @@
     <Content Include="Views\Order\Checkout.cshtml" />
     <Content Include="Views\Order\OrderConfirmation.cshtml" />
     <Content Include="Views\User\OrderHistory.cshtml" />
+    <Content Include="Views\User\ChangePassword.cshtml" />
+    <Content Include="Views\Address\Index.cshtml" />
+    <Content Include="Views\Address\Create.cshtml" />
+    <Content Include="Views\Address\Edit.cshtml" />
+    <Content Include="Views\Address\Delete.cshtml" />
+    <Content Include="Views\Order\Edit.cshtml" />
+    <Content Include="Views\Order\Index.cshtml" />
+    <Content Include="Views\User\Edit.cshtml" />
+    <Content Include="Views\Brand\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

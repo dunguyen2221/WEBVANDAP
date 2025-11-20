@@ -35,7 +35,6 @@ namespace WEBVANDAP.Models
         public Nullable<bool> IsFeatured { get; set; }
         public Nullable<System.DateTime> CreatedAt { get; set; }
         public int CategoryId { get; set; }
-        public int StockQuantity { get; set; }
         public int BrandId { get; set; }
     
         public virtual Brand Brand { get; set; }

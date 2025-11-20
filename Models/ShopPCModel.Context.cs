@@ -18,7 +18,6 @@ namespace WEBVANDAP.Models
         public ShopPCEntities2()
             : base("name=ShopPCEntities2")
         {
-            this.Configuration.LazyLoadingEnabled = true;
         }
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

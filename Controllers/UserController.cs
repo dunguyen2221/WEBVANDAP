@@ -1,10 +1,10 @@
-﻿using System.Linq;
+﻿using Microsoft.AspNet.Identity; // Cần cho User.Identity.GetUserId() và Identity Manager
+using System.Data.Entity;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using WEBVANDAP.Models;
-using System.Net;
-using System.Data.Entity;
-using Microsoft.AspNet.Identity; // Cần cho User.Identity.GetUserId() và Identity Manager
-using System.Collections.Generic;
 
 namespace WEBVANDAP.Controllers
 {
@@ -186,6 +186,91 @@ namespace WEBVANDAP.Controllers
                 _context.Dispose();
             }
             base.Dispose(disposing);
+        }
+        public ActionResult ManageAddress()
+        {
+            return RedirectToAction("Index", "Address");
+        }
+        // GET: User/ChangePassword
+        public ActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        // POST: User/ChangePassword
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            string userId = Session["UserId"] as string;
+
+            if (string.IsNullOrEmpty(userId))
+                return RedirectToAction("DangNhap", "Account");
+
+            var user = _context.AspNetUsers.Find(userId);
+            if (user == null)
+                return HttpNotFound();
+
+            // =========================
+            // 1. KIỂM TRA MẬT KHẨU CŨ
+            // =========================
+            bool isOldPasswordCorrect = BCrypt.Net.BCrypt.Verify(model.OldPassword, user.PasswordHash);
+
+            if (!isOldPasswordCorrect)
+            {
+                ModelState.AddModelError("", "Mật khẩu hiện tại không chính xác.");
+                return View(model);
+            }
+
+            // =========================
+            // 2. HASH MẬT KHẨU MỚI BẰNG BCRYPT
+            // =========================
+            string newHashed = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+            user.PasswordHash = newHashed;
+
+            _context.SaveChanges();
+
+            TempData["SuccessMessage"] = "Đổi mật khẩu thành công!";
+            return RedirectToAction("Index");
+        }
+        // ADMIN: KHÓA USER
+        [Authorize(Roles = "Admin")]
+        public ActionResult LockUser(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var user = _context.AspNetUsers.Find(id);
+            if (user == null)
+                return HttpNotFound();
+
+            user.LockoutEnabled = true;   // KHÓA TÀI KHOẢN
+            _context.SaveChanges();
+
+            TempData["SuccessMessage"] = "Đã khóa tài khoản!";
+            return RedirectToAction("ManageUsers");
+        }
+
+
+        // ADMIN: MỞ KHÓA USER
+        [Authorize(Roles = "Admin")]
+        public ActionResult UnlockUser(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var user = _context.AspNetUsers.Find(id);
+            if (user == null)
+                return HttpNotFound();
+
+            user.LockoutEnabled = false;   // MỞ KHÓA
+            _context.SaveChanges();
+
+            TempData["SuccessMessage"] = "Đã mở khóa tài khoản!";
+            return RedirectToAction("ManageUsers");
         }
     }
 }
