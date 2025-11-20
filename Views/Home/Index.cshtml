@@ -82,10 +82,124 @@
             white-space: nowrap;
         }
 
-        @@media (max-width: 992px) {
-            .btn-order-history {
-                width: 100%;
-                margin-top: 10px;
+        /* ========================================== */
+        /* FLOATING CONTACT BUTTONS (Zalo & FB)       */
+        /* ========================================== */
+        .floating-contact {
+            position: fixed;
+            bottom: 30px;
+            right: 20px;
+            z-index: 9999; /* Ensure it stays on top */
+            display: flex;
+            flex-direction: column; /* Stack them vertically */
+            gap: 20px;
+        }
+
+        .contact-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+            position: relative;
+            text-decoration: none;
+        }
+
+            /* Icon Colors */
+            .contact-icon.zalo {
+                background-color: #0068FF; /* Zalo Blue */
+            }
+
+            .contact-icon.facebook {
+                background-color: #1877F2; /* Facebook Blue */
+            }
+
+            .contact-icon.github {
+                background-color: #333333; /* GitHub Dark Gray */
+            }
+
+            /* Icon Sizes */
+            .contact-icon i {
+                font-size: 30px;
+                color: white;
+            }
+
+            .contact-icon img {
+                width: 35px;
+                height: auto;
+                object-fit: contain;
+            }
+
+            /* Hover Effect: Scale up slightly */
+            .contact-icon:hover {
+                transform: scale(1.1);
+            }
+
+        /* ========================================== */
+        /* SHAKING / RINGING ANIMATION                */
+        /* ========================================== */
+        @@keyframes ring-alo {
+            0% {
+                transform: rotate(0) scale(1) skew(1deg);
+            }
+
+            10% {
+                transform: rotate(-25deg) scale(1) skew(1deg);
+            }
+
+            20% {
+                transform: rotate(25deg) scale(1) skew(1deg);
+            }
+
+            30% {
+                transform: rotate(-25deg) scale(1) skew(1deg);
+            }
+
+            40% {
+                transform: rotate(25deg) scale(1) skew(1deg);
+            }
+
+            50% {
+                transform: rotate(0) scale(1) skew(1deg);
+            }
+
+            100% {
+                transform: rotate(0) scale(1) skew(1deg);
+            }
+        }
+
+        /* Apply animation to the inner icon/image, not the whole button container
+        so the button stays in place while the icon inside shakes */
+        .shake-anim {
+            animation: ring-alo 2s infinite ease-in-out;
+            transform-origin: 50% 50%;
+        }
+
+        /* Optional: Add a pulsing ring effect behind the buttons */
+        .contact-icon::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: inherit;
+            opacity: 0.6;
+            z-index: -1;
+            animation: pulse-ring 2s infinite;
+        }
+
+        @@keyframes pulse-ring {
+            0% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
             }
         }
     </style>
@@ -312,6 +426,22 @@
                 </nav>
             </div>
         </div>
+    </div>
+
+    <!-- FLOATING SHAKING ICONS -->
+    <div class="floating-contact">
+        <a href="https://zalo.me/YOUR_PHONE_NUMBER" target="_blank" class="contact-icon zalo" title="Chat Zalo">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1200px-Icon_of_Zalo.svg.png"
+                 class="shake-anim" alt="Zalo">
+        </a>
+
+        <a href="https://m.me/YOUR_FACEBOOK_ID" target="_blank" class="contact-icon facebook" title="Chat Facebook">
+            <i class="bi bi-messenger shake-anim"></i>
+        </a>
+
+        <a href="https://github.com/dunguyen2221/WEBVANDAP.git" target="_blank" class="contact-icon github" title="Open Github">
+            <i class="bi bi-github shake-anim"></i>
+        </a>
     </div>
 
     <!-- SCRIPT -->

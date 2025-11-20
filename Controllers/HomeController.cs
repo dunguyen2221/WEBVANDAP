@@ -32,7 +32,7 @@ namespace WEBVANDAP.Controllers
         public ActionResult Index(string sortBy = "popular", int page = 1, int? filterCategory = null, int? filterBrand = null)
         {
             // Định nghĩa số lượng sản phẩm trên mỗi trang
-            int pageSize = 4;
+            int pageSize = 6;
 
             // Bắt đầu truy vấn (Include ProductImages để hiển thị ảnh trên trang chủ)
             var products = _context.Products
