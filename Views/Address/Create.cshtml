@@ -1,55 +1,73 @@
 ﻿@model WEBVANDAP.Models.Address
 @{
     ViewBag.Title = "Thêm địa chỉ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Thêm địa chỉ</h2>
+<div class="container my-5">
+    <h2 class="fw-bold mb-4 text-uppercase text-dark">
+        <i class="bi bi-geo-alt text-danger me-2"></i> Thêm địa chỉ mới
+    </h2>
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
 
-    <div class="form-group mb-3">
-        <label>Họ và tên</label>
-        @Html.TextBoxFor(m => m.FullName, new { @class = "form-control", placeholder = "Nhập họ và tên" })
-        @Html.ValidationMessageFor(m => m.FullName)
-    </div>
+        <div class="card shadow-sm p-4 rounded-4">
 
-    <div class="form-group mb-3">
-        <label>Số điện thoại</label>
-        @Html.TextBoxFor(m => m.Phone, new { @class = "form-control", placeholder = "Nhập số điện thoại" })
-        @Html.ValidationMessageFor(m => m.Phone)
-    </div>
+            <div class="row g-3">
 
-    <div class="form-group mb-3">
-        <label>Đường / Số nhà</label>
-        @Html.TextBoxFor(m => m.Street, new { @class = "form-control", placeholder = "Nhập đường / số nhà" })
-        @Html.ValidationMessageFor(m => m.Street)
-    </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Họ và tên</label>
+                    @Html.TextBoxFor(m => m.FullName, new { @class = "form-control", placeholder = "Nhập họ và tên" })
+                    @Html.ValidationMessageFor(m => m.FullName, "", new { @class = "text-danger" })
+                </div>
 
-    <div class="form-group mb-3">
-        <label>Phường / Xã</label>
-        @Html.TextBoxFor(m => m.Ward, new { @class = "form-control", placeholder = "Nhập phường / xã" })
-        @Html.ValidationMessageFor(m => m.Ward)
-    </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Số điện thoại</label>
+                    @Html.TextBoxFor(m => m.Phone, new { @class = "form-control", placeholder = "Nhập số điện thoại" })
+                    @Html.ValidationMessageFor(m => m.Phone, "", new { @class = "text-danger" })
+                </div>
 
-    <div class="form-group mb-3">
-        <label>Quận / Huyện</label>
-        @Html.TextBoxFor(m => m.District, new { @class = "form-control", placeholder = "Nhập quận / huyện" })
-        @Html.ValidationMessageFor(m => m.District)
-    </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Đường / Số nhà</label>
+                    @Html.TextBoxFor(m => m.Street, new { @class = "form-control", placeholder = "Nhập đường / số nhà" })
+                    @Html.ValidationMessageFor(m => m.Street, "", new { @class = "text-danger" })
+                </div>
 
-    <div class="form-group mb-3">
-        <label>Tỉnh / Thành phố</label>
-        @Html.TextBoxFor(m => m.City, new { @class = "form-control", placeholder = "Nhập tỉnh / thành phố" })
-        @Html.ValidationMessageFor(m => m.City)
-    </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Phường / Xã</label>
+                    @Html.TextBoxFor(m => m.Ward, new { @class = "form-control", placeholder = "Nhập phường / xã" })
+                    @Html.ValidationMessageFor(m => m.Ward, "", new { @class = "text-danger" })
+                </div>
 
-    <div class="form-check mb-3">
-        @Html.CheckBox("IsDefault", (Model != null && Model.IsDefault == true), new { @class = "form-check-input" })
-        <label class="form-check-label">Đặt làm địa chỉ mặc định</label>
-    </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Quận / Huyện</label>
+                    @Html.TextBoxFor(m => m.District, new { @class = "form-control", placeholder = "Nhập quận / huyện" })
+                    @Html.ValidationMessageFor(m => m.District, "", new { @class = "text-danger" })
+                </div>
 
-    <button type="submit" class="btn btn-primary">Lưu</button>
-    <a href="@Url.Action("Index", "Address")" class="btn btn-secondary">Trở lại</a>
-}
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Tỉnh / Thành phố</label>
+                    @Html.TextBoxFor(m => m.City, new { @class = "form-control", placeholder = "Nhập tỉnh / thành phố" })
+                    @Html.ValidationMessageFor(m => m.City, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="col-12 mt-3">
+                    <div class="form-check">
+                        @Html.CheckBox("IsDefault", Model.IsDefault ?? false, new { @class = "form-check-input" })
+
+                        <label class="form-check-label">Đặt làm địa chỉ mặc định</label>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-danger px-4 me-2">Lưu</button>
+                <a href="@Url.Action("Index", "Address")" class="btn btn-outline-dark px-4">Trở lại</a>
+            </div>
+
+        </div>
+    }
+</div>
