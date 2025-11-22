@@ -36,6 +36,21 @@
             background-color: #fff;
         }
 
+        .navbar-brand img {
+            height: 35px;
+            margin-right: 10px;
+        }
+
+        .search-container {
+            flex-grow: 1;
+            margin: 0 20px;
+        }
+
+        /* Nút lịch sử đặt hàng */
+        .btn-order-history {
+            white-space: nowrap;
+        }
+
         /* ========== Giỏ hàng ========== */
         .cart-container {
             display: flex;
@@ -96,10 +111,10 @@
             margin-top: 60px;
         }
 
-        footer p {
-            margin-bottom: 0;
-            color: #666;
-        }
+            footer p {
+                margin-bottom: 0;
+                color: #666;
+            }
 
         /* ========== Responsive ========== */
         @@media (max-width: 992px) {
@@ -117,11 +132,13 @@
 
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg shadow-sm sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow sticky-top">
         <div class="container">
-            <a class="navbar-brand fw-bold text-danger d-flex align-items-center" href="@Url.Action("Index", "Home")">
-                <img style="height: 35px;" src="@Url.Content("~/Content/IMG/logo.png")" alt="logo" class="me-2" />
-                <span class="fs-4 fw-bold">LogiT</span>
+
+            <!-- LOGO -->
+            <a class="navbar-brand d-flex align-items-center fw-bold text-danger" href="@Url.Action("Index","Home")">
+                <img src="@Url.Content("~/Content/IMG/logo.png")" style="scale: 2.5;"
+                <span class="text-center fs-1 fw-bolder">LogiT</span>
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -129,14 +146,53 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0 fw-semibold">
-                    <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "Home")">TRANG CHỦ</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#footer-contact">LIÊN HỆ</a></li>
+
+                <!-- THANH TÌM KIẾM -->
+                <div class="search-container d-flex align-items-center">
+                    <form class="d-flex w-100" action="@Url.Action("Index","Home")" method="get">
+                        <input class="form-control me-2" type="search" name="search" placeholder="Tìm kiếm sản phẩm, thương hiệu..." aria-label="Search" />
+                        <button class="btn btn-outline-dark" type="submit"><i class="bi bi-search"></i></button>
+                    </form>
+                </div>
+
+                <!-- 🔹 Nút Lịch sử đặt hàng -->
+                <div class="d-flex align-items-center ms-2">
+                    <a href="@Url.Action("OrderHistory", "User")" class="btn btn-outline-primary btn-order-history">
+                        <i class="bi bi-clock-history me-1"></i> Lịch sử đặt hàng
+                    </a>
+                </div>
+
+                <!-- ACCOUNT / CART -->
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 fw-semibold d-flex align-items-center">
+
+                    <li class="nav-item d-none d-lg-block">
+                        <a class="nav-link" href="@Url.Action("Index", "Home")">TRANG CHỦ</a>
+                    </li>
+
+                    <li class="nav-item me-2">
+                        <a href="@Url.Action("Index", "Cart")" class="btn btn-outline-dark position-relative">
+                            <i class="bi bi-cart3"></i> Giỏ hàng
+                        </a>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="dropdown-toggle text-decoration-none text-dark nav-link" href="#" id="adminDropdown" data-bs-toggle="dropdown">
+                            @(Session["Username"] ?? "Tài khoản")
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            @if (Session["Username"] != null)
+                            {
+                                <li><a class="dropdown-item" href="@Url.Action("Index","User")">Thông tin cá nhân</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("DangXuat","Account")">Đăng xuất</a></li>
+                            }
+                            else
+                            {
+                                <li><a class="dropdown-item" href="@Url.Action("DangNhap","Account")">Đăng nhập</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("DangKy","Account")">Đăng ký</a></li>
+                            }
+                        </ul>
+                    </li>
                 </ul>
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Tìm kiếm..." />
-                    <button class="btn btn-outline-dark" type="submit"><i class="bi bi-search"></i></button>
-                </form>
             </div>
         </div>
     </nav>
