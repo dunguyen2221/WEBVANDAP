@@ -1,38 +1,354 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
-    @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
-</head>
-<body>
-    @*
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
-            <div class="container">
-                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                        <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                        <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    *@
+    <title>@ViewBag.Title - LogiT Shop</title>
 
-    <div>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            margin-top: auto;
+            background-color: #fff;
+            border-top: 1px solid #ddd;
+            padding: 40px 0;
+        }
+
+            footer p {
+                margin-bottom: 0;
+                color: #fff;
+            }
+
+        .footer-links a {
+            text-decoration: none;
+            color: #666;
+            transition: color 0.3s;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+            .footer-links a:hover {
+                color: #0d6efd;
+            }
+
+        /* --- NAVBAR --- */
+        .navbar-brand img {
+            height: 35px;
+            margin-right: 10px;
+        }
+
+        .search-container {
+            flex-grow: 1;
+            margin: 0 20px;
+        }
+
+        .btn-order-history {
+            white-space: nowrap;
+        }
+
+        /* --- FLOATING BUTTONS --- */
+        .floating-contact {
+            position: fixed;
+            bottom: 30px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .contact-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+            position: relative;
+            text-decoration: none;
+        }
+
+            .contact-icon.zalo {
+                background-color: #0068FF;
+            }
+
+            .contact-icon.facebook {
+                background-color: #1877F2;
+            }
+
+            .contact-icon.Telephone {
+                background-color: forestgreen;
+            }
+
+            .contact-icon i {
+                font-size: 30px;
+                color: white;
+            }
+
+            .contact-icon img {
+                width: 35px;
+                height: auto;
+                object-fit: contain;
+            }
+
+            .contact-icon:hover {
+                transform: scale(1.1);
+            }
+
+        /* --- ANIMATIONS --- */
+        @@keyframes ring-alo {
+            0% {
+                transform: rotate(0) scale(1) skew(1deg);
+            }
+
+            10% {
+                transform: rotate(-25deg) scale(1) skew(1deg);
+            }
+
+            20% {
+                transform: rotate(25deg) scale(1) skew(1deg);
+            }
+
+            30% {
+                transform: rotate(-25deg) scale(1) skew(1deg);
+            }
+
+            40% {
+                transform: rotate(25deg) scale(1) skew(1deg);
+            }
+
+            50% {
+                transform: rotate(0) scale(1) skew(1deg);
+            }
+
+            100% {
+                transform: rotate(0) scale(1) skew(1deg);
+            }
+        }
+
+        .shake-anim {
+            animation: ring-alo 2s infinite ease-in-out;
+            transform-origin: 50% 50%;
+        }
+
+        .contact-icon::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: inherit;
+            opacity: 0.6;
+            z-index: -1;
+            animation: pulse-ring 2s infinite;
+        }
+
+        @@keyframes pulse-ring {
+            0% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* --- RESPONSIVE MOBILE NAVBAR FIX --- */
+        @@media (max-width: 991.98px) {
+            /* Căn chỉnh lại container tìm kiếm */
+            .search-container {
+                margin: 15px 0 !important; /* Thêm khoảng cách trên dưới */
+                width: 100%;
+            }
+
+                .search-container form {
+                    display: flex;
+                    width: 100%;
+                }
+
+                .search-container input {
+                    flex-grow: 1;
+                }
+            /* Nút Lịch sử đơn hàng: Full width và căn giữa text */
+            .order-history-wrapper {
+                width: 100%;
+                margin: 0 0 15px 0 !important; /* Xóa margin trái, thêm margin dưới */
+            }
+
+            .btn-order-history {
+                width: 100%;
+                display: block;
+                text-align: center;
+            }
+            /* Các mục trong menu (Trang chủ, Giỏ hàng, Tài khoản) */
+            .navbar-nav {
+                width: 100%;
+            }
+
+                .navbar-nav .nav-item {
+                    width: 100%;
+                    margin-bottom: 10px; /* Khoảng cách giữa các mục */
+                    margin-right: 0 !important; /* Xóa margin phải */
+                }
+                /* Nút Giỏ hàng & Dropdown full width */
+                .navbar-nav .btn, .navbar-nav .dropdown-toggle {
+                    width: 100%;
+                    text-align: center;
+                    display: block;
+                }
+            /* Dropdown menu căn giữa */
+            .dropdown-menu {
+                text-align: center;
+                border: none;
+                background-color: #f8f9fa; /* Màu nền nhẹ cho submenu */
+            }
+        }
+    </style>
+
+    @RenderSection("Styles", required: false)
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center fw-bold text-danger" href="@Url.Action("Index","Home")">
+                <img src="@Url.Content("~/Content/IMG/logo.png")" style="scale: 2.5;" />
+                <span class="text-center fs-3 fw-bolder" style="font-family: monospace">LogiT</span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+
+                <div class="search-container d-flex align-items-center">
+                    <form class="d-flex w-100" action="@Url.Action("Index","Home")" method="get">
+                        <input class="form-control me-2" type="search" name="search" placeholder="Tìm kiếm sản phẩm..." />
+                        <button class="btn btn-outline-dark" type="submit"><i class="bi bi-search"></i></button>
+                    </form>
+                </div>
+
+                <div class="d-flex align-items-center ms-lg-2 order-history-wrapper">
+                    <a href="@Url.Action("OrderHistory", "User")" class="btn btn-outline-primary btn-order-history">
+                        <i class="bi bi-clock-history me-1"></i> Lịch sử đặt hàng
+                    </a>
+                </div>
+
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 fw-semibold d-flex align-items-lg-center">
+
+                    <li class="nav-item d-none d-lg-block">
+                        <a class="nav-link" href="@Url.Action("Index", "Home")">TRANG CHỦ</a>
+                    </li>
+
+                    <li class="nav-item me-lg-2">
+                        <a href="@Url.Action("Index", "Cart")" class="btn btn-outline-dark position-relative">
+                            <i class="bi bi-cart3"></i> Giỏ hàng
+                            @if (Session["CartCount"] != null && (int)Session["CartCount"] > 0)
+                            {
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    @Session["CartCount"]
+                                </span>
+                            }
+                        </a>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="dropdown-toggle text-decoration-none text-dark nav-link" href="#" id="adminDropdown" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-fill"></i>
+                            @(Session["Username"] ?? "Tài khoản")
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            @if (Session["Username"] != null)
+                            {
+                                <li><a class="dropdown-item" href="@Url.Action("Index","User")">Thông tin cá nhân</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("DangXuat","Account")">Đăng xuất</a></li>
+                            }
+                            else
+                            {
+                                <li><a class="dropdown-item" href="@Url.Action("DangNhap","Account")">Đăng nhập</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("DangKy","Account")">Đăng ký</a></li>
+                            }
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div style="flex: 1;">
         @RenderBody()
     </div>
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @RenderSection("scripts", required: false)
+    <div class="floating-contact">
+        <a href="https://zalo.me/YOUR_PHONE_NUMBER" target="_blank" class="contact-icon zalo" title="Chat Zalo">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1200px-Icon_of_Zalo.svg.png" class="shake-anim" alt="Zalo">
+        </a>
+        <a href="https://m.me/YOUR_FACEBOOK_ID" target="_blank" class="contact-icon facebook" title="Chat Facebook">
+            <i class="bi bi-messenger shake-anim"></i>
+        </a>
+        <a href="#" target="_blank" class="contact-icon Telephone" title="Telephone">
+            <i class="bi bi-telephone-fill shake-anim"></i>
+        </a>
+    </div>
+
+    <footer id="footer-about-us" class="bg-dark text-white pt-5 pb-3">
+        <div class="container-fluid">
+            <div class="row g-4">
+                <div class="col-md-4 text-start">
+                    <h5 class="fw-bold">LogiT Shop</h5>
+                    <p class="small">Store: 7/38 Thành Thái, Phường 14, Quận 10, TP.HCM</p>
+                    <p class="small">GIẤY PHÉP KINH DOANH: Công Ty TNHH LogiT - 0318537815</p>
+                    <p class="small">Người đại diện: Phan Minh Trí</p>
+                    <p class="small">EMAIL: LogiTShop@gmail.com</p>
+                    <img src="~/Content/IMG/bocongthuong.png" alt="Đã Thông Báo Bộ Công Thương" class="mt-2">
+                </div>
+                <div class="col-md-2 offset-md-1 text-start">
+                    <h5 class="fw-bold">Về Chúng Tôi</h5>
+                    <ul class="footer-links list-unstyled text-decoration-none">
+                        <li><a href="#">Giới Thiệu</a></li>
+                        <li><a href="#">Tác Giả</a></li>
+                        <li><a href="#">Thành Tựu</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2 text-start">
+                    <h5 class="fw-bold">Chính Sách</h5>
+                    <ul class="footer-links list-unstyled">
+                        <li><a href="#">Hướng Dẫn Mua Hàng</a></li>
+                        <li><a href="#">Quy Định Bảo Hành</a></li>
+                        <li><a href="#">Chính Sách Bảo Mật</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 text-start">
+                    <h5 class="fw-bold">Thanh Toán</h5>
+                    <div class="fs-1"><i class="bi bi-visa me-2"></i><i class="bi bi-paypal"></i></div>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center small"><p class="mb-0">Copyright © 2025 LogiT Shop - CỬA HÀNG SẢN PHẨM MÁY TÍNH</p></div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

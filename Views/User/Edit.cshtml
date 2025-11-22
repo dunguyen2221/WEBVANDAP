@@ -2,7 +2,7 @@
 
 @{
     ViewBag.Title = "Chỉnh sửa thông tin cá nhân - LogiT Shop";
-    Layout = null;
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <!DOCTYPE html>
@@ -20,12 +20,6 @@
             background-color: #f5f5f5;
         }
 
-        .navbar-brand img {
-            height: 45px;
-            margin-right: 8px;
-            object-fit: contain;
-        }
-
         .profile-card {
             border: none;
             border-radius: 14px;
@@ -39,57 +33,18 @@
                 transform: translateY(-4px);
                 box-shadow: 0 6px 25px rgba(0,0,0,0.12);
             }
+
+        .floating-contact {
+            display: none;
+        }
     </style>
 </head>
 
 <body>
 
-    <!-- NAV -->
-    <nav class="navbar navbar-expand-lg bg-light shadow-sm sticky-top">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center fw-bold text-danger" href="@Url.Action("Index","Home")">
-                <img src="@Url.Content("~/Content/IMG/logo.png")" />
-                <span class="fs-3 fw-bold text-dark">LogiT</span>
-            </a>
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navMenu">
-                <ul class="navbar-nav ms-auto fw-semibold">
-                    <li class="nav-item"><a href="@Url.Action("Index","Home")" class="nav-link">TRANG CHỦ</a></li>
-                    <li class="nav-item me-2">
-                        <a href="@Url.Action("Index","Cart")" class="btn btn-outline-dark position-relative">
-                            <i class="bi bi-cart3"></i> Giỏ hàng
-                        </a>
-                    </li>
-
-                    <li class="nav-item dropdown">
-                        <a class="dropdown-toggle nav-link text-dark" href="#" data-bs-toggle="dropdown">
-                            @(Session["Username"] ?? "Tài khoản")
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            @if (Session["Username"] != null)
-                            {
-                                <li><a class="dropdown-item" href="@Url.Action("Index","User")">Trang cá nhân</a></li>
-                                <li><a class="dropdown-item" href="@Url.Action("DangXuat","Account")">Đăng xuất</a></li>
-                            }
-                            else
-                            {
-                                <li><a class="dropdown-item" href="@Url.Action("DangNhap","Account")">Đăng nhập</a></li>
-                                <li><a class="dropdown-item" href="@Url.Action("DangKy","Account")">Đăng ký</a></li>
-                            }
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
     <!-- CONTENT -->
     <div class="container" style="max-width: 650px; margin-top: 50px;">
-        <div class="profile-card">
+        <div class="profile-card mb-5">
 
             <h3 class="fw-bold text-dark mb-4">
                 <i class="bi bi-person-gear text-primary me-2"></i>
