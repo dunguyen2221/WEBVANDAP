@@ -71,6 +71,22 @@
             width: 100%;
         }
 
+        footer p {
+            margin-bottom: 0;
+        }
+
+        .footer-links a {
+            text-decoration: none; /* Xóa gạch chân */
+            color: #666;
+            transition: color 0.3s;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+            .footer-links a:hover {
+                color: #0d6efd; /* Màu xanh khi di chuột vào */
+            }
+
         /* Thanh tìm kiếm kéo dài */
         .search-container {
             flex-grow: 1;
@@ -147,19 +163,19 @@
             }
 
             10% {
-                transform: rotate(-25deg) scale(1) skew(1deg);
+                transform: rotate(-15deg) scale(1) skew(1deg);
             }
 
             20% {
-                transform: rotate(25deg) scale(1) skew(1deg);
+                transform: rotate(15deg) scale(1) skew(1deg);
             }
 
             30% {
-                transform: rotate(-25deg) scale(1) skew(1deg);
+                transform: rotate(-15deg) scale(1) skew(1deg);
             }
 
             40% {
-                transform: rotate(25deg) scale(1) skew(1deg);
+                transform: rotate(15deg) scale(1) skew(1deg);
             }
 
             50% {
@@ -212,8 +228,10 @@
 
             <!-- LOGO -->
             <a class="navbar-brand d-flex align-items-center fw-bold text-danger" href="@Url.Action("Index","Home")">
-                <img src="@Url.Content("~/Content/IMG/logo.png")" style="scale: 2.5;"
-                <span class="text-center fs-1 fw-bolder">LogiT</span>
+                <img src="@Url.Content("~/Content/IMG/logo.png")" style="scale: 2.5;" />
+                <span class="text-center fs-3 fw-bolder" style="font-family: monospace">
+                    LogiT
+                </span>
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
