@@ -96,8 +96,8 @@
         }
 
         .contact-icon {
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -207,14 +207,13 @@
 
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow sticky-top">
         <div class="container">
 
             <!-- LOGO -->
             <a class="navbar-brand d-flex align-items-center fw-bold text-danger" href="@Url.Action("Index","Home")">
-                <img src="@Url.Content("~/Content/IMG/logo.png")" style="scale: 2.5;">
-                <img src="@Url.Content("~/Content/IMG/logo.png")" style="scale: 2.5;">
-                <span class="text-center fs-4 fw-bolder">LogiT</span>
+                <img src="@Url.Content("~/Content/IMG/logo.png")" style="scale: 2.5;"
+                <span class="text-center fs-1 fw-bolder">LogiT</span>
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -464,6 +463,46 @@
             <i class="bi bi-telephone-fill shake-anim"></i>
         </a>
     </div>
+
+    <!-- FOOTER FOOTER FOOTER -->
+
+    <footer id="footer-about-us" class="bg-dark text-white pt-5 pb-3">
+        <div class="container-fluid">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <h5 class="fw-bold">LogiT Shop</h5>
+                    <p class="small">Store: 7/38 Thành Thái, Phường 14, Quận 10, TP.HCM</p>
+                    <p class="small">GIẤY PHÉP KINH DOANH: Công Ty TNHH LogiT - 0318537815</p>
+                    <p class="small">Người đại diện: Phan Minh Trí</p>
+                    <p class="small">EMAIL: LogiTShop@gmail.com</p>
+                    <img src="~/Content/IMG/bocongthuong.png" alt="Đã Thông Báo Bộ Công Thương" class="mt-2">
+                </div>
+                <div class="col-md-2 offset-md-1">
+                    <h5 class="fw-bold">Về Chúng Tôi</h5>
+                    <ul class="footer-links list-unstyled text-decoration-none">
+                        <li><a href="#">Giới Thiệu</a></li>
+                        <li><a href="#">Tác Giả</a></li>
+                        <li><a href="#">Thành Tựu</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                    <h5 class="fw-bold">Chính Sách</h5>
+                    <ul class="footer-links list-unstyled">
+                        <li><a href="#">Hướng Dẫn Mua Hàng</a></li>
+                        <li><a href="#">Quy Định Bảo Hành</a></li>
+                        <li><a href="#">Chính Sách Bảo Mật</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="fw-bold">Thanh Toán</h5>
+                    <div class="fs-1"><i class="bi bi-visa me-2"></i><i class="bi bi-paypal"></i></div>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center small"><p class="mb-0">Copyright © 2025 LogiT Shop - CỬA HÀNG SẢN PHẨM MÁY TÍNH</p></div>
+        </div>
+    </footer>
+
 
     <!-- SCRIPT -->
 
