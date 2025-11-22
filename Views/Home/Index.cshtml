@@ -117,8 +117,8 @@
                 background-color: #1877F2; /* Facebook Blue */
             }
 
-            .contact-icon.github {
-                background-color: #333333; /* GitHub Dark Gray */
+            .contact-icon.Telephone {
+                background-color: forestgreen; /* GitHub Dark Gray */
             }
 
             /* Icon Sizes */
@@ -320,7 +320,7 @@
     <div class="my-5 mx-5">
         <div class="row g-4">
             <!-- Sidebar -->
-            <div style="width:250px" class="col-lg-3 col-md-4">
+            <div class="col-lg-2 col-md-4">
                 <h5 class="fw-bold mb-3">Lọc Sản Phẩm</h5>
 
                 @using (Html.BeginForm("Index", "Home", FormMethod.Get, new { id = "filterForm", @class = "mb-4" }))
@@ -354,7 +354,7 @@
             </div>
 
             <!-- Main Content -->
-            <div class="col-lg-9 col-md-8">
+            <div class="col-lg-10 col-md-8">
                 @using (Html.BeginForm("Index", "Home", FormMethod.Get, new { @class = "d-flex justify-content-end align-items-center mb-4 filters-section" }))
                 {
                     @Html.Hidden("page", currentPage)
@@ -382,9 +382,27 @@
                             <div class="col-md-4 col-sm-6">
                                 <div class="card product-card h-100 position-relative">
                                     <img src="@imageUrl" class="card-img-top" alt="@product.Name">
-                                    <div class="card-body">
-                                        <h6 class="card-title">@product.Name</h6>
-                                        <p class="price mb-0">@product.Price.ToString("N0") đ</p>
+                                    <div class="card-body d-flex flex-column">
+                                        <h6 class="card-title mb-3">@product.Name</h6>
+
+                                        <div class="d-flex justify-content-between align-items-center mt-auto w-100">
+
+                                            @* Giả sử Model của bạn có thuộc tính Quantity hoặc IsActive *@
+                                            @if (product.Stock > 0)
+                                            {
+                                                <span class="badge bg-success bg-opacity-10 text-success px-2 py-1 rounded-pill fw-normal" style="font-size: 12px;">
+                                                    <i class="bi bi-check-circle-fill me-1"></i>Còn hàng
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary bg-opacity-10 text-secondary px-2 py-1 rounded-pill fw-normal" style="font-size: 12px;">
+                                                    <i class="bi bi-x-circle-fill me-1"></i>Hết hàng
+                                                </span>
+                                            }
+
+                                            <p class="price mb-0 me-3 fs-5 fw-bold">@product.Price.ToString("N0") ₫</p>
+                                        </div>
                                     </div>
                                     <div class="card-footer d-flex flex-column gap-2">
                                         <a href="@Url.Action("Details","Product", new { id = product.Id })" class="btn btn-outline-primary btn-sm">Xem chi tiết</a>
@@ -439,8 +457,8 @@
             <i class="bi bi-messenger shake-anim"></i>
         </a>
 
-        <a href="https://github.com/dunguyen2221/WEBVANDAP.git" target="_blank" class="contact-icon github" title="Open Github">
-            <i class="bi bi-github shake-anim"></i>
+        <a href="https://github.com/dunguyen2221/WEBVANDAP.git" target="_blank" class="contact-icon Telephone" title="Telephone">
+            <i class="bi bi-telephone-fill shake-anim"></i>
         </a>
     </div>
 
