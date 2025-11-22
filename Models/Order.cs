@@ -31,6 +31,7 @@ namespace WEBVANDAP.Models
         public Nullable<int> ShippingAddressId { get; set; }
     
         public virtual Address Address { get; set; }
+        public string Notes { get; set; }
         public virtual AspNetUser AspNetUser { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrderItem> OrderItems { get; set; }
