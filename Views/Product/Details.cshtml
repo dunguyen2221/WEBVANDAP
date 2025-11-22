@@ -160,6 +160,93 @@
             <p>@Html.Raw(Model.Description)</p>
         </div>
     </div>
+    <div class="container my-5 px-5">
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-header bg-white py-3">
+                <h5 class="fw-bold mb-0">Đánh giá sản phẩm (@(Model.Reviews != null ? Model.Reviews.Count : 0))</h5>
+            </div>
+            <div class="card-body p-4">
+
+                @if (Session["UserId"] != null)
+                {
+                    <div class="mb-4 p-4 bg-light rounded-3">
+                        <h6 class="fw-bold mb-3">Viết đánh giá của bạn</h6>
+                        @using (Html.BeginForm("Create", "Review", FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.Hidden("productId", Model.Id)
+
+                            <div class="mb-3">
+                                <label class="form-label small text-muted">Đánh giá sao:</label>
+                                <select name="rating" class="form-select w-auto">
+                                    <option value="5">⭐⭐⭐⭐⭐ (Tuyệt vời)</option>
+                                    <option value="4">⭐⭐⭐⭐ (Tốt)</option>
+                                    <option value="3">⭐⭐⭐ (Bình thường)</option>
+                                    <option value="2">⭐⭐ (Tệ)</option>
+                                    <option value="1">⭐ (Rất tệ)</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <textarea name="content" class="form-control" rows="3" placeholder="Chia sẻ cảm nhận của bạn về sản phẩm..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        Vui lòng <a href="@Url.Action("DangNhap", "Account")" class="alert-link">đăng nhập</a> để viết đánh giá.
+                    </div>
+                }
+
+                <hr />
+
+                @if (Model.Reviews != null && Model.Reviews.Any())
+                {
+                    foreach (var review in Model.Reviews.OrderByDescending(r => r.CreatedAt))
+                    {
+                        <div class="d-flex mb-4">
+                            <div class="flex-shrink-0">
+                                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white fw-bold" style="width: 40px; height: 40px;">
+                                    @(review.AspNetUser?.UserName?.Substring(0, 1).ToUpper() ?? "U")
+                                </div>
+                            </div>
+                            <div class="ms-3 w-100">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="fw-bold mb-0">@(review.AspNetUser?.UserName ?? "Người dùng ẩn danh")</h6>
+                                        <div class="text-warning small">
+                                            @for (int i = 0; i < review.Rating; i++)
+                                            {<i class="bi bi-star-fill"></i>}
+                                            @for (int i = 0; i < 5 - review.Rating; i++)
+                                            {<i class="bi bi-star"></i>}
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">@review.CreatedAt</small>
+                                </div>
+                                <p class="mt-2 mb-0">@review.Comment</p>
+
+                                @* Nút xóa cho Admin *@
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    using (Html.BeginForm("Delete", "Review", FormMethod.Post, new { @class = "mt-2" }))
+                                    {
+                                        @Html.Hidden("id", review.Id)
+                                        <button type="submit" class="btn btn-link text-danger p-0 small" onclick="return confirm('Xóa đánh giá này?')">Xóa (Admin)</button>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted text-center my-4">Chưa có đánh giá nào. Hãy là người đầu tiên!</p>
+                }
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>

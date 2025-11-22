@@ -1,0 +1,41 @@
+﻿@using WEBVANDAP.Models
+@{
+    ViewBag.Title = "Tìm Kiếm Sản Phẩm";
+}
+
+<h2 class="text-2xl font-bold mb-4 text-center">Tìm Kiếm Sản Phẩm Nâng Cao</h2>
+
+<div class="max-w-xl mx-auto bg-white p-8 rounded-xl shadow-2xl border border-indigo-100">
+    @using (Html.BeginForm("Results", "Search", FormMethod.Get, new { @class = "space-y-6" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <!-- Ô nhập từ khóa tìm kiếm -->
+        <div class="form-group">
+            <label for="keyword" class="block text-sm font-medium text-gray-700">Từ khóa tìm kiếm:</label>
+            @Html.TextBox("keyword", null, new { @class = "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500", placeholder = "Nhập tên sản phẩm..." })
+        </div>
+
+        <!-- Dropdown lọc theo Danh mục -->
+        <div class="form-group">
+            <label for="categoryId" class="block text-sm font-medium text-gray-700">Lọc theo Danh mục:</label>
+            @Html.DropDownList("categoryId", (SelectList)ViewBag.Categories, "--- Tất cả Danh mục ---", new { @class = "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" })
+        </div>
+
+        <!-- Dropdown lọc theo Thương hiệu -->
+        <div class="form-group">
+            <label for="brandId" class="block text-sm font-medium text-gray-700">Lọc theo Thương hiệu:</label>
+            @Html.DropDownList("brandId", (SelectList)ViewBag.Brands, "--- Tất cả Thương hiệu ---", new { @class = "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" })
+        </div>
+
+        <!-- Nút Tìm kiếm -->
+        <div class="pt-4">
+            <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                Tìm Kiếm
+            </button>
+        </div>
+    }
+</div>
