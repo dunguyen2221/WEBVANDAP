@@ -1,87 +1,264 @@
-﻿@model IEnumerable<WEBVANDAP.Models.Address>
+﻿@model IEnumerable<WEBVANDAP.Models.Product>
 
 @{
-    ViewBag.Title = "Danh sách địa chỉ - LogiT Shop";
+    ViewBag.Title = "Trang chủ - LogiT Shop";
     Layout = null;
+
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+    string currentSort = ViewBag.CurrentSort;
+    int? currentCategory = ViewBag.CurrentCategory;
+    int? currentBrand = ViewBag.CurrentBrand;
+    List<WEBVANDAP.Models.Category> allCategories = ViewBag.Categories;
 }
 
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             background-color: #f5f5f5;
         }
 
         .navbar-brand img {
-            height: 45px;
-            margin-right: 8px;
-            object-fit: contain;
+            height: 35px;
+            margin-right: 10px;
         }
 
-        .address-card {
+        .product-card {
             border: none;
-            border-radius: 14px;
-            background: #fff;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            padding: 1.5rem;
-            transition: .3s ease;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-            .address-card:hover {
-                transform: translateY(-4px);
-                box-shadow: 0 6px 25px rgba(0,0,0,0.12);
+            .product-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
             }
+
+        .price {
+            color: #d0021c;
+            font-weight: 600;
+        }
+
+        .list-group-item {
+            cursor: pointer;
+        }
+
+            .list-group-item.active {
+                background-color: #0d6efd;
+                color: #fff;
+            }
+
+        .filters-section {
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+
+        .footer-full {
+            width: 100%;
+        }
+
+        /* Thanh tìm kiếm kéo dài */
+        .search-container {
+            flex-grow: 1;
+            margin: 0 20px;
+        }
+
+        /* Nút lịch sử đặt hàng */
+        .btn-order-history {
+            white-space: nowrap;
+        }
+
+        /* ========================================== */
+        /* FLOATING CONTACT BUTTONS (Zalo & FB)       */
+        /* ========================================== */
+        .floating-contact {
+            position: fixed;
+            bottom: 30px;
+            right: 20px;
+            z-index: 9999; /* Ensure it stays on top */
+            display: flex;
+            flex-direction: column; /* Stack them vertically */
+            gap: 20px;
+        }
+
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+            position: relative;
+            text-decoration: none;
+        }
+
+            /* Icon Colors */
+            .contact-icon.zalo {
+                background-color: #0068FF; /* Zalo Blue */
+            }
+
+            .contact-icon.facebook {
+                background-color: #1877F2; /* Facebook Blue */
+            }
+
+            .contact-icon.Telephone {
+                background-color: forestgreen; /* GitHub Dark Gray */
+            }
+
+            /* Icon Sizes */
+            .contact-icon i {
+                font-size: 30px;
+                color: white;
+            }
+
+            .contact-icon img {
+                width: 35px;
+                height: auto;
+                object-fit: contain;
+            }
+
+            /* Hover Effect: Scale up slightly */
+            .contact-icon:hover {
+                transform: scale(1.1);
+            }
+
+        /* ========================================== */
+        /* SHAKING / RINGING ANIMATION                */
+        /* ========================================== */
+        @@keyframes ring-alo {
+            0% {
+                transform: rotate(0) scale(1) skew(1deg);
+            }
+
+            10% {
+                transform: rotate(-25deg) scale(1) skew(1deg);
+            }
+
+            20% {
+                transform: rotate(25deg) scale(1) skew(1deg);
+            }
+
+            30% {
+                transform: rotate(-25deg) scale(1) skew(1deg);
+            }
+
+            40% {
+                transform: rotate(25deg) scale(1) skew(1deg);
+            }
+
+            50% {
+                transform: rotate(0) scale(1) skew(1deg);
+            }
+
+            100% {
+                transform: rotate(0) scale(1) skew(1deg);
+            }
+        }
+
+        /* Apply animation to the inner icon/image, not the whole button container
+        so the button stays in place while the icon inside shakes */
+        .shake-anim {
+            animation: ring-alo 2s infinite ease-in-out;
+            transform-origin: 50% 50%;
+        }
+
+        /* Optional: Add a pulsing ring effect behind the buttons */
+        .contact-icon::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: inherit;
+            opacity: 0.6;
+            z-index: -1;
+            animation: pulse-ring 2s infinite;
+        }
+
+        @@keyframes pulse-ring {
+            0% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 
 <body>
 
-    <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg bg-light shadow-sm sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm sticky-top">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center fw-bold text-danger"
-               href="@Url.Action("Index","Home")">
 
-                <img src="@Url.Content("~/Content/IMG/logo.png")" alt="Logo" />
-
-                <span class="fw-bold fs-3 text-dark">LogiT</span>
+            <!-- LOGO -->
+            <a class="navbar-brand d-flex align-items-center fw-bold text-danger" href="@Url.Action("Index","Home")">
+                <img src="@Url.Content("~/Content/IMG/logo.png")" style="scale: 2.5;">
+                <img src="@Url.Content("~/Content/IMG/logo.png")" style="scale: 2.5;">
+                <span class="text-center fs-4 fw-bolder">LogiT</span>
             </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="collapse navbar-collapse" id="mainNav">
-                <ul class="navbar-nav ms-auto fw-semibold">
+            <div class="collapse navbar-collapse" id="navbarNav">
 
-                    <li class="nav-item">
-                        <a href="@Url.Action("Index","Home")" class="nav-link">TRANG CHỦ</a>
+                <!-- THANH TÌM KIẾM -->
+                <div class="search-container d-flex align-items-center">
+                    <form class="d-flex w-100" action="@Url.Action("Index","Home")" method="get">
+                        <input class="form-control me-2" type="search" name="search" placeholder="Tìm kiếm sản phẩm, thương hiệu..." aria-label="Search" />
+                        <button class="btn btn-outline-dark" type="submit"><i class="bi bi-search"></i></button>
+                    </form>
+                </div>
+
+                <!-- 🔹 Nút Lịch sử đặt hàng -->
+                <div class="d-flex align-items-center ms-2">
+                    <a href="@Url.Action("OrderHistory", "User")" class="btn btn-outline-primary btn-order-history">
+                        <i class="bi bi-clock-history me-1"></i> Lịch sử đặt hàng
+                    </a>
+                </div>
+
+                <!-- ACCOUNT / CART -->
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 fw-semibold d-flex align-items-center">
+
+                    <li class="nav-item d-none d-lg-block">
+                        <a class="nav-link" href="@Url.Action("Index", "Home")">TRANG CHỦ</a>
                     </li>
 
                     <li class="nav-item me-2">
-                        <a href="@Url.Action("Index","Cart")" class="btn btn-outline-dark">
+                        <a href="@Url.Action("Index", "Cart")" class="btn btn-outline-dark position-relative">
                             <i class="bi bi-cart3"></i> Giỏ hàng
                         </a>
                     </li>
 
-                    <!-- USER MENU -->
                     <li class="nav-item dropdown">
-                        <a class="dropdown-toggle nav-link text-dark" href="#" data-bs-toggle="dropdown">
-                            @(Session["Username"]?.ToString() ?? "Tài khoản")
+                        <a class="dropdown-toggle text-decoration-none text-dark nav-link" href="#" id="adminDropdown" data-bs-toggle="dropdown">
+                            @(Session["Username"] ?? "Tài khoản")
                         </a>
-
                         <ul class="dropdown-menu dropdown-menu-end">
                             @if (Session["Username"] != null)
                             {
-                                <li><a class="dropdown-item" href="@Url.Action("Index","User")">Trang cá nhân</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Index","User")">Thông tin cá nhân</a></li>
                                 <li><a class="dropdown-item" href="@Url.Action("DangXuat","Account")">Đăng xuất</a></li>
                             }
                             else
@@ -91,86 +268,243 @@
                             }
                         </ul>
                     </li>
-
                 </ul>
             </div>
         </div>
     </nav>
 
+    <!-- ========================================== -->
+    <!-- BANNER -->
+    <!-- ========================================== -->
+    <div class="mt-5">
+        <div class="row g-4">
 
-    <!-- PAGE CONTENT -->
-    <div class="container my-5">
+            <div id="carouselInterval" class="carousel slide carousel-fade col-12 col-lg-8 ps-4" data-bs-ride="carousel"
+                 data-bs-pause="false">
+                <div class="carousel-inner h-100">
+                    <div class="carousel-item active h-100" data-bs-interval="3000">
+                        <img src="@Url.Content("~/Content/IMG/bannerlefttrue.png")" class="img-fluid rounded-3 h-100">
+                    </div>
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3 class="fw-bold text-dark">
-                <i class="bi bi-geo-alt-fill text-danger me-2"></i>
-                Danh sách địa chỉ
-            </h3>
+                    <div class="carousel-item h-100" data-bs-interval="3000">
+                        <img src="@Url.Content("~/Content/IMG/bannerleft2.png")" class="img-fluid rounded-3 h-100">
+                    </div>
 
-            <a href="@Url.Action("Create","Address")" class="btn btn-danger px-4 rounded-pill">
-                <i class="bi bi-plus-circle"></i> Thêm địa chỉ
-            </a>
+                    <div class="carousel-item h-100" data-bs-interval="3000">
+                        <img src="@Url.Content("~/Content/IMG/bannerleft3.png")" class="img-fluid rounded-3 h-100">
+                    </div>
+                </div>
+
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselInterval" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon rounded-3" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselInterval" data-bs-slide="next">
+                    <span class="carousel-control-next-icon rounded-3" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <div class="d-flex flex-column gap-4">
+                    <a href="#"><img src="@Url.Content("~/Content/IMG/banneright1.jpg")" class="img-fluid rounded-3" /></a>
+                    <a href="#"><img src="@Url.Content("~/Content/IMG/bannerright2.jpg")" class="img-fluid rounded-3" /></a>
+                    <a href="#"><img src="@Url.Content("~/Content/IMG/bannerright3.jpg")" class="img-fluid rounded-3" /></a>
+                </div>
+            </div>
         </div>
+    </div>
 
-        @if (Model != null && Model.Any())
-        {
-            <div class="row g-4">
-                @foreach (var item in Model)
+    <!-- ========================================== -->
+    <!-- DANH SÁCH SẢN PHẨM -->
+    <!-- ========================================== -->
+    <div class="my-5 mx-5">
+        <div class="row g-4">
+            <!-- Sidebar -->
+            <div class="col-lg-2 col-md-4">
+                <h5 class="fw-bold mb-3">Lọc Sản Phẩm</h5>
+
+                @using (Html.BeginForm("Index", "Home", FormMethod.Get, new { id = "filterForm", @class = "mb-4" }))
                 {
-                    <div class="col-md-6 col-lg-4">
-                        <div class="address-card h-100">
+                    @Html.Hidden("page", 1)
+                    @Html.Hidden("sortBy", currentSort)
 
-                            <h5 class="fw-bold text-dark mb-2">
-                                <i class="bi bi-house-door text-primary me-1"></i> Địa chỉ
-                            </h5>
+                    <div class="card p-3 shadow-sm mb-4">
+                        <h6 class="fw-bold mb-3">Danh Mục</h6>
+                        <ul class="list-group list-group-flush" id="category-list">
+                            <li class="list-group-item category-item @(currentCategory == null || currentCategory == 0 ? "active" : "")" data-category-id="0">Tất cả sản phẩm</li>
+                            @if (allCategories != null)
+                            {
+                                foreach (var category in allCategories)
+                                {
+                                    <li class="list-group-item category-item @(currentCategory == category.Id ? "active" : "")" data-category-id="@category.Id">@category.Name</li>
+                                }
+                            }
+                        </ul>
+                        @Html.Hidden("filterCategory", currentCategory)
+                    </div>
 
-                            <p class="text-muted mb-3">
-                                @($"{item.Street}, {item.Ward}, {item.District}, {item.City}")
-                            </p>
-
-                            <div class="d-flex justify-content-between mt-3">
-                                <a href="@Url.Action("Edit","Address", new { id = item.Id })"
-                                   class="btn btn-warning btn-sm px-3">
-                                    <i class="bi bi-pencil-square"></i> Sửa
-                                </a>
-
-                                <a href="@Url.Action("Delete","Address", new { id = item.Id })"
-                                   class="btn btn-danger btn-sm px-3">
-                                    <i class="bi bi-trash"></i> Xóa
-                                </a>
-                            </div>
-
-                        </div>
+                    <div class="card p-3 shadow-sm">
+                        <h6 class="fw-bold mb-3">Thương Hiệu</h6>
+                        <ul class="list-group list-group-flush" id="brand-list">
+                            <li class="list-group-item text-muted">Vui lòng chọn Danh mục</li>
+                        </ul>
+                        @Html.Hidden("filterBrand", currentBrand, new { id = "filterBrandHidden" })
                     </div>
                 }
             </div>
-        }
-        else
-        {
-            <div class="alert alert-light text-center border py-5">
-                <i class="bi bi-emoji-frown fs-1 text-secondary"></i>
-                <p class="mt-3 mb-0">Bạn chưa có địa chỉ nào.</p>
-            </div>
-        }
 
-        @if (TempData["SuccessMessage"] != null)
-        {
-            <div class="alert alert-success mt-4">
-                <i class="bi bi-check-circle-fill me-2"></i>
-                @TempData["SuccessMessage"]
-            </div>
-        }
+            <!-- Main Content -->
+            <div class="col-lg-10 col-md-8">
+                @using (Html.BeginForm("Index", "Home", FormMethod.Get, new { @class = "d-flex justify-content-end align-items-center mb-4 filters-section" }))
+                {
+                    @Html.Hidden("page", currentPage)
+                    @Html.Hidden("filterCategory", currentCategory)
+                    @Html.Hidden("filterBrand", currentBrand)
 
-        <div class="mt-5">
-            <a href="@Url.Action("Index","User")" class="btn btn-outline-dark rounded-pill px-4">
-                <i class="bi bi-arrow-left"></i> Quay lại Hồ sơ
-            </a>
+                    <div class="d-flex align-items-center gap-2">
+                        <label for="sortBy" class="form-label mb-0 small text-muted">Sắp xếp theo:</label>
+                        <select id="sortBy" name="sortBy" class="form-select" onchange="this.form.submit();" style="width: 180px;">
+                            <option value="popular" selected="@(currentSort == null || currentSort == "popular")">Phổ biến</option>
+                            <option value="price-asc" selected="@(currentSort == "price-asc")">Giá tăng dần</option>
+                            <option value="price-desc" selected="@(currentSort == "price-desc")">Giá giảm dần</option>
+                        </select>
+                    </div>
+                }
+
+                <div class="row g-4">
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var product in Model)
+                        {
+                            var firstImage = product.ProductImages.FirstOrDefault();
+                            string imageUrl = firstImage != null ? Url.Content(firstImage.Url) : Url.Content("~/Content/IMG/default_placeholder.jpg");
+
+                            <div class="col-md-4 col-sm-6">
+                                <div class="card product-card h-100 position-relative">
+                                    <img src="@imageUrl" class="card-img-top" alt="@product.Name">
+                                    <div class="card-body d-flex flex-column">
+                                        <h6 class="card-title mb-3">@product.Name</h6>
+
+                                        <div class="d-flex justify-content-between align-items-center mt-auto w-100">
+
+                                            @* Giả sử Model của bạn có thuộc tính Quantity hoặc IsActive *@
+                                            @if (product.Stock > 0)
+                                            {
+                                                <span class="badge bg-success bg-opacity-10 text-success px-2 py-1 rounded-pill fw-normal" style="font-size: 12px;">
+                                                    <i class="bi bi-check-circle-fill me-1"></i>Còn hàng
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary bg-opacity-10 text-secondary px-2 py-1 rounded-pill fw-normal" style="font-size: 12px;">
+                                                    <i class="bi bi-x-circle-fill me-1"></i>Hết hàng
+                                                </span>
+                                            }
+
+                                            <p class="price mb-0 me-3 fs-5 fw-bold">@product.Price.ToString("N0") ₫</p>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer d-flex flex-column gap-2">
+                                        <a href="@Url.Action("Details","Product", new { id = product.Id })" class="btn btn-outline-primary btn-sm">Xem chi tiết</a>
+
+                                        @using (Html.BeginForm("AddToCart", "Cart", FormMethod.Post, new { @class = "w-100" }))
+                                        {
+                                            @Html.Hidden("productId", product.Id)
+                                            @Html.Hidden("quantity", 1)
+                                            <button type="submit" class="btn btn-danger btn-sm w-100">Thêm vào giỏ hàng</button>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="col-12"><div class="text-center py-5 text-muted">Không tìm thấy sản phẩm nào.</div></div>
+                    }
+                </div>
+
+                <nav class="mt-5">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                            @Html.ActionLink("«", "Index", "Home", new { page = currentPage - 1, sortBy = currentSort, filterCategory = currentCategory, filterBrand = currentBrand }, new { @class = "page-link" })
+                        </li>
+
+                        @for (int i = 1; i <= totalPages; i++)
+                        {
+                            <li class="page-item @(i == currentPage ? "active" : "")">
+                                @Html.ActionLink(i.ToString(), "Index", "Home", new { page = i, sortBy = currentSort, filterCategory = currentCategory, filterBrand = currentBrand }, new { @class = "page-link" })
+                            </li>
+                        }
+
+                        <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                            @Html.ActionLink("»", "Index", "Home", new { page = currentPage + 1, sortBy = currentSort, filterCategory = currentCategory, filterBrand = currentBrand }, new { @class = "page-link" })
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </div>
-
     </div>
 
+    <!-- FLOATING SHAKING ICONS -->
+    <div class="floating-contact">
+        <a href="https://zalo.me/YOUR_PHONE_NUMBER" target="_blank" class="contact-icon zalo" title="Chat Zalo">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1200px-Icon_of_Zalo.svg.png"
+                 class="shake-anim" alt="Zalo">
+        </a>
+
+        <a href="https://m.me/YOUR_FACEBOOK_ID" target="_blank" class="contact-icon facebook" title="Chat Facebook">
+            <i class="bi bi-messenger shake-anim"></i>
+        </a>
+
+        <a href="https://github.com/dunguyen2221/WEBVANDAP.git" target="_blank" class="contact-icon Telephone" title="Telephone">
+            <i class="bi bi-telephone-fill shake-anim"></i>
+        </a>
+    </div>
+
+    <!-- SCRIPT -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            function loadBrands(categoryId, selectedBrandId) {
+                var brandList = $('#brand-list');
+                brandList.empty();
 
+                if (categoryId > 0) {
+                    $.get('@Url.Action("GetBrandsByCategory", "Home")', { categoryId: categoryId }, function (brands) {
+                        brandList.append('<li class="list-group-item brand-item ' + (selectedBrandId == 0 ? "active" : "") + '" data-brand-id="0">Tất cả Thương hiệu</li>');
+                        $.each(brands, function (_, brand) {
+                            var isActive = brand.Id == selectedBrandId ? "active" : "";
+                            brandList.append('<li class="list-group-item brand-item ' + isActive + '" data-brand-id="' + brand.Id + '">' + brand.Name + '</li>');
+                        });
+                    });
+                } else {
+                    brandList.append('<li class="list-group-item text-muted">Vui lòng chọn Danh mục</li>');
+                }
+            }
+
+            $('#category-list').on('click', '.category-item', function () {
+                var categoryId = $(this).data('category-id');
+                $('input[name="filterCategory"]').val(categoryId);
+                $('#filterBrandHidden').val(0);
+                $('#filterForm').submit();
+            });
+
+            $('#brand-list').on('click', '.brand-item', function () {
+                var brandId = $(this).data('brand-id');
+                $('#filterBrandHidden').val(brandId);
+                $('#filterForm').submit();
+            });
+
+            var initialCategoryId = @(currentCategory.HasValue ? currentCategory.Value : 0);
+            var initialBrandId = @(currentBrand.HasValue ? currentBrand.Value : 0);
+
+            if (initialCategoryId > 0) {
+                loadBrands(initialCategoryId, initialBrandId);
+            }
+        });
+    </script>
 </body>
 </html>
