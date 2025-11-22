@@ -21,9 +21,9 @@
 
         <dt class="col-sm-3">Tồn kho</dt>
         <dd class="col-sm-9">
-            @if (Model.StockQuantity > 0)
+            @if (Model.Stock > 0)
             {
-                <span class="text-success fw-bold">Còn hàng (@Model.StockQuantity)</span>
+                <span class="text-success fw-bold">Còn hàng (@Model.Stock)</span>
             }
             else
             {
