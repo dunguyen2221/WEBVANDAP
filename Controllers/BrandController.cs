@@ -17,18 +17,25 @@ namespace WEBVANDAP.Controllers
         // --------------------------------------------------------
         public ActionResult Index()
         {
-            var brands = _context.Brands.ToList();
+            var brands = _context.Brands
+                                 .Include(b => b.Category) // ✔ LOAD CATEGORY
+                                 .ToList();
+
             return View(brands);
         }
+
 
         // --------------------------------------------------------
         // CREATE (GET): Brand/Create (Hiển thị form)
         // --------------------------------------------------------
         public ActionResult Create()
         {
-            // Không còn Category dropdown nữa
+            ViewBag.Categories = _context.Categories
+                                         .Select(c => new { c.Id, c.Name })
+                                         .ToList();
             return View();
         }
+
 
         // --------------------------------------------------------
         // CREATE (POST): Brand/Create (Lưu dữ liệu)
@@ -44,23 +51,24 @@ namespace WEBVANDAP.Controllers
                 return RedirectToAction("Index");
             }
 
-            // Không còn PopulateCategoriesDropdown, chỉ trả lại view
+            // Nếu ModelState lỗi thì load lại dropdown
+            ViewBag.Categories = _context.Categories
+                                         .Select(c => new { c.Id, c.Name })
+                                         .ToList();
+
             return View(brand);
         }
 
         // --------------------------------------------------------
         // EDIT (GET): Brand/Edit/5 (Hiển thị form chỉnh sửa)
         // --------------------------------------------------------
-        public ActionResult Edit(int? id)
+        public ActionResult Edit(int id)
         {
-            if (id == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var brand = _context.Brands.Find(id);
 
-            Brand brand = _context.Brands.Find(id);
-            if (brand == null)
-                return HttpNotFound();
+            // Tạo danh sách danh mục cho dropdown, lấy từ bảng Categories
+            ViewBag.CategoryId = new SelectList(_context.Categories, "Id", "Name", brand.CategoryId);
 
-            // Không cần dropdown Category
             return View(brand);
         }
 

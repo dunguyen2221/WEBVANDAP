@@ -33,6 +33,7 @@
         <AssociationConnector Association="ShopPCModel.FK_ProductSpecs_Product" ManuallyRouted="false" />
         <AssociationConnector Association="ShopPCModel.FK_Reviews_Product" ManuallyRouted="false" />
         <AssociationConnector Association="ShopPCModel.AspNetUserRoles" ManuallyRouted="false" />
+        <AssociationConnector Association="ShopPCModel.FK_Brands_Categories" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

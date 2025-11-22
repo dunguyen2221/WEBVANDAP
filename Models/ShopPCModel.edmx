@@ -62,6 +62,7 @@
           <Property Name="Slug" Type="nvarchar" MaxLength="200" />
           <Property Name="Logo" Type="nvarchar" MaxLength="255" />
           <Property Name="IsActive" Type="bit" />
+          <Property Name="CategoryId" Type="int" />
         </EntityType>
         <EntityType Name="CartItems">
           <Key>
@@ -197,6 +198,18 @@
             </Principal>
             <Dependent Role="AspNetUserRoles">
               <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Brands_Categories">
+          <End Role="Categories" Type="Self.Categories" Multiplicity="0..1" />
+          <End Role="Brands" Type="Self.Brands" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Categories">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Brands">
+              <PropertyRef Name="CategoryId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -393,6 +406,10 @@
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
           </AssociationSet>
+          <AssociationSet Name="FK_Brands_Categories" Association="Self.FK_Brands_Categories">
+            <End Role="Categories" EntitySet="Categories" />
+            <End Role="Brands" EntitySet="Brands" />
+          </AssociationSet>
           <AssociationSet Name="FK_CartItems_Cart" Association="Self.FK_CartItems_Cart">
             <End Role="Carts" EntitySet="Carts" />
             <End Role="CartItems" EntitySet="CartItems" />
@@ -508,6 +525,8 @@
           <Property Name="Logo" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="IsActive" Type="Boolean" />
           <NavigationProperty Name="Products" Relationship="Self.FK_Products_Brand" FromRole="Brands" ToRole="Products" />
+          <Property Name="CategoryId" Type="Int32" />
+          <NavigationProperty Name="Category" Relationship="ShopPCModel.FK_Brands_Categories" FromRole="Brand" ToRole="Category" />
         </EntityType>
         <EntityType Name="CartItem">
           <Key>
@@ -541,6 +560,7 @@
           <Property Name="Icon" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="IsActive" Type="Boolean" />
           <NavigationProperty Name="Products" Relationship="Self.FK_Products_Category" FromRole="Categories" ToRole="Products" />
+          <NavigationProperty Name="Brands" Relationship="ShopPCModel.FK_Brands_Categories" FromRole="Category" ToRole="Brand" />
         </EntityType>
         <EntityType Name="OrderItem">
           <Key>
@@ -885,7 +905,23 @@
             <End Role="AspNetRoles" EntitySet="AspNetRoles" />
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
           </AssociationSet>
+          <AssociationSet Name="FK_Brands_Categories" Association="ShopPCModel.FK_Brands_Categories">
+            <End Role="Category" EntitySet="Categories" />
+            <End Role="Brand" EntitySet="Brands" />
+          </AssociationSet>
         </EntityContainer>
+        <Association Name="FK_Brands_Categories">
+          <End Type="ShopPCModel.Category" Role="Category" Multiplicity="0..1" />
+          <End Type="ShopPCModel.Brand" Role="Brand" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Category">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Brand">
+              <PropertyRef Name="CategoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -938,6 +974,7 @@
           <EntitySetMapping Name="Brands">
             <EntityTypeMapping TypeName="ShopPCModel.Brand">
               <MappingFragment StoreEntitySet="Brands">
+                <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Slug" ColumnName="Slug" />

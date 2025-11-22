@@ -2,7 +2,7 @@
 @using System.Linq
 
 @{
-    ViewBag.Title = "Chi Tiết: " + Model.Name;
+    ViewBag.Title = "Quản lý sản phẩm: " + Model.Name;
     Layout = null;
 
     bool isAuthenticated = System.Web.HttpContext.Current.User.Identity.IsAuthenticated;
@@ -10,7 +10,6 @@
 
     var firstImage = Model.ProductImages.FirstOrDefault();
     string imageUrl = firstImage != null ? Url.Content(firstImage.Url) : Url.Content("~/Images/default_placeholder.jpg");
-    string currentUserName = isAuthenticated ? User.Identity.Name : "Tài Khoản";
 }
 
 <!DOCTYPE html>
@@ -20,23 +19,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f8fafc;
+            background-color: #f0f2f5;
+            font-family: "Segoe UI", sans-serif;
         }
 
-        .card {
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        .sidebar {
+            width: 220px;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 30px;
+        }
+
+        .card-product {
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
 
         .product-name {
-            font-weight: 700;
             font-size: 1.8rem;
+            font-weight: 700;
         }
 
         .price {
@@ -49,224 +58,161 @@
             font-weight: 500;
         }
 
-        .action-buttons {
-            margin-top: 15px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+        .review-card {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .review-star i {
+            color: #ffc107;
         }
 
         .carousel-inner img {
-            border-radius: 12px;
+            border-radius: 10px;
             width: 100%;
             object-fit: contain;
+            max-height: 400px;
         }
 
-        .breadcrumb {
-            background: transparent;
-            padding-left: 0;
+        .action-buttons .btn {
+            margin-right: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="container my-4">
-        <!-- Breadcrumb -->
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="@Url.Action("Index","Home")">Trang chủ</a></li>
-                <li class="breadcrumb-item"><a href="@Url.Action("Index","Product")">Sản phẩm</a></li>
-                <li class="breadcrumb-item active" aria-current="page">@Model.Name</li>
-            </ol>
-        </nav>
+    <div class="d-flex" style="min-height: 100vh;">
+        <!-- Sidebar -->
+        <div class="sidebar d-flex flex-column flex-shrink-0 p-3 text-white bg-primary position-sticky top-0" style="height: 100vh;">
+            <a class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none" href="@Url.Action("Index", "Admin")">
+                <i class="bi bi-shop fs-3 me-2"></i>
+                <span class="fs-5 fw-bold">ADMIN</span>
+            </a>
+            <hr class="text-white opacity-25">
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li><a href="@Url.Action("Index","Admin")" class="nav-link text-white"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
+                <li><a href="@Url.Action("Index","Product")" class="nav-link text-white"><i class="bi bi-box-seam me-2"></i> Sản phẩm</a></li>
+                <li><a href="@Url.Action("Index","Review")" class="nav-link text-white"><i class="bi bi-star-half me-2"></i> Đánh giá</a></li>
+            </ul>
+            <div class="mt-auto pt-3 border-top border-white-50">
+                <a href="@Url.Action("DangXuat", "Account")" class="btn btn-sm btn-outline-light rounded-circle">
+                    <i class="bi bi-box-arrow-left"></i>
+                </a>
+            </div>
+        </div>
 
-        <div class="row g-4">
-            <!-- Hình ảnh sản phẩm -->
-            <div class="col-lg-6">
-                <div id="productCarousel" class="carousel slide card p-3">
-                    <div class="carousel-inner">
-                        @if (Model.ProductImages != null && Model.ProductImages.Any())
-                        {
-                            int i = 0;
-                            foreach (var img in Model.ProductImages)
+        <!-- Main content -->
+        <div class="flex-grow-1 main-content">
+            <div class="mb-4 d-flex justify-content-between align-items-center">
+                <h2 class="fw-bold h4 mb-0">Chi tiết sản phẩm</h2>
+                <i class="bi bi-box-seam fs-2 text-primary"></i>
+            </div>
+
+            <div class="row g-4">
+                <!-- Carousel ảnh -->
+                <div class="col-lg-6">
+                    <div id="productCarousel" class="carousel slide card-product p-3">
+                        <div class="carousel-inner">
+                            @if (Model.ProductImages != null && Model.ProductImages.Any())
                             {
-                                <div class="carousel-item @(i==0?"active":"")">
-                                    <img src="@Url.Content(img.Url)" alt="@Model.Name" />
-                                </div>
-                                i++;
+                                int i = 0;
+                                foreach (var img in Model.ProductImages)
+                                {
+                                    <div class="carousel-item @(i==0?"active":"")">
+                                        <img src="@Url.Content(img.Url)" alt="@Model.Name" />
+                                    </div>
+                                    i++;
+                                }
                             }
-                        }
-                        else
+                            else
+                            {
+                                <div class="carousel-item active">
+                                    <img src="@imageUrl" alt="Placeholder">
+                                </div>
+                            }
+                        </div>
+                        @if (Model.ProductImages.Count > 1)
                         {
-                            <div class="carousel-item active">
-                                <img src="@imageUrl" alt="Placeholder">
+                            <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon"></span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon"></span>
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                <!-- Thông tin sản phẩm -->
+                <div class="col-lg-6">
+                    <div class="card card-product p-4">
+                        <div class="product-name">@Model.Name</div>
+                        <div class="mb-2"><strong>Danh mục:</strong> @(Model.Category?.Name ?? "N/A")</div>
+                        <div class="mb-2"><strong>Thương hiệu:</strong> @(Model.Brand?.Name ?? "N/A")</div>
+                        <div class="price">@Model.Price.ToString("N0") VNĐ</div>
+                        <div class="stock mb-3">Tình trạng: @(Model.Stock > 0 ? "Còn hàng" : "Hết hàng")</div>
+
+                        @if (isAdmin)
+                        {
+                            <div class="action-buttons">
+                                @Html.ActionLink("✏️ Sửa", "Edit", new { id = Model.Id }, new { @class = "btn btn-warning" })
+                                @Html.ActionLink("🗑️ Xóa", "Delete", new { id = Model.Id }, new { @class = "btn btn-danger" })
+                                @Html.ActionLink("⬅️ Quản lý sản phẩm", "Index", "Product", null, new { @class = "btn btn-secondary" })
                             </div>
                         }
                     </div>
-                    @if (Model.ProductImages.Count > 1)
-                    {
-                        <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon"></span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
-                            <span class="carousel-control-next-icon"></span>
-                        </button>
-                    }
                 </div>
             </div>
 
-            <!-- Thông tin sản phẩm -->
-            <div class="col-lg-6">
-                <div class="card p-4">
-                    <div class="product-name">@Model.Name</div>
-                    <div class="mb-2"><strong>Danh mục:</strong> @(Model.Category?.Name ?? "N/A")</div>
-                    <div class="mb-2"><strong>Thương hiệu:</strong> @(Model.Brand?.Name ?? "N/A")</div>
-                    <div class="price">@Model.Price.ToString("N0") VNĐ</div>
-                    <div class="stock mb-3">Tình trạng: @(Model.Stock > 0 ? "Còn hàng" : "Hết hàng")</div>
+            <!-- Mô tả sản phẩm -->
+            <div class="card card-product p-4 mt-4">
+                <h5>Mô tả sản phẩm</h5>
+                <p>@Html.Raw(Model.Description)</p>
+            </div>
 
-                    @if (isAdmin)
+            <!-- Review -->
+            <div class="card card-product mt-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">Đánh giá (@(Model.Reviews?.Count ?? 0))</h5>
+                    @if (Model.Reviews != null && Model.Reviews.Any())
                     {
-                        <div class="action-buttons">
-                            @Html.ActionLink("✏️ Sửa", "Edit", new { id = Model.Id }, new { @class = "btn btn-warning" })
-                            @Html.ActionLink("🗑️ Xóa", "Delete", new { id = Model.Id }, new { @class = "btn btn-danger" })
-                            @Html.ActionLink("⬅️ Quản lý sản phẩm", "Index", "Product", null, new { @class = "btn btn-secondary" })
-                        </div>
+                        foreach (var review in Model.Reviews.OrderByDescending(r => r.CreatedAt))
+                        {
+                            <div class="review-card">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <strong>@(review.AspNetUser?.UserName ?? "Người dùng ẩn danh")</strong>
+                                        <div class="review-star">
+                                            @for (int i = 0; i < review.Rating; i++)
+                                            {<i class="fas fa-star"></i>}
+                                            @for (int i = 0; i < 5 - review.Rating; i++)
+                                            {<i class="far fa-star"></i>}
+                                        </div>
+                                        <small class="text-muted">@review.CreatedAt</small>
+                                    </div>
+                                    @if (isAdmin)
+                                    {
+                                        using (Html.BeginForm("Delete", "Review", FormMethod.Post))
+                                        {
+                                            @Html.Hidden("id", review.Id)
+                                            <button type="submit" class="btn btn-link text-danger" onclick="return confirm('Xóa đánh giá này?')">Xóa</button>
+                                        }
+                                    }
+                                </div>
+                                <p class="mt-2 mb-0">@review.Comment</p>
+                            </div>
+                        }
                     }
                     else
                     {
-                        if (Model.Stock > 0)
-                        {
-                            <form method="post" action="@Url.Action("AddToCart","Cart")" class="mt-3">
-                                <input type="hidden" name="productId" value="@Model.Id" />
-                                <div class="input-group mb-3" style="max-width: 150px;">
-                                    <button type="button" class="btn btn-outline-secondary" id="button-minus">-</button>
-                                    <input type="number" name="quantity" class="form-control text-center" value="1" min="1" max="@Model.Stock" id="quantity-input" />
-                                    <button type="button" class="btn btn-outline-secondary" id="button-plus">+</button>
-                                </div>
-                                <button type="submit" class="btn btn-danger w-100">THÊM VÀO GIỎ</button>
-                            </form>
-                        }
-                        else
-                        {
-                            <div class="alert alert-danger text-center">SẢN PHẨM TẠM THỜI HẾT HÀNG!</div>
-                        }
+                        <p class="text-muted text-center my-4">Chưa có đánh giá nào.</p>
                     }
                 </div>
-            </div>
-        </div>
-
-        <!-- Mô tả sản phẩm -->
-        <div class="card p-4 mt-4">
-            <h5>Mô tả sản phẩm</h5>
-            <p>@Html.Raw(Model.Description)</p>
-        </div>
-    </div>
-    <div class="container my-5 px-5">
-        <div class="card shadow-sm border-0 rounded-3">
-            <div class="card-header bg-white py-3">
-                <h5 class="fw-bold mb-0">Đánh giá sản phẩm (@(Model.Reviews != null ? Model.Reviews.Count : 0))</h5>
-            </div>
-            <div class="card-body p-4">
-
-                @if (Session["UserId"] != null)
-                {
-                    <div class="mb-4 p-4 bg-light rounded-3">
-                        <h6 class="fw-bold mb-3">Viết đánh giá của bạn</h6>
-                        @using (Html.BeginForm("Create", "Review", FormMethod.Post))
-                        {
-                            @Html.AntiForgeryToken()
-                            @Html.Hidden("productId", Model.Id)
-
-                            <div class="mb-3">
-                                <label class="form-label small text-muted">Đánh giá sao:</label>
-                                <select name="rating" class="form-select w-auto">
-                                    <option value="5">⭐⭐⭐⭐⭐ (Tuyệt vời)</option>
-                                    <option value="4">⭐⭐⭐⭐ (Tốt)</option>
-                                    <option value="3">⭐⭐⭐ (Bình thường)</option>
-                                    <option value="2">⭐⭐ (Tệ)</option>
-                                    <option value="1">⭐ (Rất tệ)</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <textarea name="content" class="form-control" rows="3" placeholder="Chia sẻ cảm nhận của bạn về sản phẩm..."></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
-                        }
-                    </div>
-                }
-                else
-                {
-                    <div class="alert alert-info">
-                        Vui lòng <a href="@Url.Action("DangNhap", "Account")" class="alert-link">đăng nhập</a> để viết đánh giá.
-                    </div>
-                }
-
-                <hr />
-
-                @if (Model.Reviews != null && Model.Reviews.Any())
-                {
-                    foreach (var review in Model.Reviews.OrderByDescending(r => r.CreatedAt))
-                    {
-                        <div class="d-flex mb-4">
-                            <div class="flex-shrink-0">
-                                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white fw-bold" style="width: 40px; height: 40px;">
-                                    @(review.AspNetUser?.UserName?.Substring(0, 1).ToUpper() ?? "U")
-                                </div>
-                            </div>
-                            <div class="ms-3 w-100">
-                                <div class="d-flex justify-content-between">
-                                    <div>
-                                        <h6 class="fw-bold mb-0">@(review.AspNetUser?.UserName ?? "Người dùng ẩn danh")</h6>
-                                        <div class="text-warning small">
-                                            @for (int i = 0; i < review.Rating; i++)
-                                            {<i class="bi bi-star-fill"></i>}
-                                            @for (int i = 0; i < 5 - review.Rating; i++)
-                                            {<i class="bi bi-star"></i>}
-                                        </div>
-                                    </div>
-                                    <small class="text-muted">@review.CreatedAt</small>
-                                </div>
-                                <p class="mt-2 mb-0">@review.Comment</p>
-
-                                @* Nút xóa cho Admin *@
-                                @if (User.IsInRole("Admin"))
-                                {
-                                    using (Html.BeginForm("Delete", "Review", FormMethod.Post, new { @class = "mt-2" }))
-                                    {
-                                        @Html.Hidden("id", review.Id)
-                                        <button type="submit" class="btn btn-link text-danger p-0 small" onclick="return confirm('Xóa đánh giá này?')">Xóa (Admin)</button>
-                                    }
-                                }
-                            </div>
-                        </div>
-                    }
-                }
-                else
-                {
-                    <p class="text-muted text-center my-4">Chưa có đánh giá nào. Hãy là người đầu tiên!</p>
-                }
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const quantityInput = document.getElementById('quantity-input');
-            const btnPlus = document.getElementById('button-plus');
-            const btnMinus = document.getElementById('button-minus');
-
-            if (quantityInput && btnPlus && btnMinus) {
-                btnPlus.addEventListener('click', () => {
-                    let val = parseInt(quantityInput.value);
-                    let max = parseInt(quantityInput.max);
-                    if (val < max) quantityInput.value = val + 1;
-                });
-                btnMinus.addEventListener('click', () => {
-                    let val = parseInt(quantityInput.value);
-                    if (val > 1) quantityInput.value = val - 1;
-                });
-            }
-        });
-    </script>
 </body>
 </html>

@@ -10,21 +10,18 @@ using WEBVANDAP.Models;
 
 namespace WEBVANDAP.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ProductController : Controller
     {
         private readonly ShopPCEntities2 _context = new ShopPCEntities2();
 
-        // Phương thức nội bộ để lưu file ảnh và cập nhật DB (giữ nguyên)
+        // Lưu file ảnh và cập nhật DB
         private void SaveProductImages(int productId, HttpPostedFileBase[] images)
         {
             if (images == null || images.All(f => f == null || f.ContentLength == 0)) return;
 
             string folderPath = Server.MapPath("~/Content/ProductImages/");
-
-            if (!Directory.Exists(folderPath))
-            {
-                Directory.CreateDirectory(folderPath);
-            }
+            if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
 
             foreach (var imageFile in images.Where(f => f != null && f.ContentLength > 0))
             {
@@ -35,26 +32,22 @@ namespace WEBVANDAP.Controllers
                 string uploadPath = Path.Combine(folderPath, fileName);
                 imageFile.SaveAs(uploadPath);
 
-                var productImage = new ProductImage
+                _context.ProductImages.Add(new ProductImage
                 {
                     ProductId = productId,
                     Url = "~/Content/ProductImages/" + fileName
-                };
-                _context.ProductImages.Add(productImage);
+                });
             }
             _context.SaveChanges();
         }
 
-        // Phương thức nội bộ để xóa file ảnh vật lý trên server (giữ nguyên)
+        // Xóa file ảnh vật lý
         private void DeleteImageFile(string url)
         {
             try
             {
                 string physicalPath = Server.MapPath(url);
-                if (System.IO.File.Exists(physicalPath))
-                {
-                    System.IO.File.Delete(physicalPath);
-                }
+                if (System.IO.File.Exists(physicalPath)) System.IO.File.Delete(physicalPath);
             }
             catch (Exception ex)
             {
@@ -62,10 +55,9 @@ namespace WEBVANDAP.Controllers
             }
         }
 
-
-        // --------------------------------------------------------
-        // CHỨC NĂNG CÔNG CỘNG (Giữ nguyên)
-        // --------------------------------------------------------
+        // -----------------------
+        // Danh sách sản phẩm
+        // -----------------------
         public ActionResult Index()
         {
             var products = _context.Products
@@ -75,37 +67,52 @@ namespace WEBVANDAP.Controllers
             return View(products);
         }
 
+        [Authorize(Roles = "Admin")]
         public ActionResult Details(int? id)
         {
             if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            Product product = _context.Products
-                                     .Include(p => p.ProductImages)
-                                     .FirstOrDefault(p => p.Id == id);
+            var product = _context.Products
+                                  .Include(p => p.ProductImages)
+                                  .Include(p => p.Category)
+                                  .Include(p => p.Brand)
+                                  .FirstOrDefault(p => p.Id == id);
 
             if (product == null) return HttpNotFound();
-            return View(product);
+
+            return View("Details", product); // View riêng cho admin: DetailsAdmin.cshtml
         }
 
-        // --------------------------------------------------------
-        // CHỨC NĂNG QUẢN LÝ (Admin)
-        // --------------------------------------------------------
+        [AllowAnonymous]
+        public ActionResult DetailUser(int? id)
+        {
+            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-        [Authorize(Roles = "Admin")]
+            var product = _context.Products.Include(p => p.ProductImages)
+                                           .FirstOrDefault(p => p.Id == id);
+            if (product == null) return HttpNotFound();
+
+            return View("DetailsUser", product);
+        }
+
+
+
+        // -----------------------
+        // Create Product
+        // -----------------------
         public ActionResult Create()
         {
             ViewBag.CategoryId = new SelectList(_context.Categories, "Id", "Name");
-            ViewBag.BrandId = new SelectList(_context.Brands, "Id", "Name");
+            ViewBag.BrandId = new SelectList(new List<Brand>(), "Id", "Name"); // ban đầu trống
             return View(new Product());
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Product product, HttpPostedFileBase[] images)
         {
             ViewBag.CategoryId = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
-            ViewBag.BrandId = new SelectList(_context.Brands, "Id", "Name", product.BrandId);
+            ViewBag.BrandId = new SelectList(_context.Brands.Where(b => b.CategoryId == product.CategoryId), "Id", "Name", product.BrandId);
 
             if (string.IsNullOrWhiteSpace(product.Slug) && !string.IsNullOrWhiteSpace(product.Name))
             {
@@ -115,123 +122,86 @@ namespace WEBVANDAP.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Products.Add(product);
-                    _context.SaveChanges();
-                    int newProductId = product.Id;
+                _context.Products.Add(product);
+                _context.SaveChanges();
+                SaveProductImages(product.Id, images);
 
-                    this.SaveProductImages(newProductId, images);
-
-                    TempData["SuccessMessage"] = "Tạo sản phẩm mới thành công!";
-                    return RedirectToAction("Index");
-                }
-                catch (Exception ex)
-                {
-                    TempData["Error"] = "Đã xảy ra lỗi hệ thống: " + ex.Message;
-                    return View(product);
-                }
+                TempData["SuccessMessage"] = "Tạo sản phẩm mới thành công!";
+                return RedirectToAction("Index");
             }
             return View(product);
         }
 
-        [Authorize(Roles = "Admin")]
+        // -----------------------
+        // Edit Product
+        // -----------------------
         public ActionResult Edit(int? id)
         {
             if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            Product product = _context.Products
-                                     .Include(p => p.ProductImages)
-                                     .FirstOrDefault(p => p.Id == id);
+            var product = _context.Products.Include(p => p.ProductImages).FirstOrDefault(p => p.Id == id);
             if (product == null) return HttpNotFound();
 
             ViewBag.CategoryId = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
-            ViewBag.BrandId = new SelectList(_context.Brands, "Id", "Name", product.BrandId);
+            ViewBag.BrandId = new SelectList(_context.Brands.Where(b => b.CategoryId == product.CategoryId), "Id", "Name", product.BrandId);
 
             return View(product);
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(Product product, HttpPostedFileBase[] newImages)
         {
             ViewBag.CategoryId = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
-            ViewBag.BrandId = new SelectList(_context.Brands, "Id", "Name", product.BrandId);
+            ViewBag.BrandId = new SelectList(_context.Brands.Where(b => b.CategoryId == product.CategoryId), "Id", "Name", product.BrandId);
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    var originalValues = _context.Products
-                        .AsNoTracking()
-                        .Where(p => p.Id == product.Id)
-                        .Select(p => new { p.Slug, p.CreatedAt })
-                        .FirstOrDefault();
+                var originalValues = _context.Products.AsNoTracking()
+                                       .Where(p => p.Id == product.Id)
+                                       .Select(p => new { p.Slug, p.CreatedAt })
+                                       .FirstOrDefault();
+                if (originalValues == null) return HttpNotFound();
 
-                    if (originalValues == null)
-                    {
-                        TempData["Error"] = "Không tìm thấy sản phẩm cần chỉnh sửa.";
-                        return HttpNotFound();
-                    }
+                product.Slug = originalValues.Slug;
+                product.CreatedAt = originalValues.CreatedAt;
 
-                    product.Slug = originalValues.Slug;
-                    product.CreatedAt = originalValues.CreatedAt;
+                _context.Entry(product).State = EntityState.Modified;
+                SaveProductImages(product.Id, newImages);
+                _context.SaveChanges();
 
-                    _context.Entry(product).State = EntityState.Modified;
-
-                    this.SaveProductImages(product.Id, newImages);
-
-                    _context.SaveChanges();
-
-                    TempData["SuccessMessage"] = "Cập nhật sản phẩm thành công!";
-                    return RedirectToAction("Index");
-                }
-                catch (Exception ex)
-                {
-                    TempData["Error"] = "Đã xảy ra lỗi hệ thống: " + ex.Message;
-                    return View(product);
-                }
+                TempData["SuccessMessage"] = "Cập nhật sản phẩm thành công!";
+                return RedirectToAction("Index");
             }
-
             return View(product);
         }
 
-        [Authorize(Roles = "Admin")]
+        // -----------------------
+        // Delete Product
+        // -----------------------
         public ActionResult Delete(int? id)
         {
             if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            Product product = _context.Products
-                                     .Include(p => p.ProductImages)
-                                     .FirstOrDefault(p => p.Id == id);
+            var product = _context.Products.Include(p => p.ProductImages).FirstOrDefault(p => p.Id == id);
             if (product == null) return HttpNotFound();
             return View(product);
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Product product = _context.Products
-                                     .Include(p => p.ProductImages)
-                                     .FirstOrDefault(p => p.Id == id);
-
+            var product = _context.Products.Include(p => p.ProductImages).FirstOrDefault(p => p.Id == id);
             if (product != null)
             {
-                // Xóa tất cả các file ảnh vật lý trên server và trong DB
                 foreach (var image in product.ProductImages.ToList())
                 {
-                    this.DeleteImageFile(image.Url);
+                    DeleteImageFile(image.Url);
                     _context.ProductImages.Remove(image);
                 }
-
-                // Xóa các OrderItem, CartItem liên quan 
                 _context.OrderItems.RemoveRange(_context.OrderItems.Where(oi => oi.ProductId == id));
                 _context.CartItems.RemoveRange(_context.CartItems.Where(ci => ci.ProductId == id));
-
-                // Xóa sản phẩm chính
                 _context.Products.Remove(product);
                 _context.SaveChanges();
             }
@@ -239,14 +209,26 @@ namespace WEBVANDAP.Controllers
             return RedirectToAction("Index");
         }
 
-        [Authorize(Roles = "Admin")]
+        // -----------------------
+        // AJAX lấy Brand theo Category
+        // -----------------------
+        [HttpPost]
+        public JsonResult GetBrandsByCategory(int categoryId)
+        {
+            var brands = _context.Brands
+                                 .Where(b => b.CategoryId == categoryId)
+                                 .Select(b => new { b.Id, b.Name })
+                                 .ToList();
+            return Json(brands);
+        }
+
         [HttpPost]
         public JsonResult DeleteImage(int imageId)
         {
             var image = _context.ProductImages.Find(imageId);
-            if (image == null) return Json(new { success = false, message = "Không tìm thấy ảnh" });
+            if (image == null) return Json(new { success = false });
 
-            this.DeleteImageFile(image.Url);
+            DeleteImageFile(image.Url);
             _context.ProductImages.Remove(image);
             _context.SaveChanges();
 
@@ -255,10 +237,7 @@ namespace WEBVANDAP.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                _context.Dispose();
-            }
+            if (disposing) _context.Dispose();
             base.Dispose(disposing);
         }
     }

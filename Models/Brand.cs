@@ -25,8 +25,10 @@ namespace WEBVANDAP.Models
         public string Slug { get; set; }
         public string Logo { get; set; }
         public Nullable<bool> IsActive { get; set; }
+        public Nullable<int> CategoryId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Product> Products { get; set; }
+        public virtual Category Category { get; set; }
     }
 }
