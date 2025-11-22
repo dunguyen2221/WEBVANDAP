@@ -264,7 +264,7 @@ public class OrderController : Controller
                                 .Include(o => o.AspNetUser) // Tải thông tin khách hàng
                                 .OrderByDescending(o => o.OrderDate)
                                 .ToList();
-        return View("AdminIndex", allOrders); // Trả về View riêng (cần tạo AdminIndex.cshtml)
+        return View("Index", allOrders); // Trả về View riêng (cần tạo AdminIndex.cshtml)
     }
 
     [Authorize(Roles = "Admin")]
