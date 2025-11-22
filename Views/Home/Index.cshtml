@@ -225,11 +225,13 @@
 
                 <!-- THANH TÌM KIẾM -->
                 <div class="search-container d-flex align-items-center">
-                    <form class="d-flex w-100" action="@Url.Action("Index","Home")" method="get">
-                        <input class="form-control me-2" type="search" name="search" placeholder="Tìm kiếm sản phẩm, thương hiệu..." aria-label="Search" />
-                        <button class="btn btn-outline-dark" type="submit"><i class="bi bi-search"></i></button>
-                    </form>
-                </div>
+    <form class="d-flex w-100" action="@Url.Action("Results", "Search")" method="get">
+        <!-- Đã đổi Action từ Home/Index sang Search/Results -->
+        <!-- Đã đổi name từ 'search' sang 'keyword' -->
+        <input class="form-control me-2" type="search" name="keyword" placeholder="Tìm kiếm sản phẩm, thương hiệu..." aria-label="Search" />
+        <button class="btn btn-outline-dark" type="submit"><i class="bi bi-search"></i></button>
+    </form>
+</div>
 
                 <!-- 🔹 Nút Lịch sử đặt hàng -->
                 <div class="d-flex align-items-center ms-2">
