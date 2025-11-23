@@ -11,7 +11,7 @@ namespace WEBVANDAP.Models
 {
     using System;
     using System.Collections.Generic;
-    
+
     public partial class Order
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -19,7 +19,7 @@ namespace WEBVANDAP.Models
         {
             this.OrderItems = new HashSet<OrderItem>();
         }
-    
+
         public int Id { get; set; }
         public string OrderCode { get; set; }
         public Nullable<System.DateTime> OrderDate { get; set; }
@@ -29,7 +29,9 @@ namespace WEBVANDAP.Models
         public Nullable<bool> IsPaid { get; set; }
         public string UserId { get; set; }
         public Nullable<int> ShippingAddressId { get; set; }
-    
+
+        public string Notes { get; set; }
+
         public virtual Address Address { get; set; }
         public virtual AspNetUser AspNetUser { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
