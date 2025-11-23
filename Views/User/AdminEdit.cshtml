@@ -2,80 +2,9 @@
 
 @{
     ViewBag.Title = "Chỉnh sửa Người dùng #" + Model.UserName;
-    Layout = null; // Dùng layout Admin
+    Layout = "~/Views/Shared/Layout2.cshtml"; // Dùng layout Admin
 }
 
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Admin PMT</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
-
-    <style>
-        body {
-            background-color: #f0f2f5;
-            font-family: "Segoe UI", sans-serif;
-        }
-
-        .sidebar {
-            width: 220px;
-        }
-
-        .main-content {
-            padding: 30px;
-            flex-grow: 1;
-        }
-
-        .card {
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .sidebar .nav-link.active {
-            background-color: #fff;
-            color: #000 !important;
-            font-weight: 600;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="d-flex" style="min-height: 100vh;">
-        <!-- SIDEBAR -->
-        <div class="sidebar d-flex flex-column flex-shrink-0 p-3 text-white bg-primary position-sticky top-0" style="height: 100vh;">
-            <a class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none" href="@Url.Action("Index", "Admin")">
-                <img style="width: 32px; transform: scale(2.5);" class="img-fluid me-3" src="@Url.Content("~/Content/IMG/logo.png")" alt="PMT Logo">
-                <span class="fs-4 fw-bold">ADMIN</span>
-            </a>
-            <hr class="text-white opacity-25">
-            <ul class="nav nav-pills flex-column mb-auto">
-                <li class="nav-item">
-                    <a href="@Url.Action("Index", "Admin")" class="nav-link text-white"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
-                </li>
-                <li class="nav-item mt-3">
-                    <span class="text-white-50 text-uppercase small fw-bold">Management</span>
-                </li>
-                <li class="nav-item">
-                    <a href="@Url.Action("Index", "Product")" class="nav-link text-white"><i class="bi bi-box-seam me-2"></i> Sản Phẩm</a>
-                </li>
-                <li class="nav-item">
-                    <a href="@Url.Action("Index", "Order")" class="nav-link text-white"><i class="bi bi-list-check me-2"></i> Đơn Hàng</a>
-                </li>
-                <li class="nav-item">
-                    <a href="@Url.Action("AdminIndex", "User")" class="nav-link active bg-light text-dark fw-bold"><i class="bi bi-people me-2"></i> Người dùng</a>
-                </li>
-            </ul>
-            <div class="mt-auto pt-3 border-top border-2 border-white-50">
-                <a href="@Url.Action("DangXuat", "Account")" class="btn btn-sm btn-outline-light rounded-circle">
-                    <i class="bi bi-box-arrow-left"></i>
-                </a>
-            </div>
-        </div>
 
         <!-- MAIN CONTENT -->
         <div class="main-content d-flex flex-column">
@@ -129,8 +58,6 @@
                 }
             </div>
         </div>
-    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+

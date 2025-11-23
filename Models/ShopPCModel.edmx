@@ -52,6 +52,7 @@
           <Property Name="TwoFactorEnabled" Type="bit" Nullable="false" />
           <Property Name="LockoutEnabled" Type="bit" Nullable="false" />
           <Property Name="AccessFailedCount" Type="int" Nullable="false" />
+          <Property Name="IsLocked" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Brands">
           <Key>
@@ -515,6 +516,7 @@
           <NavigationProperty Name="Orders" Relationship="Self.FK_Orders_User" FromRole="AspNetUsers" ToRole="Orders" />
           <NavigationProperty Name="Reviews" Relationship="Self.FK_Reviews_User" FromRole="AspNetUsers" ToRole="Reviews" />
           <NavigationProperty Name="AspNetRoles" Relationship="Self.AspNetUserRoles" FromRole="AspNetUsers" ToRole="AspNetRoles" />
+          <Property Name="IsLocked" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="Brand">
           <Key>
@@ -958,6 +960,7 @@
           <EntitySetMapping Name="AspNetUsers">
             <EntityTypeMapping TypeName="ShopPCModel.AspNetUser">
               <MappingFragment StoreEntitySet="AspNetUsers">
+                <ScalarProperty Name="IsLocked" ColumnName="IsLocked" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="UserName" ColumnName="UserName" />
                 <ScalarProperty Name="NormalizedUserName" ColumnName="NormalizedUserName" />

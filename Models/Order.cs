@@ -11,7 +11,7 @@ namespace WEBVANDAP.Models
 {
     using System;
     using System.Collections.Generic;
-
+    
     public partial class Order
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -19,7 +19,7 @@ namespace WEBVANDAP.Models
         {
             this.OrderItems = new HashSet<OrderItem>();
         }
-
+    
         public int Id { get; set; }
         public string OrderCode { get; set; }
         public Nullable<System.DateTime> OrderDate { get; set; }

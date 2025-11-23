@@ -119,31 +119,45 @@ namespace WEBVANDAP.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        // POST: User/AdminEdit (Admin lưu cập nhật và đổi quyền)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult AdminEdit(AspNetUser model, string selectedRoleId)
         {
             if (ModelState.IsValid)
             {
-                var userInDb = _context.AspNetUsers.Find(model.Id);
+                var userInDb = _context.AspNetUsers
+                    .Include(u => u.AspNetRoles)
+                    .SingleOrDefault(u => u.Id == model.Id);
 
                 if (userInDb != null)
                 {
-                    // Cập nhật thông tin cơ bản
+                    // Cập nhật thông tin cơ bản nếu muốn (Email, PhoneNumber)
                     userInDb.Email = model.Email;
                     userInDb.PhoneNumber = model.PhoneNumber;
 
-                    // TODO: Cần TÍCH HỢP LOGIC CẬP NHẬT VAI TRÒ (Role) bằng ASP.NET Identity Manager 
-                    // (Sử dụng UserManager.RemoveFromRole và UserManager.AddToRole)
+                    // =========================
+                    // CẬP NHẬT ROLE
+                    // =========================
+                    // Xóa hết role cũ
+                    userInDb.AspNetRoles.Clear();
+
+                    // Gán role mới
+                    if (!string.IsNullOrEmpty(selectedRoleId))
+                    {
+                        var role = _context.AspNetRoles.Find(selectedRoleId);
+                        if (role != null)
+                        {
+                            userInDb.AspNetRoles.Add(role);
+                        }
+                    }
 
                     _context.SaveChanges();
                     TempData["SuccessMessage"] = "Cập nhật người dùng thành công!";
-
                     return RedirectToAction("ManageUsers");
                 }
             }
 
+            // Nếu lỗi, load lại dropdown
             ViewBag.Roles = new SelectList(_context.AspNetRoles, "Id", "Name", selectedRoleId);
             return View(model);
         }
@@ -236,7 +250,6 @@ namespace WEBVANDAP.Controllers
             TempData["SuccessMessage"] = "Đổi mật khẩu thành công!";
             return RedirectToAction("Index");
         }
-        // ADMIN: KHÓA USER
         [Authorize(Roles = "Admin")]
         public ActionResult LockUser(string id)
         {
@@ -247,15 +260,13 @@ namespace WEBVANDAP.Controllers
             if (user == null)
                 return HttpNotFound();
 
-            user.LockoutEnabled = true;   // KHÓA TÀI KHOẢN
+            user.IsLocked = true;   // KHÓA VĨNH VIỄN
             _context.SaveChanges();
 
             TempData["SuccessMessage"] = "Đã khóa tài khoản!";
-            return RedirectToAction("ManageUsers");
+            return RedirectToAction("ManageUsers"); // reload lại View từ DB
         }
 
-
-        // ADMIN: MỞ KHÓA USER
         [Authorize(Roles = "Admin")]
         public ActionResult UnlockUser(string id)
         {
@@ -266,11 +277,14 @@ namespace WEBVANDAP.Controllers
             if (user == null)
                 return HttpNotFound();
 
-            user.LockoutEnabled = false;   // MỞ KHÓA
+            user.IsLocked = false;   // MỞ KHÓA
             _context.SaveChanges();
 
             TempData["SuccessMessage"] = "Đã mở khóa tài khoản!";
             return RedirectToAction("ManageUsers");
         }
+
+
+
     }
 }
