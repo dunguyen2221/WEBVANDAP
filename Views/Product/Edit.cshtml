@@ -159,6 +159,32 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+     $(function () {
+         $('#CategoryId').change(function () {
+
+             var categoryId = $(this).val();
+             var $brand = $('#BrandId');
+
+             $brand.empty();
+             $brand.append($('<option>', { value: '', text: '-- Chọn thương hiệu --' }));
+
+             if (categoryId) {
+                 $.ajax({
+                     url: '@Url.Action("GetBrandsByCategory","Product")',
+                     type: 'POST',
+                     data: { categoryId: categoryId },
+                     success: function (data) {
+                         $.each(data, function (i, brand) {
+                             $brand.append($('<option>', { value: brand.Id, text: brand.Name }));
+                         });
+                     }
+                 });
+             }
+         });
+     });
+    </script>
 </body>
 </html>

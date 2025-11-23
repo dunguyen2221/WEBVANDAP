@@ -3,39 +3,68 @@
     ViewBag.Title = "Tìm Kiếm Sản Phẩm";
 }
 
-<h2 class="text-2xl font-bold mb-4 text-center">Tìm Kiếm Sản Phẩm Nâng Cao</h2>
+<div class="flex justify-center mt-10">
+    <div class="w-full max-w-xl bg-white p-8 rounded-xl shadow-lg border border-gray-100">
 
-<div class="max-w-xl mx-auto bg-white p-8 rounded-xl shadow-2xl border border-indigo-100">
-    @using (Html.BeginForm("Results", "Search", FormMethod.Get, new { @class = "space-y-6" }))
-    {
-        @Html.AntiForgeryToken()
+        <h2 class="text-2xl font-bold mb-6 text-center text-gray-800 tracking-wide">
+            🔍 Tìm Kiếm Sản Phẩm
+        </h2>
 
-        <!-- Ô nhập từ khóa tìm kiếm -->
-        <div class="form-group">
-            <label for="keyword" class="block text-sm font-medium text-gray-700">Từ khóa tìm kiếm:</label>
-            @Html.TextBox("keyword", null, new { @class = "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500", placeholder = "Nhập tên sản phẩm..." })
-        </div>
+        @using (Html.BeginForm("Results", "Search", FormMethod.Get, new { @class = "space-y-5" }))
+        {
+            @Html.AntiForgeryToken()
 
-        <!-- Dropdown lọc theo Danh mục -->
-        <div class="form-group">
-            <label for="categoryId" class="block text-sm font-medium text-gray-700">Lọc theo Danh mục:</label>
-            @Html.DropDownList("categoryId", (SelectList)ViewBag.Categories, "--- Tất cả Danh mục ---", new { @class = "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" })
-        </div>
+            <!-- Từ khóa -->
+            <div>
+                <label for="keyword" class="block text-sm font-semibold text-gray-700 mb-1">
+                    Từ khóa tìm kiếm
+                </label>
+                @Html.TextBox("keyword", null,
+                    new
+                         {
+                        @class = "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition",
+                        placeholder = "Nhập tên sản phẩm..."
+                    })
+            </div>
 
-        <!-- Dropdown lọc theo Thương hiệu -->
-        <div class="form-group">
-            <label for="brandId" class="block text-sm font-medium text-gray-700">Lọc theo Thương hiệu:</label>
-            @Html.DropDownList("brandId", (SelectList)ViewBag.Brands, "--- Tất cả Thương hiệu ---", new { @class = "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" })
-        </div>
+            <!-- Danh mục -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Danh mục</label>
+                @Html.DropDownList(
+                    "categoryId",
+                    (SelectList)ViewBag.Categories,
+                    "--- Tất cả Danh mục ---",
+                    new
+                         {
+                        @class = "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                    })
+            </div>
 
-        <!-- Nút Tìm kiếm -->
-        <div class="pt-4">
-            <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                Tìm Kiếm
-            </button>
-        </div>
-    }
+            <!-- Thương hiệu -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Thương hiệu</label>
+                @Html.DropDownList(
+                    "brandId",
+                    (SelectList)ViewBag.Brands,
+                    "--- Tất cả Thương hiệu ---",
+                    new
+                         {
+                        @class = "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                    })
+            </div>
+
+            <!-- Button -->
+            <div class="pt-3">
+                <button type="submit"
+                        class="w-full flex justify-center items-center gap-2 py-2.5 px-4 text-base font-medium text-white bg-indigo-600 rounded-md shadow-md hover:bg-indigo-700 active:scale-[.98] transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                         viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    Tìm Kiếm
+                </button>
+            </div>
+        }
+    </div>
 </div>
