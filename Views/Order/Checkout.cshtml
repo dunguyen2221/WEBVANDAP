@@ -23,175 +23,205 @@
     footer {
         display: none;
     }
+
+    /* Custom Styles for Checkout */
+    .checkout-container {
+        background-color: #f9f9f9;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+        .checkout-container .card {
+            margin-bottom: 20px;
+        }
+
+        .checkout-container h5 {
+            color: #333;
+            font-weight: bold;
+        }
+
+    .checkout-summary {
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+        .checkout-summary .price {
+            font-size: 22px;
+            color: #e74c3c;
+        }
+
+    .btn-checkout {
+        background-color: #e74c3c;
+        color: white;
+        font-weight: bold;
+        padding: 15px;
+        border-radius: 5px;
+        width: 100%;
+    }
+
+        .btn-checkout:hover {
+            background-color: #c0392b;
+        }
+
+    .back-to-cart {
+        background-color: #bdc3c7;
+        color: white;
+        font-weight: bold;
+        padding: 12px;
+        border-radius: 5px;
+        width: 100%;
+    }
+
+        .back-to-cart:hover {
+            background-color: #95a5a6;
+        }
+
+    .form-check-label {
+        font-size: 16px;
+    }
+
+    .form-select {
+        font-size: 16px;
+    }
+
+    .shipping-address {
+        margin-top: 20px;
+    }
+
+    /* Always Show New Address Fields */
+    #new-address-fields {
+        display: block;
+    }
 </style>
 
-
 <div class="container my-5">
-    <h2 class="fw-bold mb-4">Hoàn Tất Đơn Hàng</h2>
-    <hr />
+    <div class="checkout-container">
+        <h2 class="text-center fw-bold mb-4">Hoàn Tất Đơn Hàng</h2>
+        <hr />
 
-    @using (Html.BeginForm("PlaceOrder", "Order", FormMethod.Post, new { id = "checkoutForm" }))
-    {
-        @Html.AntiForgeryToken()
-        @Html.ValidationSummary(false, "", new { @class = "alert alert-danger" })
+        @using (Html.BeginForm("PlaceOrder", "Order", FormMethod.Post, new { id = "checkoutForm" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(false, "", new { @class = "alert alert-danger" })
 
-        <div class="row g-4">
+            <div class="row g-4">
 
-            <div class="col-lg-8">
+                <!-- Left Column (Shipping Address & Payment) -->
+                <div class="col-lg-8">
+                    <!-- Shipping Address -->
+                    <div class="card shadow-sm border-0 p-4">
+                        <h5 class="fw-bold text-primary mb-3"><i class="fa fa-map-marker-alt me-2"></i> Địa Chỉ Giao Hàng</h5>
 
-                <div class="card shadow-sm border-0 mb-4 p-4">
-                    <h5 class="fw-bold mb-3 text-primary"><i class="fa fa-map-marker-alt me-2"></i> Địa Chỉ Giao Hàng</h5>
-
-                    @if (userAddresses.Any())
-                    {
-                        <p class="small text-muted">Chọn địa chỉ đã lưu hoặc nhập địa chỉ mới.</p>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Địa chỉ đã lưu:</label>
-                            @Html.DropDownListFor(m => m.SelectedAddressId,
-                                new SelectList(userAddresses, "Id", "Street", Model.SelectedAddressId),
-                                "--- Nhập Địa chỉ mới ---",
-                                new { @class = "form-select", id = "addressSelect" })
-                        </div>
-
-                        <p class="text-center my-3 text-muted">- HOẶC NHẬP MỚI -</p>
-                    }
-
-                    <div id="new-address-fields" style="@(Model.SelectedAddressId.HasValue && userAddresses.Any() ? "display: none;" : "")">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                @Html.LabelFor(m => m.ShippingFullName, "Tên người nhận", new { @class = "form-label small fw-bold" })
-                                @Html.TextBoxFor(m => m.ShippingFullName, new { @class = "form-control", placeholder = "Ví dụ: Nguyễn Văn A", id = "ShippingFullName" })
-                                @Html.ValidationMessageFor(m => m.ShippingFullName, "", new { @class = "text-danger small" })
-                            </div>
-                            <div class="col-md-6">
-                                @Html.LabelFor(m => m.ShippingPhone, "Số điện thoại", new { @class = "form-label small fw-bold" })
-                                @Html.TextBoxFor(m => m.ShippingPhone, new { @class = "form-control", placeholder = "09x xxx xxxx", id = "ShippingPhone" })
-                                @Html.ValidationMessageFor(m => m.ShippingPhone, "", new { @class = "text-danger small" })
-                            </div>
-                            <div class="col-12">
-                                @Html.LabelFor(m => m.ShippingStreet, "Địa chỉ chi tiết", new { @class = "form-label small fw-bold" })
-                                @Html.TextBoxFor(m => m.ShippingStreet, new { @class = "form-control", placeholder = "Ví dụ: 123 Nguyễn Trãi, Phường B...", id = "ShippingStreet" })
-                                @Html.ValidationMessageFor(m => m.ShippingStreet, "", new { @class = "text-danger small" })
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card shadow-sm border-0 mb-4 p-4">
-                    <h5 class="fw-bold mb-3 text-primary"><i class="fa fa-money-bill-wave me-2"></i> Phương Thức Thanh Toán</h5>
-                    <div class="form-check mb-2">
-                        @Html.RadioButtonFor(m => m.PaymentMethod, "COD", new { @class = "form-check-input", id = "paymentCOD", @checked = (Model.PaymentMethod == "COD" || string.IsNullOrEmpty(Model.PaymentMethod)) })
-                        <label class="form-check-label" for="paymentCOD">Thanh toán khi nhận hàng (COD)</label>
-                    </div>
-                    <div class="form-check">
-                        @Html.RadioButtonFor(m => m.PaymentMethod, "Online", new { @class = "form-check-input", id = "paymentOnline", @disabled = "disabled" })
-                        <label class="form-check-label" for="paymentOnline">Thanh toán Online (Thẻ/Ví điện tử) - *Đang phát triển*</label>
-                    </div>
-                    @Html.ValidationMessageFor(m => m.PaymentMethod, "", new { @class = "text-danger small" })
-                </div>
-
-                <div class="card shadow-sm border-0 p-4">
-                    <h5 class="fw-bold mb-3 text-primary"><i class="fa fa-sticky-note me-2"></i> Ghi Chú Đơn Hàng</h5>
-                    @Html.TextAreaFor(m => m.Notes, 4, 80, new { @class = "form-control", placeholder = "Yêu cầu về thời gian giao hàng, địa chỉ bổ sung..." })
-                </div>
-
-            </div>
-
-            <div class="col-lg-4">
-                <div class="card shadow-lg border-0 p-4">
-                    <h5 class="fw-bold mb-3">Sản Phẩm (@cartItems.Sum(ci => ci.Quantity))</h5>
-
-                    <ul class="list-unstyled small mb-4 border-bottom pb-2" style="max-height: 250px; overflow-y: auto;">
-                        @foreach (var item in cartItems)
+                        @if (userAddresses.Any())
                         {
-                            string productName = item.Product?.Name ?? $"Sản phẩm #{item.ProductId}";
-                            string defaultImageUrl = Url.Content("~/Content/ProductImages/no-image.png");
-                            string imageUrl = Url.Content(item.Product?.ProductImages?.FirstOrDefault()?.Url ?? defaultImageUrl);
+                            <p class="small text-muted">Chọn địa chỉ đã lưu hoặc nhập địa chỉ mới.</p>
 
-                            <li class="d-flex align-items-start mb-3">
-                                <img src="@imageUrl" alt="@productName"
-                                     style="width:55px; height:55px; object-fit:cover; border-radius:8px; margin-right:12px; border: 1px solid #eee;" />
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Địa chỉ đã lưu:</label>
+                                @Html.DropDownListFor(m => m.SelectedAddressId,
+                                    new SelectList(userAddresses, "Id", "Street", Model.SelectedAddressId),
+                                    "--- Nhập Địa chỉ mới ---",
+                                    new { @class = "form-select", id = "addressSelect" })
+                            </div>
 
-                                <div class="flex-grow-1 pe-2">
-                                    <div class="fw-semibold text-dark" style="line-height: 1.2;">@productName</div>
-                                    <small class="text-muted">x @item.Quantity</small>
-                                </div>
-
-                                <div class="fw-bold text-end text-nowrap">
-                                    @((item.UnitPrice * (item.Quantity ?? 0)).ToString("N0")) đ
-                                </div>
-                            </li>
+                            <p class="text-center my-3 text-muted">- HOẶC NHẬP MỚI -</p>
                         }
-                    </ul>
 
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Tổng tiền hàng:</span>
-                        <span class="fw-bold">@Model.CartTotal.ToString("N0") đ</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Phí vận chuyển:</span>
-                        <span class="fw-bold text-success">@Model.ShippingFee.ToString("N0") đ</span>
-                    </div>
-                    <hr />
-                    <div class="d-flex justify-content-between mb-4">
-                        <span class="fs-5 fw-bold">TỔNG CỘNG:</span>
-                        <span class="fs-4 fw-bolder text-danger">@Model.FinalTotal.ToString("N0") đ</span>
+                        <!-- New Address Fields (Always Visible) -->
+                        <div id="new-address-fields">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    @Html.LabelFor(m => m.ShippingFullName, "Tên người nhận", new { @class = "form-label small fw-bold" })
+                                    @Html.TextBoxFor(m => m.ShippingFullName, new { @class = "form-control", placeholder = "Ví dụ: Nguyễn Văn A", id = "ShippingFullName" })
+                                    @Html.ValidationMessageFor(m => m.ShippingFullName, "", new { @class = "text-danger small" })
+                                </div>
+                                <div class="col-md-6">
+                                    @Html.LabelFor(m => m.ShippingPhone, "Số điện thoại", new { @class = "form-label small fw-bold" })
+                                    @Html.TextBoxFor(m => m.ShippingPhone, new { @class = "form-control", placeholder = "09x xxx xxxx", id = "ShippingPhone" })
+                                    @Html.ValidationMessageFor(m => m.ShippingPhone, "", new { @class = "text-danger small" })
+                                </div>
+                                <div class="col-12">
+                                    @Html.LabelFor(m => m.ShippingStreet, "Địa chỉ chi tiết", new { @class = "form-label small fw-bold" })
+                                    @Html.TextBoxFor(m => m.ShippingStreet, new { @class = "form-control", placeholder = "Ví dụ: 123 Nguyễn Trãi, Phường B...", id = "ShippingStreet" })
+                                    @Html.ValidationMessageFor(m => m.ShippingStreet, "", new { @class = "text-danger small" })
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <button type="submit" class="btn btn-danger btn-lg fw-bold py-3 w-100">
-                        HOÀN TẤT ĐẶT HÀNG
-                    </button>
+                    <!-- Payment Method -->
+                    <div class="card shadow-sm border-0 p-4">
+                        <h5 class="fw-bold text-primary mb-3"><i class="fa fa-money-bill-wave me-2"></i> Phương Thức Thanh Toán</h5>
+                        <div class="form-check mb-2">
+                            @Html.RadioButtonFor(m => m.PaymentMethod, "COD", new { @class = "form-check-input", id = "paymentCOD", @checked = (Model.PaymentMethod == "COD" || string.IsNullOrEmpty(Model.PaymentMethod)) })
+                            <label class="form-check-label" for="paymentCOD">Thanh toán khi nhận hàng (COD)</label>
+                        </div>
+                        <div class="form-check">
+                            @Html.RadioButtonFor(m => m.PaymentMethod, "Online", new { @class = "form-check-input", id = "paymentOnline", @disabled = "disabled" })
+                            <label class="form-check-label" for="paymentOnline">Thanh toán Online (Thẻ/Ví điện tử) - *Đang phát triển*</label>
+                        </div>
+                        @Html.ValidationMessageFor(m => m.PaymentMethod, "", new { @class = "text-danger small" })
+                    </div>
 
-                    <a href="@Url.Action("Index", "Cart")" class="btn btn-outline-secondary mt-2 w-100">
-                        ← Quay lại Giỏ hàng
-                    </a>
+                    <!-- Order Notes -->
+                    <div class="card shadow-sm border-0 p-4">
+                        <h5 class="fw-bold text-primary mb-3"><i class="fa fa-sticky-note me-2"></i> Ghi Chú Đơn Hàng</h5>
+                        @Html.TextAreaFor(m => m.Notes, 4, 80, new { @class = "form-control", placeholder = "Yêu cầu về thời gian giao hàng, địa chỉ bổ sung..." })
+                    </div>
+                </div>
+
+                <!-- Right Column (Order Summary) -->
+                <div class="col-lg-4">
+                    <div class="card shadow-lg border-0 p-4">
+                        <h5 class="fw-bold mb-3">Sản Phẩm (@cartItems.Sum(ci => ci.Quantity))</h5>
+
+                        <ul class="list-unstyled small mb-4 border-bottom pb-2" style="max-height: 250px; overflow-y: auto;">
+                            @foreach (var item in cartItems)
+                            {
+                                string productName = item.Product?.Name ?? $"Sản phẩm #{item.ProductId}";
+                                string defaultImageUrl = Url.Content("~/Content/ProductImages/no-image.png");
+                                string imageUrl = Url.Content(item.Product?.ProductImages?.FirstOrDefault()?.Url ?? defaultImageUrl);
+
+                                <li class="d-flex align-items-start mb-3">
+                                    <img src="@imageUrl" alt="@productName"
+                                         style="width:55px; height:55px; object-fit:cover; border-radius:8px; margin-right:12px; border: 1px solid #eee;" />
+                                    <div class="flex-grow-1 pe-2">
+                                        <div class="fw-semibold text-dark" style="line-height: 1.2;">@productName</div>
+                                        <small class="text-muted">x @item.Quantity</small>
+                                    </div>
+
+                                    <div class="fw-bold text-end text-nowrap">
+                                        @((item.UnitPrice * (item.Quantity ?? 0)).ToString("N0")) đ
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Tổng tiền hàng:</span>
+                            <span class="fw-bold">@Model.CartTotal.ToString("N0") đ</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Phí vận chuyển:</span>
+                            <span class="fw-bold text-success">@Model.ShippingFee.ToString("N0") đ</span>
+                        </div>
+                        <hr />
+                        <div class="d-flex justify-content-between mb-4">
+                            <span class="fs-5 fw-bold">TỔNG CỘNG:</span>
+                            <span class="fs-4 fw-bolder text-danger">@Model.FinalTotal.ToString("N0") đ</span>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger btn-lg fw-bold py-3 w-100">
+                            HOÀN TẤT ĐẶT HÀNG
+                        </button>
+
+                        <a href="@Url.Action("Index", "Cart")" class="btn btn-outline-secondary mt-2 w-100">
+                            ← Quay lại Giỏ hàng
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
-    }
+        }
+    </div>
 </div>
-
-@section Scripts {
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            var addresses = @Html.Raw(Json.Encode(userAddresses.Select(a => new { a.Id, a.FullName, a.Phone, a.Street })));
-            var $addressSelect = $('#addressSelect');
-            var $newAddressFields = $('#new-address-fields');
-            var $shippingFullName = $('#ShippingFullName');
-            var $shippingPhone = $('#ShippingPhone');
-            var $shippingStreet = $('#ShippingStreet');
-
-            function toggleAddressFields(selectedId) {
-                var isNewAddress = !selectedId || selectedId === "";
-                if (isNewAddress) {
-                    $newAddressFields.show();
-                    $shippingFullName.prop('disabled', false);
-                    $shippingPhone.prop('disabled', false);
-                    $shippingStreet.prop('disabled', false);
-                    $shippingFullName.val('');
-                    $shippingPhone.val('');
-                    $shippingStreet.val('');
-                } else {
-                    $newAddressFields.hide();
-                    $shippingFullName.prop('disabled', true);
-                    $shippingPhone.prop('disabled', true);
-                    $shippingStreet.prop('disabled', true);
-                    var selectedAddress = addresses.find(a => a.Id.toString() === selectedId);
-                    if (selectedAddress) {
-                        $shippingFullName.val(selectedAddress.FullName);
-                        $shippingPhone.val(selectedAddress.Phone);
-                        $shippingStreet.val(selectedAddress.Street);
-                    }
-                }
-            }
-
-            $addressSelect.change(function () {
-                toggleAddressFields($(this).val());
-            });
-
-            toggleAddressFields($addressSelect.val());
-        });
-    </script>
-}

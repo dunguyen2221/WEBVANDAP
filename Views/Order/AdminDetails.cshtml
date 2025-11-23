@@ -1,292 +1,292 @@
-﻿@model WEBVANDAP.Models.Order
+﻿    @model WEBVANDAP.Models.Order
 
-@{
-    ViewBag.Title = "Chi tiết đơn hàng #" + Model.OrderCode;
-    Layout = null; // Sử dụng Layout Admin nhúng trực tiếp
-}
+    @{
+        ViewBag.Title = "Chi tiết đơn hàng #" + Model.OrderCode;
+        Layout = null; // Sử dụng Layout Admin nhúng trực tiếp
+    }
 
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Admin LogiT Shop</title>
+    <!DOCTYPE html>
+    <html lang="vi">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>@ViewBag.Title - Admin LogiT Shop</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
-    <style>
-        /* CSS Sidebar Cố định & Layout Admin */
-        body {
-            background-color: #f0f2f5;
-            font-family: "Segoe UI", sans-serif;
-        }
-
-        .sidebar {
-            width: 220px;
-        }
-
-        .main-content {
-            padding: 30px;
-            background-color: #f0f2f5;
-            flex-grow: 1;
-        }
-
-        .card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .badge-lg {
-            font-size: 1rem;
-            padding: 0.5em 1em;
-        }
-
-        /* Timeline trạng thái đơn giản */
-        .status-card {
-            border-left: 5px solid #0d6efd;
-        }
-
-            .status-card.completed {
-                border-left-color: #198754;
+        <style>
+            /* CSS Sidebar Cố định & Layout Admin */
+            body {
+                background-color: #f0f2f5;
+                font-family: "Segoe UI", sans-serif;
             }
 
-            .status-card.cancelled {
-                border-left-color: #dc3545;
+            .sidebar {
+                width: 220px;
             }
-    </style>
-</head>
 
-<body class="bg-body-tertiary">
+            .main-content {
+                padding: 30px;
+                background-color: #f0f2f5;
+                flex-grow: 1;
+            }
 
-    <div class="d-flex" style="min-height: 100vh;">
+            .card {
+                border: none;
+                border-radius: 10px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            }
 
-        <div class="sidebar d-flex flex-column flex-shrink-0 p-3 text-white bg-primary position-sticky top-0" style="height: 100vh;">
+            .badge-lg {
+                font-size: 1rem;
+                padding: 0.5em 1em;
+            }
 
-            <a class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none" href="@Url.Action("Index", "Admin")">
-                <img style="width: 32px; transform: scale(2.5);" class="img-fluid me-3"
-                     src="@Url.Content("~/Content/IMG/logo.png")" alt="LogiT Logo">
-                <span class="fs-4 fw-bold">ADMIN</span>
-            </a>
-            <hr class="text-white opacity-25">
+            /* Timeline trạng thái đơn giản */
+            .status-card {
+                border-left: 5px solid #0d6efd;
+            }
 
-            <ul class="nav nav-pills flex-column mb-auto">
-                <li class="nav-item">
-                    <a href="@Url.Action("Index", "Admin")" class="nav-link text-white">
-                        <i class="bi bi-speedometer2 me-2"></i> Dashboard
-                    </a>
-                </li>
+                .status-card.completed {
+                    border-left-color: #198754;
+                }
 
-                <li class="nav-item mt-3">
-                    <span class="text-white-50 text-uppercase small fw-bold">Management</span>
-                </li>
+                .status-card.cancelled {
+                    border-left-color: #dc3545;
+                }
+        </style>
+    </head>
 
-                <li class="nav-item">
-                    <a href="@Url.Action("Index", "Product")" class="nav-link text-white">
-                        <i class="bi bi-box-seam me-2"></i> Sản Phẩm
-                    </a>
-                </li>
+    <body class="bg-body-tertiary">
 
-                <li class="nav-item">
-                    <a href="@Url.Action("Index", "Order")" class="nav-link active bg-light text-dark fw-bold">
-                        <i class="bi bi-list-check me-2"></i> Đơn Hàng
-                    </a>
-                </li>
+        <div class="d-flex" style="min-height: 100vh;">
 
-                <li class="nav-item">
-                    <a href="@Url.Action("ManageUsers", "User")" class="nav-link text-white">
-                        <i class="bi bi-people me-2"></i> Users
-                    </a>
-                </li>
-            </ul>
+            <div class="sidebar d-flex flex-column flex-shrink-0 p-3 text-white bg-primary position-sticky top-0" style="height: 100vh;">
 
-            <div class="mt-auto pt-3 border-top border-2 border-white-50">
-                <a href="@Url.Action("DangXuat", "Account")" class="btn btn-sm btn-outline-light rounded-circle">
-                    <i class="bi bi-chevron-left"></i>
+                <a class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none" href="@Url.Action("Index", "Admin")">
+                    <img style="width: 32px; transform: scale(2.5);" class="img-fluid me-3"
+                         src="@Url.Content("~/Content/IMG/logo.png")" alt="LogiT Logo">
+                    <span class="fs-4 fw-bold">ADMIN</span>
                 </a>
-            </div>
-        </div>
-        <div class="main-content d-flex flex-column">
+                <hr class="text-white opacity-25">
 
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="fw-bold text-dark mb-0">
-                    Chi tiết đơn hàng <span class="text-primary">#@Model.OrderCode</span>
-                </h2>
-                <a href="@Url.Action("Index", "Order")" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-left"></i> Quay lại danh sách
-                </a>
-            </div>
+                <ul class="nav nav-pills flex-column mb-auto">
+                    <li class="nav-item">
+                        <a href="@Url.Action("Index", "Admin")" class="nav-link text-white">
+                            <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                        </a>
+                    </li>
 
-            @if (TempData["SuccessMessage"] != null)
-            {
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            }
+                    <li class="nav-item mt-3">
+                        <span class="text-white-50 text-uppercase small fw-bold">Management</span>
+                    </li>
 
-            <div class="card mb-4 p-4 status-card @(Model.Status == "Completed" ? "completed" : (Model.Status == "Cancelled" ? "cancelled" : ""))">
-                <div class="row align-items-center">
-                    <div class="col-md-5">
-                        <h5 class="mb-1 text-muted">Trạng thái hiện tại:</h5>
-                        @{
-                            string badgeClass = "bg-secondary";
-                            string statusVN = Model.Status;
-                            if (Model.Status == "Pending") { badgeClass = "bg-warning text-dark"; statusVN = "Chờ xử lý"; }
-                            else if (Model.Status == "Shipped") { badgeClass = "bg-info text-dark"; statusVN = "Đang giao hàng"; }
-                            else if (Model.Status == "Completed") { badgeClass = "bg-success"; statusVN = "Hoàn thành"; }
-                            else if (Model.Status == "Cancelled") { badgeClass = "bg-danger"; statusVN = "Đã hủy"; }
-                        }
-                        <span class="badge @badgeClass badge-lg mt-1">@statusVN</span>
-                    </div>
+                    <li class="nav-item">
+                        <a href="@Url.Action("Index", "Product")" class="nav-link text-white">
+                            <i class="bi bi-box-seam me-2"></i> Sản Phẩm
+                        </a>
+                    </li>
 
-                    <div class="col-md-7 text-end">
-                        @if (Model.Status == "Pending")
-                        {
-                            // Nút chuyển sang Đang giao hàng
-                            using (Html.BeginForm("UpdateStatus", "Order", FormMethod.Post, new { @class = "d-inline" }))
-                            {
-                                @Html.AntiForgeryToken()
-                                @Html.Hidden("id", Model.Id)
-                                @Html.Hidden("status", "Shipped")
-                                <button type="submit" class="btn btn-primary me-2" onclick="return confirm('Xác nhận chuyển sang trạng thái Đang Giao Hàng?')">
-                                    <i class="fa fa-truck"></i> Xác nhận Giao hàng
-                                </button>
-                            }
-                            // Nút Hủy đơn
-                            using (Html.BeginForm("UpdateStatus", "Order", FormMethod.Post, new { @class = "d-inline" }))
-                            {
-                                @Html.AntiForgeryToken()
-                                @Html.Hidden("id", Model.Id)
-                                @Html.Hidden("status", "Cancelled")
-                                <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Bạn có chắc chắn muốn HỦY đơn hàng này?')">
-                                    <i class="fa fa-times"></i> Hủy Đơn
-                                </button>
-                            }
-                        }
-                        else if (Model.Status == "Shipped")
-                        {
-                            // Nút Hoàn thành
-                            using (Html.BeginForm("UpdateStatus", "Order", FormMethod.Post, new { @class = "d-inline" }))
-                            {
-                                @Html.AntiForgeryToken()
-                                @Html.Hidden("id", Model.Id)
-                                @Html.Hidden("status", "Completed")
-                                <button type="submit" class="btn btn-success" onclick="return confirm('Xác nhận đơn hàng đã hoàn thành và thanh toán?')">
-                                    <i class="fa fa-check-circle"></i> Xác nhận Hoàn thành
-                                </button>
-                            }
-                        }
-                        else if (Model.Status == "Completed")
-                        {
-                            <span class="text-success fw-bold"><i class="bi bi-check-all"></i> Đơn hàng đã hoàn tất.</span>
-                        }
-                        else if (Model.Status == "Cancelled")
-                        {
-                            <span class="text-danger fw-bold"><i class="bi bi-x-circle"></i> Đơn hàng đã bị hủy.</span>
-                        }
-                    </div>
+                    <li class="nav-item">
+                        <a href="@Url.Action("Index", "Order")" class="nav-link active bg-light text-dark fw-bold">
+                            <i class="bi bi-list-check me-2"></i> Đơn Hàng
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="@Url.Action("ManageUsers", "User")" class="nav-link text-white">
+                            <i class="bi bi-people me-2"></i> Users
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="mt-auto pt-3 border-top border-2 border-white-50">
+                    <a href="@Url.Action("DangXuat", "Account")" class="btn btn-sm btn-outline-light rounded-circle">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
                 </div>
             </div>
+            <div class="main-content d-flex flex-column">
 
-            <div class="row g-4">
-                <div class="col-lg-6">
-                    <div class="card h-100">
-                        <div class="card-header bg-white fw-bold py-3">Thông tin Khách hàng & Giao hàng</div>
-                        <div class="card-body">
-                            <p><strong>Tài khoản đặt:</strong> @(Model.AspNetUser?.UserName ?? "Khách vãng lai")</p>
-                            <hr class="my-2">
-                            <p><strong>Người nhận:</strong> @(Model.Address?.FullName ?? "N/A")</p>
-                            <p><strong>Số điện thoại:</strong> @(Model.Address?.Phone ?? "N/A")</p>
-                            <p>
-                                <strong>Địa chỉ:</strong>
-                                @(Model.Address != null ? $"{Model.Address.Street}, {Model.Address.Ward}, {Model.Address.District}, {Model.Address.City}" : "N/A")
-                            </p>
-                            <div class="alert alert-light border mt-3 mb-0">
-                                <strong><i class="bi bi-sticky"></i> Ghi chú của khách:</strong>
-                                <span class="text-muted fst-italic">@(string.IsNullOrEmpty(Model.Notes) ? "Không có ghi chú" : Model.Notes)</span>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-bold text-dark mb-0">
+                        Chi tiết đơn hàng <span class="text-primary">#@Model.OrderCode</span>
+                    </h2>
+                    <a href="@Url.Action("Index", "Order")" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Quay lại danh sách
+                    </a>
+                </div>
+
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                <div class="card mb-4 p-4 status-card @(Model.Status == "Completed" ? "completed" : (Model.Status == "Cancelled" ? "cancelled" : ""))">
+                    <div class="row align-items-center">
+                        <div class="col-md-5">
+                            <h5 class="mb-1 text-muted">Trạng thái hiện tại:</h5>
+                            @{
+                                string badgeClass = "bg-secondary";
+                                string statusVN = Model.Status;
+                                if (Model.Status == "Pending") { badgeClass = "bg-warning text-dark"; statusVN = "Chờ xử lý"; }
+                                else if (Model.Status == "Shipped") { badgeClass = "bg-info text-dark"; statusVN = "Đang giao hàng"; }
+                                else if (Model.Status == "Completed") { badgeClass = "bg-success"; statusVN = "Hoàn thành"; }
+                                else if (Model.Status == "Cancelled") { badgeClass = "bg-danger"; statusVN = "Đã hủy"; }
+                            }
+                            <span class="badge @badgeClass badge-lg mt-1">@statusVN</span>
+                        </div>
+
+                        <div class="col-md-7 text-end">
+                            @if (Model.Status == "Pending")
+                            {
+                                // Nút chuyển sang Đang giao hàng
+                                using (Html.BeginForm("UpdateStatus", "Order", FormMethod.Post, new { @class = "d-inline" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.Hidden("id", Model.Id)
+                                    @Html.Hidden("status", "Shipped")
+                                    <button type="submit" class="btn btn-primary me-2" onclick="return confirm('Xác nhận chuyển sang trạng thái Đang Giao Hàng?')">
+                                        <i class="fa fa-truck"></i> Xác nhận Giao hàng
+                                    </button>
+                                }
+                                // Nút Hủy đơn
+                                using (Html.BeginForm("UpdateStatus", "Order", FormMethod.Post, new { @class = "d-inline" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.Hidden("id", Model.Id)
+                                    @Html.Hidden("status", "Cancelled")
+                                    <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Bạn có chắc chắn muốn HỦY đơn hàng này?')">
+                                        <i class="fa fa-times"></i> Hủy Đơn
+                                    </button>
+                                }
+                            }
+                            else if (Model.Status == "Shipped")
+                            {
+                                // Nút Hoàn thành
+                                using (Html.BeginForm("UpdateStatus", "Order", FormMethod.Post, new { @class = "d-inline" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.Hidden("id", Model.Id)
+                                    @Html.Hidden("status", "Completed")
+                                    <button type="submit" class="btn btn-success" onclick="return confirm('Xác nhận đơn hàng đã hoàn thành và thanh toán?')">
+                                        <i class="fa fa-check-circle"></i> Xác nhận Hoàn thành
+                                    </button>
+                                }
+                            }
+                            else if (Model.Status == "Completed")
+                            {
+                                <span class="text-success fw-bold"><i class="bi bi-check-all"></i> Đơn hàng đã hoàn tất.</span>
+                            }
+                            else if (Model.Status == "Cancelled")
+                            {
+                                <span class="text-danger fw-bold"><i class="bi bi-x-circle"></i> Đơn hàng đã bị hủy.</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="card h-100">
+                            <div class="card-header bg-white fw-bold py-3">Thông tin Khách hàng & Giao hàng</div>
+                            <div class="card-body">
+                                <p><strong>Tài khoản đặt:</strong> @(Model.AspNetUser?.UserName ?? "Khách vãng lai")</p>
+                                <hr class="my-2">
+                                <p><strong>Người nhận:</strong> @(Model.Address?.FullName ?? "N/A")</p>
+                                <p><strong>Số điện thoại:</strong> @(Model.Address?.Phone ?? "N/A")</p>
+                                <p>
+                                    <strong>Địa chỉ:</strong>
+                                    @(Model.Address != null ? $"{Model.Address.Street}, {Model.Address.Ward}, {Model.Address.District}, {Model.Address.City}" : "N/A")
+                                </p>
+                                <div class="alert alert-light border mt-3 mb-0">
+                                    <strong><i class="bi bi-sticky"></i> Ghi chú của khách:</strong>
+                                    <span class="text-muted fst-italic">@(string.IsNullOrEmpty(Model.Notes) ? "Không có ghi chú" : Model.Notes)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="card h-100">
+                            <div class="card-header bg-white fw-bold py-3">Thông tin Thanh toán</div>
+                            <div class="card-body">
+                                <p><strong>Ngày đặt hàng:</strong> @(Model.OrderDate.HasValue ? Model.OrderDate.Value.ToString("dd/MM/yyyy HH:mm:ss") : "")</p>
+                                <p><strong>Phương thức:</strong> <span class="badge bg-light text-dark border">@Model.PaymentMethod</span></p>
+                                <p>
+                                    <strong>Trạng thái thanh toán:</strong>
+                                    @if (Model.IsPaid == true)
+                                    {
+                                        <span class="text-success fw-bold"><i class="fa fa-check"></i> Đã thanh toán</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-warning fw-bold"><i class="fa fa-clock"></i> Chưa thanh toán (COD)</span>
+                                    }
+                                </p>
+                                <hr />
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fs-5">Tổng tiền:</span>
+                                    <span class="fs-3 text-danger fw-bold">@Model.TotalAmount.ToString("N0") VNĐ</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-lg-6">
-                    <div class="card h-100">
-                        <div class="card-header bg-white fw-bold py-3">Thông tin Thanh toán</div>
-                        <div class="card-body">
-                            <p><strong>Ngày đặt hàng:</strong> @(Model.OrderDate.HasValue ? Model.OrderDate.Value.ToString("dd/MM/yyyy HH:mm:ss") : "")</p>
-                            <p><strong>Phương thức:</strong> <span class="badge bg-light text-dark border">@Model.PaymentMethod</span></p>
-                            <p>
-                                <strong>Trạng thái thanh toán:</strong>
-                                @if (Model.IsPaid == true)
-                                {
-                                    <span class="text-success fw-bold"><i class="fa fa-check"></i> Đã thanh toán</span>
-                                }
-                                else
-                                {
-                                    <span class="text-warning fw-bold"><i class="fa fa-clock"></i> Chưa thanh toán (COD)</span>
-                                }
-                            </p>
-                            <hr />
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="fs-5">Tổng tiền:</span>
-                                <span class="fs-3 text-danger fw-bold">@Model.TotalAmount.ToString("N0") VNĐ</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card mt-4">
-                <div class="card-header bg-white fw-bold py-3">Chi tiết Sản phẩm (@Model.OrderItems.Sum(i => i.Quantity))</div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0 align-middle">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Sản phẩm</th>
-                                    <th class="text-center">Đơn giá</th>
-                                    <th class="text-center">Số lượng</th>
-                                    <th class="text-end">Thành tiền</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model.OrderItems)
-                                {
+                <div class="card mt-4">
+                    <div class="card-header bg-white fw-bold py-3">Chi tiết Sản phẩm (@Model.OrderItems.Sum(i => i.Quantity))</div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0 align-middle">
+                                <thead class="table-light">
                                     <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                @* Logic hiển thị ảnh an toàn *@
-                                                @{
-                                                    string imgUrl = "~/Content/ProductImages/no-image.png";
-                                                    if (item.Product?.ProductImages?.Any() == true)
-                                                    {
-                                                        imgUrl = item.Product.ProductImages.FirstOrDefault()?.Url ?? imgUrl;
-                                                    }
-                                                }
-                                                <img src="@Url.Content(imgUrl)" class="rounded border me-3" style="width: 50px; height: 50px; object-fit: contain;">
-                                                <div>
-                                                    <span class="fw-semibold">@item.Product.Name</span>
-                                                    <div class="small text-muted">Mã SP: @item.ProductId</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="text-center">@item.UnitPrice.ToString("N0") đ</td>
-                                        <td class="text-center">x @item.Quantity</td>
-                                        <td class="text-end fw-bold">@((item.Quantity * item.UnitPrice).ToString("N0")) đ</td>
+                                        <th>Sản phẩm</th>
+                                        <th class="text-center">Đơn giá</th>
+                                        <th class="text-center">Số lượng</th>
+                                        <th class="text-end">Thành tiền</th>
                                     </tr>
-                                }
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.OrderItems)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    @* Logic hiển thị ảnh an toàn *@
+                                                    @{
+                                                        string imgUrl = "~/Content/ProductImages/no-image.png";
+                                                        if (item.Product?.ProductImages?.Any() == true)
+                                                        {
+                                                            imgUrl = item.Product.ProductImages.FirstOrDefault()?.Url ?? imgUrl;
+                                                        }
+                                                    }
+                                                    <img src="@Url.Content(imgUrl)" class="rounded border me-3" style="width: 50px; height: 50px; object-fit: contain;">
+                                                    <div>
+                                                        <span class="fw-semibold">@item.Product.Name</span>
+                                                        <div class="small text-muted">Mã SP: @item.ProductId</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">@item.UnitPrice.ToString("N0") đ</td>
+                                            <td class="text-center">x @item.Quantity</td>
+                                            <td class="text-end fw-bold">@((item.Quantity * item.UnitPrice).ToString("N0")) đ</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
+
             </div>
-
         </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+    </html>

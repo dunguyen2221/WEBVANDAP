@@ -18,12 +18,14 @@ public class OrderController : Controller
     // ==========================================================
 
     // Helper: Lấy Cart và CartItems từ DB (ĐÃ FIX INCLUDE)
+    // TRONG OrderController.cs
+
     private Cart GetUserCart(string userId)
     {
-        // FIX: Thêm Include Product để đảm bảo dữ liệu có sẵn cho trang Checkout và PlaceOrder
+        // THÊM DÒNG INCLUDE NÀY:
         return _context.Carts
                        .Include(c => c.CartItems)
-                       .Include(c => c.CartItems.Select(ci => ci.Product))
+                       .Include(c => c.CartItems.Select(ci => ci.Product)) // <--- BẮT BUỘC CÓ
                        .FirstOrDefault(c => c.UserId == userId);
     }
 
@@ -181,6 +183,7 @@ public class OrderController : Controller
                 PaymentMethod = model.PaymentMethod ?? "COD",
                 IsPaid = (model.PaymentMethod == "Online") ? (bool?)false : null,
                 ShippingAddressId = shippingAddressId,
+                Notes = model.Notes,
             };
             _context.Orders.Add(order);
             _context.SaveChanges();
@@ -226,30 +229,27 @@ public class OrderController : Controller
     [Authorize]
     public ActionResult OrderConfirmation(int? orderId)
     {
-        // FIX: Sử dụng Session UserId
         string userId = Session["UserId"] as string;
         if (string.IsNullOrEmpty(userId))
-        {
             return RedirectToAction("DangNhap", "Account");
-        }
 
         if (orderId == null)
-        {
             return RedirectToAction("OrderHistory", "User");
-        }
 
         var order = _context.Orders
-                            .Include(o => o.OrderItems.Select(oi => oi.Product))
-                            .Include(o => o.OrderItems.Select(oi => oi.Product.ProductImages))
-                            .Include(o => o.Address) // Tải địa chỉ
-                            .FirstOrDefault(o => o.Id == orderId.Value && o.UserId == userId);
+            .Include(o => o.Address)
+            .Include(o => o.AspNetUser)
+            .Include(o => o.OrderItems)
+            .Include(o => o.OrderItems.Select(oi => oi.Product))            // <--- THÊM DÒNG NÀY
+            .Include(o => o.OrderItems.Select(oi => oi.Product.ProductImages)) // <--- THÊM DÒNG NÀY
+            .FirstOrDefault(o => o.Id == orderId.Value && o.UserId == userId);
 
         if (order == null)
-        {
             return HttpNotFound();
-        }
+
         return View(order);
     }
+
 
 
     // ==========================================================

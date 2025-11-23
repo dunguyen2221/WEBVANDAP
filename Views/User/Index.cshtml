@@ -1,9 +1,8 @@
 ﻿@model WEBVANDAP.Models.AspNetUser
 
 @{
-    ViewBag.Title = "Hồ sơ Cá nhân";
-    // SỬ DỤNG LAYOUT CÔNG CỘNG (Client)
-    Layout = null;
+    ViewBag.Title = "Hồ sơ cá nhân - LogiT Shop";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <!DOCTYPE html>
@@ -11,102 +10,102 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewBag.Title - PMT Shop</title>
+    <title>@ViewBag.Title</title>
 
-    <!-- Bootstrap + FontAwesome -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
 
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8fafc;
-            margin: 0;
-            padding: 0;
+            background-color: #f5f5f5;
         }
 
-        h2 {
-            font-weight: 700;
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .card {
+        .profile-card {
+            border: none;
+            border-radius: 14px;
+            padding: 2rem;
             background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all .3s ease;
         }
+
+            .profile-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 6px 25px rgba(0,0,0,0.12);
+            }
 
         dt {
             font-weight: 600;
-            color: #34495e;
+            color: #444;
         }
 
         dd {
-            color: #2c3e50;
-        }
-
-        .btn {
-            border-radius: 8px;
-            font-weight: 600;
-            padding: 10px 18px;
-        }
-
-            .btn i {
-                margin-right: 6px;
-            }
-        
-        .container {
-            max-width: 800px;
-            margin-top: 50px;
-        }
-
-        .alert {
-            font-weight: 500;
+            color: #222;
         }
     </style>
 </head>
 
 <body>
-    <div class="container mt-5">
-        <h2>Hồ Sơ Của Bạn</h2>
-        <hr />
 
-        @* CHÚ THÍCH: Hiển thị thông báo thành công sau khi sửa (từ TempData trong UserController.Edit POST) *@
-        @if (TempData["SuccessMessage"] != null)
-        {
-            <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-        }
+    <div class="container" style="max-width: 650px; margin-top: 50px;">
+        <div class="profile-card mb-5">
 
-        <div class="card p-4 shadow-sm">
-            @* CHÚ THÍCH: Hiển thị các thuộc tính của Model AspNetUser *@
-            <dl class="row">
-                <dt class="col-sm-3">Tên Đăng Nhập:</dt>
-                <dd class="col-sm-9 fw-bold">@Model.UserName</dd>
+            <h3 class="fw-bold text-dark mb-4">
+                <i class="bi bi-person-circle text-primary me-2"></i>
+                Hồ sơ cá nhân
+            </h3>
 
-                <dt class="col-sm-3">Email:</dt>
-                <dd class="col-sm-9">@Model.Email</dd>
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success mb-3">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    @TempData["SuccessMessage"]
+                </div>
+            }
 
-                <dt class="col-sm-3">Số Điện Thoại:</dt>
-                <dd class="col-sm-9">@(string.IsNullOrEmpty(Model.PhoneNumber) ? "Chưa cung cấp" : Model.PhoneNumber)</dd>
+            <dl class="row mt-3">
+                <dt class="col-sm-4">Tên đăng nhập:</dt>
+                <dd class="col-sm-8 fw-bold">@Model.UserName</dd>
 
-                <dt class="col-sm-3">Trạng Thái Email:</dt>
-                <dd class="col-sm-9">@(Model.EmailConfirmed ? "Đã xác thực" : "Chưa xác thực")</dd>
+                <dt class="col-sm-4">Email:</dt>
+                <dd class="col-sm-8">@Model.Email</dd>
+
+                <dt class="col-sm-4">Số điện thoại:</dt>
+                <dd class="col-sm-8">
+                    @(string.IsNullOrEmpty(Model.PhoneNumber) ? "Chưa cung cấp" : Model.PhoneNumber)
+                </dd>
+
+                <dt class="col-sm-4">Trạng thái Email:</dt>
+                <dd class="col-sm-8">
+                    @(Model.EmailConfirmed ? "Đã xác thực" : "Chưa xác thực")
+                </dd>
             </dl>
-        </div>
 
-        @* CHÚ THÍCH: Các nút điều hướng đến các chức năng quản lý khác *@
-        <div class="mt-4 d-flex flex-wrap gap-3 justify-content-center">
-            @Html.ActionLink("✏️ Chỉnh sửa Hồ sơ", "Edit", null, new { @class = "btn btn-primary" })
-            @Html.ActionLink("📍 Quản lý Địa chỉ", "ManageAddress", null, new { @class = "btn btn-info" })
-            @Html.ActionLink("📦 Lịch sử Đơn hàng", "OrderHistory", null, new { @class = "btn btn-success" })
-            @Html.ActionLink("🔐 Đổi Mật khẩu", "ChangePassword", null, new { @class = "btn btn-warning" })
-            @Html.ActionLink("🏠 Về Trang chủ", "Index", "Home", null, new { @class = "btn btn-outline-secondary" })
+            <div class="d-flex flex-column gap-2 mt-4">
+                <a href="@Url.Action("Edit")" class="btn btn-primary w-100">
+                    <i class="bi bi-pencil-square"></i> Chỉnh sửa hồ sơ
+                </a>
+
+                <a href="@Url.Action("ManageAddress")" class="btn btn-info w-100 text-white">
+                    <i class="bi bi-geo-alt"></i> Quản lý địa chỉ
+                </a>
+
+                <a href="@Url.Action("OrderHistory")" class="btn btn-success w-100 text-white">
+                    <i class="bi bi-box-seam"></i> Lịch sử đơn hàng
+                </a>
+
+                <a href="@Url.Action("ChangePassword")" class="btn btn-warning w-100">
+                    <i class="bi bi-shield-lock"></i> Đổi mật khẩu
+                </a>
+
+                <a href="@Url.Action("Index","Home")" class="btn btn-outline-dark w-100">
+                    <i class="bi bi-house"></i> Về trang chủ
+                </a>
+            </div>
+
         </div>
     </div>
 
-    <!-- Bootstrap Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

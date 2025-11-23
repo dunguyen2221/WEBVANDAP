@@ -115,6 +115,7 @@
           <Property Name="IsPaid" Type="bit" />
           <Property Name="UserId" Type="nvarchar" MaxLength="128" />
           <Property Name="ShippingAddressId" Type="int" />
+          <Property Name="Notes" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="ProductImages">
           <Key>
@@ -590,6 +591,7 @@
           <NavigationProperty Name="Address" Relationship="Self.FK_Orders_Address" FromRole="Orders" ToRole="Addresses" />
           <NavigationProperty Name="AspNetUser" Relationship="Self.FK_Orders_User" FromRole="Orders" ToRole="AspNetUsers" />
           <NavigationProperty Name="OrderItems" Relationship="Self.FK_OrderItems_Order" FromRole="Orders" ToRole="OrderItems" />
+          <Property Name="Notes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="ProductImage">
           <Key>
@@ -1028,6 +1030,7 @@
           <EntitySetMapping Name="Orders">
             <EntityTypeMapping TypeName="ShopPCModel.Order">
               <MappingFragment StoreEntitySet="Orders">
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="OrderCode" ColumnName="OrderCode" />
                 <ScalarProperty Name="OrderDate" ColumnName="OrderDate" />

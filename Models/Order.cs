@@ -29,6 +29,7 @@ namespace WEBVANDAP.Models
         public Nullable<bool> IsPaid { get; set; }
         public string UserId { get; set; }
         public Nullable<int> ShippingAddressId { get; set; }
+        public string Notes { get; set; }
     
         public virtual Address Address { get; set; }
         public virtual AspNetUser AspNetUser { get; set; }
