@@ -11,7 +11,6 @@
 
     <style>
         html, body {
-            overflow-x: hidden; /* Chặn cuộn ngang tuyệt đối */
             max-width: 100%; /* Đảm bảo web không bao giờ rộng hơn màn hình thiết bị */
         }
 
@@ -124,19 +123,19 @@
             }
 
             10% {
-                transform: rotate(-25deg) scale(1) skew(1deg);
+                transform: rotate(-15deg) scale(1) skew(1deg);
             }
 
             20% {
-                transform: rotate(25deg) scale(1) skew(1deg);
+                transform: rotate(15deg) scale(1) skew(1deg);
             }
 
             30% {
-                transform: rotate(-25deg) scale(1) skew(1deg);
+                transform: rotate(-15deg) scale(1) skew(1deg);
             }
 
             40% {
-                transform: rotate(25deg) scale(1) skew(1deg);
+                transform: rotate(15deg) scale(1) skew(1deg);
             }
 
             50% {
@@ -323,7 +322,7 @@
         </div>
     </nav>
 
-    <div>
+    <div style="flex: 1; overflow-x: hidden; width: 100%;">
         @RenderBody()
     </div>
 
