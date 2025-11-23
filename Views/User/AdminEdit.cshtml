@@ -81,7 +81,7 @@
         <div class="main-content d-flex flex-column">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="fw-bold text-dark mb-0">Chỉnh sửa Người dùng <span class="text-primary">#@Model.UserName</span></h2>
-                <a href="@Url.Action("AdminIndex", "User")" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Quay lại danh sách</a>
+                <a href="@Url.Action("ManageUsers", "User")" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Quay lại danh sách</a>
             </div>
 
             <div class="card p-4 mb-4">
@@ -123,7 +123,7 @@
                     </div>
 
                     <div class="mt-4 d-flex justify-content-between">
-                        @Html.ActionLink("Quay lại danh sách", "AdminIndex", "User", null, new { @class = "btn btn-secondary" })
+                        @Html.ActionLink("Quay lại danh sách", "ManageUsers", "User", null, new { @class = "btn btn-outline-secondary" })
                         <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i> Lưu thay đổi</button>
                     </div>
                 }

@@ -31,7 +31,7 @@
         .login-container {
             background: white;
             border-radius: 20px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
             width: 80%;
             max-width: 1000px;
             display: flex;
@@ -91,48 +91,52 @@
             text-align: center;
             color: #aaa;
         }
+
+        /* SNOW SNOW SNOW */
+        #snow-container {
+            position: fixed;
+            /* Hiển thị cố định, ngay cả khi cuộn */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 105vh;
+            /* Cao 100% chiều cao màn hình */
+            overflow: hidden;
+            /* Ẩn tuyết khi rơi ra ngoài */
+            pointer-events: none;
+            /* QUAN TRỌNG: Cho phép click xuyên qua lớp này */
+            z-index: 9999;
+            /* Đảm bảo tuyết rơi bên trên mọi thứ */
+        }
+
+        /* Định nghĩa 1 bông tuyết */
+        .snowflake {
+            position: absolute;
+            font-size: 1.5rem;
+            /* Kích thước bông tuyết */
+            user-select: none;
+            /* Ngăn người dùng chọn/bôi đen bông tuyết */
+            /* Bắt đầu rơi từ bên trên màn hình */
+            top: -20px;
+            /* Gọi hiệu ứng rơi (fall) */
+            animation: fall linear infinite;
+        }
+
+        /* Định nghĩa chuyển động rơi */
+        @@keyframes fall {
+            from {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            to {
+                /* Rơi xuống 105% chiều cao (để rơi hẳn ra ngoài) và xoay */
+                transform: translateY(105vh) rotate(360deg);
+            }
+        }
     </style>
 </head>
 
 <body>
-
-    <!-- ===== NAVBAR ===== -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm sticky-top">
-        <div class="container">
-            <a class="navbar-brand fw-bold text-danger d-flex align-items-center" href="@Url.Action("Index", "Home")">
-                <img style="height: 45px; pointer-events: none;" class="me-2"
-                     src="@Url.Content("~/Content/IMG/logo.png")" alt="logo" />
-                <span class="fs-4 fw-bold">LogiT</span>
-            </a>
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0 fw-semibold">
-                    <li class="nav-item">
-                        <a class="nav-link" href="@Url.Action("Index", "Home")">TRANG CHỦ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#footer-contact">LIÊN HỆ</a>
-                    </li>
-                </ul>
-
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search...">
-                    <button class="btn btn-outline-dark" type="submit">
-                        <i class="bi bi-search"></i>
-                    </button>
-                </form>
-
-                <div class="ms-3 d-flex align-items-center">
-                    <span class="text-muted small me-2">admin@gmail.com</span>
-                    <i class="bi bi-person-circle fs-5"></i>
-                </div>
-            </div>
-        </div>
-    </nav>
 
     <!-- ===== FORM NGANG ===== -->
     <section class="login-section">
@@ -163,37 +167,48 @@
         </div>
     </section>
 
-    <!-- ===== FOOTER ===== -->
-    <footer id="footer-contact">
-        <div class="container">
-            <div class="row gy-4">
-                <div class="col-md-4">
-                    <h5>Về LogiT</h5>
-                    <p>Chuyên cung cấp linh kiện máy tính, laptop, phụ kiện chính hãng. Chúng tôi luôn nỗ lực mang đến trải nghiệm mua sắm tốt nhất cho khách hàng.</p>
-                </div>
-                <div class="col-md-4">
-                    <h5>Liên hệ</h5>
-                    <ul class="list-unstyled">
-                        <li><i class="bi bi-geo-alt"></i> 123 Nguyễn Trãi, TP. HCM</li>
-                        <li><i class="bi bi-telephone"></i> 0123 456 789</li>
-                        <li><i class="bi bi-envelope"></i> support@logit.vn</li>
-                    </ul>
-                </div>
-                <div class="col-md-4">
-                    <h5>Theo dõi chúng tôi</h5>
-                    <a href="#" class="me-3"><i class="bi bi-facebook fs-4"></i></a>
-                    <a href="#" class="me-3"><i class="bi bi-instagram fs-4"></i></a>
-                    <a href="#"><i class="bi bi-youtube fs-4"></i></a>
-                </div>
-            </div>
-
-            <div class="footer-bottom mt-4">
-                © 2025 LogiT Shop. All Rights Reserved.
-            </div>
-        </div>
-    </footer>
-
-    <!-- Bootstrap JS -->
+    <!-- SCRIPT SCRIPT SCRIPT -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // 1. Tạo 1 div container cho tuyết
+            const snowContainer = document.createElement('div');
+            snowContainer.id = 'snow-container';
+            document.body.appendChild(snowContainer);
+
+            // 2. Hàm tạo 1 bông tuyết
+            function createSnowflake() {
+                const snowflake = document.createElement('span');
+                snowflake.classList.add('snowflake');
+                snowflake.textContent = '❄️'; // Emoji bông tuyết
+
+                // 3. Random các thuộc tính để tuyết rơi tự nhiên
+
+                // Vị trí bắt đầu (ngang) ngẫu nhiên
+                snowflake.style.left = Math.random() * 100 + 'vw';
+
+                // Tốc độ rơi ngẫu nhiên (từ 5 đến 10 giây)
+                snowflake.style.animationDuration = (Math.random() * 5 + 5) + 's';
+
+                // Độ mờ ngẫu nhiên (từ 0.3 đến 1)
+                snowflake.style.opacity = Math.random() * 0.7 + 0.3;
+
+                // Kích thước ngẫu nhiên (từ 10px đến 20px)
+                snowflake.style.fontSize = (Math.random() * 10 + 10) + 'px';
+
+                // Thêm bông tuyết vào container
+                snowContainer.appendChild(snowflake);
+
+                // 4. Xóa bông tuyết sau khi nó rơi xong (10 giây) để tiết kiệm bộ nhớ
+                setTimeout(() => {
+                    snowflake.remove();
+                }, 10000); // 10000ms = 10 giây
+            }
+
+            // 5. Liên tục tạo tuyết mới mỗi 100ms
+            setInterval(createSnowflake, 600);
+        });
+    </script>
 </body>
 </html>
