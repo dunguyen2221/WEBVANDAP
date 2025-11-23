@@ -242,12 +242,22 @@
             <div class="collapse navbar-collapse" id="navbarNav">
 
                 <div class="search-container d-flex align-items-center">
-                    <form class="d-flex w-100" action="@Url.Action("Index","Home")" method="get">
-                        <input class="form-control me-2" type="search" name="search" placeholder="Tìm kiếm sản phẩm..." />
-                        <button class="btn btn-outline-dark" type="submit"><i class="bi bi-search"></i></button>
-                    </form>
-                </div>
+                    @using (Html.BeginForm("Index", "Home", FormMethod.Get, new { @class = "d-flex w-100" }))
+                    {
+                        <input class="form-control me-2"
+                               type="search"
+                               name="keyword"
+                               placeholder="Tìm kiếm sản phẩm..."
+                               value="@ViewBag.SearchKeyword"
+                               style="border-radius: 25px 0 0 25px;" />
 
+                        <button class="btn btn-outline-dark"
+                                type="submit"
+                                style="border-radius: 0 25px 25px 0;">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    }
+                </div>
                 <div class="d-flex align-items-center ms-lg-2 order-history-wrapper">
                     <a href="@Url.Action("OrderHistory", "User")" class="btn btn-outline-primary btn-order-history">
                         <i class="bi bi-clock-history me-1"></i> Lịch sử đặt hàng

@@ -2,21 +2,19 @@
 
 @{
     ViewBag.Title = "Trang chủ - LogiT Shop";
-    Layout = "~/Views/Shared/_Layout.cshtml"; // 1. Sử dụng Layout chung
+    Layout = "~/Views/Shared/_Layout.cshtml";
 
     int currentPage = ViewBag.CurrentPage ?? 1;
     int totalPages = ViewBag.TotalPages ?? 1;
     string currentSort = ViewBag.CurrentSort;
     int? currentCategory = ViewBag.CurrentCategory;
     int? currentBrand = ViewBag.CurrentBrand;
+    string currentKeyword = ViewBag.SearchKeyword;
     List<WEBVANDAP.Models.Category> allCategories = ViewBag.Categories;
 }
 
 @section Styles {
     <style>
-        /* Chỉ giữ lại CSS đặc thù cho các thành phần trong trang chủ */
-        /* Các CSS chung như body, navbar, footer đã có trong Layout */
-
         .product-card {
             border: none;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
@@ -49,6 +47,7 @@
     </style>
 }
 
+<!-- ====================== BANNER ============================ -->
 <div class="mt-5">
     <div class="row g-4">
 
@@ -87,9 +86,11 @@
         </div>
     </div>
 </div>
-
+<!-- ====================== DANH MỤC + SẢN PHẨM ============================ -->
 <div class="my-5 mx-5">
     <div class="row g-4">
+
+        <!-- ========== SIDEBAR LỌC ========== -->
         <div class="col-lg-2 col-md-4">
             <h5 class="fw-bold mb-3">Lọc Sản Phẩm</h5>
 
@@ -97,20 +98,25 @@
             {
                 @Html.Hidden("page", 1)
                 @Html.Hidden("sortBy", currentSort)
+                @Html.Hidden("keyword", currentKeyword)
+                @Html.Hidden("filterCategory", currentCategory, new { id = "filterCategoryHidden" })
+                @Html.Hidden("filterBrand", currentBrand, new { id = "filterBrandHidden" })
 
                 <div class="card p-3 shadow-sm mb-4">
                     <h6 class="fw-bold mb-3">Danh Mục</h6>
                     <ul class="list-group list-group-flush" id="category-list">
-                        <li class="list-group-item category-item @(currentCategory == null || currentCategory == 0 ? "active" : "")" data-category-id="0">Tất cả sản phẩm</li>
+                        <li class="list-group-item category-item @(currentCategory == null || currentCategory == 0 ? "active" : "")"
+                            data-category-id="0">Tất cả sản phẩm</li>
+
                         @if (allCategories != null)
                         {
                             foreach (var category in allCategories)
                             {
-                                <li class="list-group-item category-item @(currentCategory == category.Id ? "active" : "")" data-category-id="@category.Id">@category.Name</li>
+                                <li class="list-group-item category-item @(currentCategory == category.Id ? "active" : "")"
+                                    data-category-id="@category.Id">@category.Name</li>
+                                }
                             }
-                        }
                     </ul>
-                    @Html.Hidden("filterCategory", currentCategory)
                 </div>
 
                 <div class="card p-3 shadow-sm">
@@ -118,17 +124,20 @@
                     <ul class="list-group list-group-flush" id="brand-list">
                         <li class="list-group-item text-muted">Vui lòng chọn Danh mục</li>
                     </ul>
-                    @Html.Hidden("filterBrand", currentBrand, new { id = "filterBrandHidden" })
                 </div>
             }
         </div>
 
+        <!-- ========== DANH SÁCH SẢN PHẨM ========== -->
         <div class="col-lg-10 col-md-8">
-            @using (Html.BeginForm("Index", "Home", FormMethod.Get, new { @class = "d-flex justify-content-end align-items-center mb-4 filters-section" }))
+
+            @using (Html.BeginForm("Index", "Home", FormMethod.Get,
+                new { @class = "d-flex justify-content-end align-items-center mb-4 filters-section" }))
             {
                 @Html.Hidden("page", currentPage)
                 @Html.Hidden("filterCategory", currentCategory)
                 @Html.Hidden("filterBrand", currentBrand)
+                @Html.Hidden("keyword", currentKeyword)
 
                 <div class="d-flex align-items-center gap-2">
                     <label for="sortBy" class="form-label mb-0 small text-muted">Sắp xếp theo:</label>
@@ -140,13 +149,21 @@
                 </div>
             }
 
+            @if (!string.IsNullOrWhiteSpace(currentKeyword))
+            {
+                <h5 class="mb-4 text-muted">
+                    Kết quả tìm kiếm cho: <span class="fw-bold text-danger">"@currentKeyword"</span>
+                </h5>
+            }
+
             <div class="row g-4">
                 @if (Model != null && Model.Any())
                 {
                     foreach (var product in Model)
                     {
                         var firstImage = product.ProductImages.FirstOrDefault();
-                        string imageUrl = firstImage != null ? Url.Content(firstImage.Url) : Url.Content("~/Content/IMG/default_placeholder.jpg");
+                        string imageUrl = firstImage != null ? Url.Content(firstImage.Url)
+                            : Url.Content("~/Content/IMG/default_placeholder.jpg");
 
                         <div class="col-md-4 col-sm-6">
                             <div class="card product-card h-100 position-relative">
@@ -168,11 +185,13 @@
                                             </span>
                                         }
 
-                                            <p class="price mb-0 me-3 fs-5 fw-bold">@product.Price.ToString("N0") ₫</p>
-                                        </div>
+                                        <p class="price mb-0 me-3 fs-5 fw-bold">@product.Price.ToString("N0") ₫</p>
                                     </div>
-                                    <div class="card-footer d-flex flex-column gap-2">
-                                        <a href="@Url.Action("DetailUser","Product", new { id = product.Id })" class="btn btn-outline-primary btn-sm">Xem chi tiết</a>
+                                </div>
+
+                                <div class="card-footer d-flex flex-column gap-2">
+                                    <a href="@Url.Action("DetailUser","Product", new { id = product.Id })"
+                                       class="btn btn-outline-primary btn-sm">Xem chi tiết</a>
 
                                     @using (Html.BeginForm("AddToCart", "Cart", FormMethod.Post, new { @class = "w-100" }))
                                     {
@@ -187,25 +206,47 @@
                 }
                 else
                 {
-                    <div class="col-12"><div class="text-center py-5 text-muted">Không tìm thấy sản phẩm nào.</div></div>
+                    <div class="col-12 text-center py-5 text-muted">Không tìm thấy sản phẩm nào.</div>
                 }
             </div>
 
+            <!-- PHÂN TRANG -->
             <nav class="mt-5">
                 <ul class="pagination justify-content-center">
                     <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                        @Html.ActionLink("«", "Index", "Home", new { page = currentPage - 1, sortBy = currentSort, filterCategory = currentCategory, filterBrand = currentBrand }, new { @class = "page-link" })
+                        @Html.ActionLink("«", "Index", new
+                        {
+                            page = currentPage - 1,
+                            sortBy = currentSort,
+                            filterCategory = currentCategory,
+                            filterBrand = currentBrand,
+                            keyword = currentKeyword
+                        }, new { @class = "page-link" })
                     </li>
 
                     @for (int i = 1; i <= totalPages; i++)
                     {
                         <li class="page-item @(i == currentPage ? "active" : "")">
-                            @Html.ActionLink(i.ToString(), "Index", "Home", new { page = i, sortBy = currentSort, filterCategory = currentCategory, filterBrand = currentBrand }, new { @class = "page-link" })
+                            @Html.ActionLink(i.ToString(), "Index", new
+                            {
+                                page = i,
+                                sortBy = currentSort,
+                                filterCategory = currentCategory,
+                                filterBrand = currentBrand,
+                                keyword = currentKeyword
+                            }, new { @class = "page-link" })
                         </li>
                     }
 
                     <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                        @Html.ActionLink("»", "Index", "Home", new { page = currentPage + 1, sortBy = currentSort, filterCategory = currentCategory, filterBrand = currentBrand }, new { @class = "page-link" })
+                        @Html.ActionLink("»", "Index", new
+                        {
+                            page = currentPage + 1,
+                            sortBy = currentSort,
+                            filterCategory = currentCategory,
+                            filterBrand = currentBrand,
+                            keyword = currentKeyword
+                        }, new { @class = "page-link" })
                     </li>
                 </ul>
             </nav>
@@ -213,45 +254,68 @@
     </div>
 </div>
 
+<!-- ====================== JS CHO LỌC ============================ -->
 @section Scripts {
     <script>
-        $(document).ready(function () {
-            function loadBrands(categoryId, selectedBrandId) {
-                var brandList = $('#brand-list');
-                brandList.empty();
+$(document).ready(function () {
 
-                if (categoryId > 0) {
-                    $.get('@Url.Action("GetBrandsByCategory", "Home")', { categoryId: categoryId }, function (brands) {
-                        brandList.append('<li class="list-group-item brand-item ' + (selectedBrandId == 0 ? "active" : "") + '" data-brand-id="0">Tất cả Thương hiệu</li>');
-                        $.each(brands, function (_, brand) {
-                            var isActive = brand.Id == selectedBrandId ? "active" : "";
-                            brandList.append('<li class="list-group-item brand-item ' + isActive + '" data-brand-id="' + brand.Id + '">' + brand.Name + '</li>');
-                        });
-                    });
-                } else {
-                    brandList.append('<li class="list-group-item text-muted">Vui lòng chọn Danh mục</li>');
+    // BIẾN HIDDEN
+    var initialCategoryId = parseInt($('#filterCategoryHidden').val() || 0);
+    var initialBrandId = parseInt($('#filterBrandHidden').val() || 0);
+
+    // LOAD BRAND
+    function loadBrands(categoryId, selectedBrandId) {
+        var brandList = $('#brand-list');
+        brandList.empty();
+
+        if (categoryId > 0) {
+
+            $.get('@Url.Action("GetBrandsByCategory", "Home")', { categoryId: categoryId }, function (brands) {
+
+                brandList.append(
+                    `<li class="list-group-item brand-item ${selectedBrandId == 0 ? "active" : ""}"
+                        data-brand-id="0">Tất cả Thương hiệu</li>`
+                );
+
+                $.each(brands, function (_, brand) {
+                    var active = brand.Id == selectedBrandId ? "active" : "";
+                    brandList.append(
+                        `<li class="list-group-item brand-item ${active}" data-brand-id="${brand.Id}">
+                            ${brand.Name}
+                         </li>`
+                    );
+                });
+
+                if (brands.length === 0) {
+                    brandList.append('<li class="list-group-item text-muted">Không tìm thấy Brand nào.</li>');
                 }
-            }
-
-            $('#category-list').on('click', '.category-item', function () {
-                var categoryId = $(this).data('category-id');
-                $('input[name="filterCategory"]').val(categoryId);
-                $('#filterBrandHidden').val(0);
-                $('#filterForm').submit();
             });
+        }
+        else {
+            brandList.append('<li class="list-group-item text-muted">Vui lòng chọn Danh mục</li>');
+        }
+    }
 
-            $('#brand-list').on('click', '.brand-item', function () {
-                var brandId = $(this).data('brand-id');
-                $('#filterBrandHidden').val(brandId);
-                $('#filterForm').submit();
-            });
+    // CLICK CATEGORY
+    $('#category-list').on('click', '.category-item', function () {
+        var categoryId = $(this).data('category-id');
+        $('#filterCategoryHidden').val(categoryId);
+        $('#filterBrandHidden').val(0);
+        loadBrands(categoryId, 0);
+        $('#filterForm').submit();
+    });
 
-            var initialCategoryId = @(currentCategory.HasValue ? currentCategory.Value : 0);
-            var initialBrandId = @(currentBrand.HasValue ? currentBrand.Value : 0);
+    // CLICK BRAND
+    $('#brand-list').on('click', '.brand-item', function () {
+        var brandId = $(this).data('brand-id');
+        $('#filterBrandHidden').val(brandId);
+        $('#filterForm').submit();
+    });
 
-            if (initialCategoryId > 0) {
-                loadBrands(initialCategoryId, initialBrandId);
-            }
-        });
+    // LOAD BRAND KHI VÀO TRANG
+    if (initialCategoryId > 0) {
+        loadBrands(initialCategoryId, initialBrandId);
+    }
+});
     </script>
 }

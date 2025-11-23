@@ -12,15 +12,34 @@ namespace WEBVANDAP.Controllers
         private readonly ShopPCEntities2 _context = new ShopPCEntities2();
 
         // Brand KHÔNG còn CategoryId → Action này phải trả rỗng
-        public JsonResult GetBrandsByCategory(int categoryId)
+        [HttpGet]
+        public JsonResult GetBrandsByCategory(int? categoryId)
         {
-            return Json(new List<object>(), JsonRequestBehavior.AllowGet);
+            if (categoryId == null || categoryId.Value <= 0)
+            {
+                // Trả về danh sách rỗng nếu không có categoryId hợp lệ
+                return Json(new List<object>(), JsonRequestBehavior.AllowGet);
+            }
+
+            // Truy vấn các Brand có CategoryId tương ứng
+            var brands = _context.Brands
+                                 .Where(b => b.CategoryId == categoryId.Value)
+                                 .Select(b => new
+                                 {
+                                     Id = b.Id,
+                                     Name = b.Name
+                                 })
+                                 .OrderBy(b => b.Name)
+                                 .ToList();
+
+            // Trả về kết quả dưới dạng JSON
+            return Json(brands, JsonRequestBehavior.AllowGet);
         }
 
         // --------------------------------------------------------
         // INDEX (Trang chủ)
         // --------------------------------------------------------
-        public ActionResult Index(string sortBy = "popular", int page = 1, int? filterCategory = null, int? filterBrand = null)
+        public ActionResult Index(string keyword, string sortBy = "popular", int page = 1, int? filterCategory = null, int? filterBrand = null)
         {
             int pageSize = 6;
 
@@ -28,13 +47,20 @@ namespace WEBVANDAP.Controllers
                                    .Include(p => p.ProductImages)
                                    .AsQueryable();
 
-            // LỌC THEO CATEGORY
+            // 🔍 TÌM KIẾM THEO TÊN SẢN PHẨM
+            if (!string.IsNullOrWhiteSpace(keyword))
+            {
+                products = products.Where(p => p.Name.Contains(keyword));
+                ViewBag.SearchKeyword = keyword; // Gửi ngược về View
+            }
+
+            // LỌC CATEGORY
             if (filterCategory.HasValue && filterCategory.Value > 0)
             {
                 products = products.Where(p => p.CategoryId == filterCategory.Value);
             }
 
-            // LỌC THEO BRAND
+            // LỌC BRAND
             if (filterBrand.HasValue && filterBrand.Value > 0)
             {
                 products = products.Where(p => p.BrandId == filterBrand.Value);
@@ -63,17 +89,19 @@ namespace WEBVANDAP.Controllers
 
             var pagedProducts = products.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
-            // VIEWBAG TRUYỀN DỮ LIỆU
+            // TRUYỀN DỮ LIỆU QUA VIEW
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
             ViewBag.CurrentSort = sortBy;
             ViewBag.CurrentCategory = filterCategory;
+            ViewBag.CurrentBrand = filterBrand;
 
             ViewBag.Categories = _context.Categories.ToList();
             ViewBag.Brands = _context.Brands.ToList();
 
             return View(pagedProducts);
         }
+
 
         public ActionResult About()
         {
