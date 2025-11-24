@@ -247,6 +247,7 @@
     <Content Include="Models\ShopPCModel.edmx.diagram">
       <DependentUpon>ShopPCModel.edmx</DependentUpon>
     </Content>
+    <Content Include="script.sql" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
@@ -316,6 +317,7 @@
     <Content Include="Views\Search\Results.cshtml" />
     <Content Include="Views\Product\DetailsUser.cshtml" />
     <Content Include="Views\Shared\Layout2.cshtml" />
+    <Content Include="Views\Shared\_LayoutAnimation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
