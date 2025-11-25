@@ -12,8 +12,30 @@
     bool isEligibleForCheckout = subTotal >= minOrderAmount;
 }
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 @section Styles {
     <style>
+        /* --- BREADCRUMB STYLE (Giống DetailsUser) --- */
+        .breadcrumb-wrap {
+            background: #fff;
+            padding: 12px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        .breadcrumb-item a {
+            color: #6c757d;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb-item.active {
+            color: #333;
+            font-weight: 600;
+        }
+
+        /* --- CART STYLES --- */
         .cart-container {
             display: flex;
             flex-wrap: wrap;
@@ -22,15 +44,35 @@
         }
 
         .cart-list {
-            flex: 1 1 65%; /* Tăng độ rộng danh sách lên một chút */
+            flex: 1 1 65%;
             background-color: #fff;
             border-radius: 12px;
             padding: 25px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
             min-width: 100px;
+            /* Giới hạn chiều cao và cho phép cuộn nếu danh sách dài */
             max-height: 80vh;
             overflow-y: auto;
         }
+
+            /* Tùy chỉnh thanh cuộn */
+            .cart-list::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            .cart-list::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 3px;
+            }
+
+            .cart-list::-webkit-scrollbar-thumb {
+                background: #ccc;
+                border-radius: 3px;
+            }
+
+                .cart-list::-webkit-scrollbar-thumb:hover {
+                    background: #aaa;
+                }
 
         .summary-card {
             flex: 1 1 30%;
@@ -40,36 +82,41 @@
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
             min-width: 280px;
             height: fit-content;
+            position: sticky;
+            top: 100px; /* Trượt theo khi cuộn */
         }
 
         .cart-item-img {
             width: 80px;
             height: 80px;
             object-fit: contain;
+            padding: 5px;
+            background: #fff;
         }
 
         .price {
-            color: #d0021c;
-            font-weight: 600;
+            color: #d70018;
+            font-weight: 700;
         }
 
-        /* --- QUANTITY BOX --- */
+        /* Quantity Control */
         .quantity-box {
             display: flex;
             align-items: center;
             justify-content: center;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            overflow: hidden;
+            width: 110px;
         }
 
         .quantity-input {
             width: 40px;
-            height: 30px;
+            height: 32px;
             text-align: center;
+            border: none;
             margin: 0;
-            border-top: 1px solid #ced4da;
-            border-bottom: 1px solid #ced4da;
-            border-left: none;
-            border-right: none;
-            border-radius: 0;
+            font-weight: 600;
             -moz-appearance: textfield;
         }
 
@@ -79,28 +126,21 @@
             }
 
         .quantity-btn {
-            width: 30px;
-            height: 30px;
-            line-height: 1;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid #ced4da;
-            background-color: #fff;
+            width: 35px;
+            height: 32px;
+            border: none;
+            background-color: #f8f9fa;
             cursor: pointer;
+            transition: background 0.2s;
         }
 
             .quantity-btn:hover {
-                background-color: #e9ecef;
+                background-color: #e2e6ea;
             }
 
-            .quantity-btn.minus {
-                border-radius: 4px 0 0 4px;
-            }
-
-            .quantity-btn.plus {
-                border-radius: 0 4px 4px 0;
+            .quantity-btn:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
             }
 
         @@media (max-width: 992px) {
@@ -110,35 +150,58 @@
             }
 
             .cart-list, .summary-card {
-                width: 90%;
+                width: 100%;
                 min-width: auto;
             }
+
+            .summary-card {
+                position: static;
+            }
+            /* Mobile thì không sticky */
         }
     </style>
 }
 
-<div class="container my-5">
-    <nav aria-label="breadcrumb" class="mb-4">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")" class="text-decoration-none">Trang chủ</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Giỏ hàng (@totalItems)</li>
-        </ol>
-    </nav>
+<div class="breadcrumb-wrap">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb m-0">
+                <li class="breadcrumb-item">
+                    <a href="@Url.Action("Index", "Home")">
+                        <i class="fas fa-home me-1"></i> Trang chủ
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Giỏ hàng (@totalItems)</li>
+            </ol>
+        </nav>
+    </div>
+</div>
 
+<div class="container mb-5">
     @if (Model == null || !Model.Any())
     {
-        <div class="alert alert-info text-center">
-            Giỏ hàng trống. <a href="@Url.Action("Index", "Home")" class="alert-link">Mua sắm ngay</a>.
+        <div class="text-center py-5 bg-white rounded shadow-sm">
+            <img src="https://cdn-icons-png.flaticon.com/512/11329/11329060.png" width="120" class="mb-4 opacity-50" alt="Empty Cart">
+            <h4 class="text-muted">Giỏ hàng của bạn đang trống</h4>
+            <p class="text-secondary mb-4">Hãy chọn thêm sản phẩm để mua sắm nhé!</p>
+            <a href="@Url.Action("Index", "Home")" class="btn btn-danger px-4 py-2 rounded-pill fw-bold">
+                <i class="fas fa-cart-plus me-2"></i> Mua sắm ngay
+            </a>
         </div>
     }
     else
     {
         <div class="cart-container">
             <div class="cart-list">
-                <h5 class="fw-bold mb-4 border-bottom pb-2">Giỏ hàng của bạn</h5>
+                <h5 class="fw-bold mb-4 pb-2 border-bottom text-dark">
+                    <i class="fas fa-shopping-bag me-2 text-danger"></i>Sản phẩm trong giỏ
+                </h5>
 
-                <div class="row text-muted fw-bold mb-3 text-uppercase small align-items-center d-none d-md-flex text-center">
-                    <div class="col-5 text-start">Sản phẩm</div>  <div class="col-3">Số lượng</div>             <div class="col-3">Thành tiền</div>           <div class="col-1"></div>
+                <div class="row text-muted fw-bold mb-3 text-uppercase small align-items-center d-none d-md-flex text-center bg-light py-2 rounded">
+                    <div class="col-5 text-start ps-3">Sản phẩm</div>
+                    <div class="col-3">Số lượng</div>
+                    <div class="col-3">Thành tiền</div>
+                    <div class="col-1"></div>
                 </div>
 
                 @foreach (var item in Model)
@@ -149,36 +212,45 @@
                     string defaultImageUrl = "~/Content/ProductImages/no-image.png";
                     string imageUrl = (item.Product?.ProductImages?.FirstOrDefault()?.Url) ?? defaultImageUrl;
 
-                    <div class="row align-items-center mb-4 border-bottom pb-3 text-center">
-
+                    <div class="row align-items-center mb-3 border-bottom pb-3 text-center">
                         <div class="col-12 col-md-5 text-start d-flex align-items-center">
-                            <img src="@Url.Content(imageUrl)" alt="@productName" class="cart-item-img border rounded me-3 flex-shrink-0" />
+                            <a href="@Url.Action("DetailUser", "Product", new { id = item.ProductId })">
+                                <img src="@Url.Content(imageUrl)" alt="@productName" class="cart-item-img border rounded me-3 flex-shrink-0" />
+                            </a>
                             <div>
-                                <h6 class="fw-semibold mb-1 text-truncate" style="max-width: 200px;">@productName</h6>
-                                <p class="price mb-0 text-muted small">@item.UnitPrice.ToString("N0") đ</p>
+                                <h6 class="fw-semibold mb-1 text-truncate" style="max-width: 220px;">
+                                    <a href="@Url.Action("DetailUser", "Product", new { id = item.ProductId })" class="text-dark text-decoration-none">@productName</a>
+                                </h6>
+                                <p class="price mb-0 text-muted small">@item.UnitPrice.ToString("N0") ₫</p>
                             </div>
                         </div>
 
                         <div class="col-12 col-md-3 mt-3 mt-md-0 d-flex justify-content-center">
-                            @using (Html.BeginForm("UpdateQuantity", "Cart", FormMethod.Post, new { @class = "quantity-box" }))
+                            @using (Html.BeginForm("UpdateQuantity", "Cart", FormMethod.Post))
                             {
                                 @Html.Hidden("productId", item.ProductId)
-                                <button type="button" class="quantity-btn minus" onclick="this.form.quantity.stepDown(); this.form.submit();" @(qty <= 1 ? "disabled" : "")>-</button>
-                                <input type="number" name="quantity" class="quantity-input" min="1" value="@qty" onchange="this.form.submit()" />
-                                <button type="button" class="quantity-btn plus" onclick="this.form.quantity.stepUp(); this.form.submit();">+</button>
+                                <div class="quantity-box">
+                                    <button type="button" class="quantity-btn" onclick="this.form.quantity.stepDown(); this.form.submit();" @(qty <= 1 ? "disabled" : "")>
+                                        <i class="fas fa-minus small"></i>
+                                    </button>
+                                    <input type="number" name="quantity" class="quantity-input" min="1" value="@qty" onchange="this.form.submit()" />
+                                    <button type="button" class="quantity-btn" onclick="this.form.quantity.stepUp(); this.form.submit();">
+                                        <i class="fas fa-plus small"></i>
+                                    </button>
+                                </div>
                             }
                         </div>
 
-                        <div class="col-12 col-md-3 mt-2 mt-md-0 fw-bold text-danger">
-                            @total.ToString("N0") đ
+                        <div class="col-12 col-md-3 mt-2 mt-md-0 fw-bold text-danger fs-6">
+                            @total.ToString("N0") ₫
                         </div>
 
-                        <div class="col-12 col-md-1 mt-2 mt-md-0 text-end">
+                        <div class="col-12 col-md-1 mt-2 mt-md-0 text-end pe-3">
                             @using (Html.BeginForm("RemoveFromCart", "Cart", FormMethod.Post))
                             {
                                 @Html.Hidden("productId", item.ProductId)
-                                <button type="submit" class="btn btn-sm text-danger border-0 p-0" onclick="return confirm('Xóa sản phẩm?');">
-                                    <i class="bi bi-trash fs-5"></i>
+                                <button type="submit" class="btn btn-link text-secondary p-0" onclick="return confirm('Xóa sản phẩm này khỏi giỏ hàng?');" title="Xóa">
+                                    <i class="fas fa-trash-alt hover-danger"></i>
                                 </button>
                             }
                         </div>
@@ -188,24 +260,48 @@
                 <div class="text-end mt-4">
                     @using (Html.BeginForm("RemoveAll", "Cart", FormMethod.Post))
                     {
-                        <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Xóa hết giỏ hàng?');">
-                            <i class="bi bi-trash me-1"></i> Xoá hết giỏ hàng
+                        <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="return confirm('Bạn chắc chắn muốn xóa hết giỏ hàng?');">
+                            <i class="fas fa-trash me-1"></i> Xoá tất cả
                         </button>
                     }
                 </div>
             </div>
 
             <div class="summary-card">
-                <h5 class="fw-bold mb-4 border-bottom pb-2">Thông tin đơn hàng</h5>
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="fs-6 fw-bold">Tổng tiền:</span>
-                    <span class="fs-4 fw-bold text-danger price">@subTotal.ToString("N0") đ</span>
+                <h5 class="fw-bold mb-4 border-bottom pb-3 text-dark">Thanh toán</h5>
+
+                <div class="d-flex justify-content-between align-items-center mb-2 text-muted">
+                    <span>Tạm tính:</span>
+                    <span>@subTotal.ToString("N0") ₫</span>
                 </div>
-                <a href="@Url.Action("Checkout", "Order")" class="btn btn-danger w-100 fw-bold fs-5 py-2 mb-3" @(isEligibleForCheckout ? "" : "disabled")>THANH TOÁN</a>
-                <div class="alert alert-info p-3 d-flex align-items-start" style="background-color: #e6f7ff;">
-                    <i class="bi bi-info-circle-fill fs-5 me-2 text-primary"></i>
-                    <div><strong class="d-block mb-1">Chính sách mua hàng</strong><small>Chỉ thanh toán đơn hàng trên <strong>@minOrderAmount.ToString("N0") đ</strong>.</small></div>
+                <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+                    <span>Giảm giá:</span>
+                    <span>0 ₫</span>
                 </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <span class="fs-6 fw-bold">Tổng cộng:</span>
+                    <span class="fs-4 fw-bold text-danger">@subTotal.ToString("N0") ₫</span>
+                </div>
+
+                <a href="@Url.Action("Checkout", "Order")" class="btn btn-danger w-100 fw-bold py-3 rounded-3 text-uppercase shadow-sm mb-3 @(isEligibleForCheckout ? "" : "disabled")">
+                    Tiến hành đặt hàng
+                </a>
+
+                @if (!isEligibleForCheckout)
+                {
+                    <div class="alert alert-warning p-2 small d-flex align-items-start mb-0">
+                        <i class="fas fa-exclamation-circle fs-6 me-2 mt-1"></i>
+                        <div>Đơn hàng tối thiểu để thanh toán là <strong>@minOrderAmount.ToString("N0") ₫</strong>.</div>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-success p-2 small d-flex align-items-center mb-0">
+                        <i class="fas fa-check-circle fs-6 me-2"></i>
+                        <div>Đủ điều kiện thanh toán.</div>
+                    </div>
+                }
             </div>
         </div>
     }
