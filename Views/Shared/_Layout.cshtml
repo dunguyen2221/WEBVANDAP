@@ -10,8 +10,9 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <style>
+        /* --- GIỮ NGUYÊN CÁC STYLE CŨ CỦA BẠN --- */
         html, body {
-            max-width: 100%; /* Đảm bảo web không bao giờ rộng hơn màn hình thiết bị */
+            max-width: 100%;
         }
 
         html {
@@ -25,32 +26,61 @@
             min-height: 100vh;
         }
 
-        /* --- FOOTER --- */
+        /* --- SỬA FOOTER --- */
         footer {
             margin-top: auto;
             background-color: #fff;
             border-top: 1px solid #ddd;
-            padding: 40px 0;
+            padding: 60px 0 30px; /* Tăng padding để footer thoáng hơn */
         }
 
+            footer h5 {
+                color: #333;
+                margin-bottom: 20px;
+                text-transform: uppercase;
+                font-size: 1.1rem;
+                letter-spacing: 0.5px;
+            }
+
             footer p {
-                margin-bottom: 0;
-                color: #fff;
+                color: #666;
+                margin-bottom: 10px;
+                line-height: 1.6;
             }
 
         .footer-links a {
             text-decoration: none;
             color: #666;
-            transition: color 0.3s;
+            transition: all 0.3s ease;
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
         }
 
             .footer-links a:hover {
-                color: #0d6efd;
+                color: #dc3545; /* Màu đỏ chủ đạo */
+                transform: translateX(5px); /* Hiệu ứng di chuyển nhẹ khi hover */
             }
 
-        /* --- NAVBAR --- */
+        /* Style riêng cho icon thanh toán */
+        .payment-icons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+            .payment-icons i {
+                font-size: 2.5rem; /* Kích thước icon */
+                color: #555;
+                transition: color 0.3s;
+            }
+
+                .payment-icons i:hover {
+                    color: #0d6efd; /* Màu xanh khi hover */
+                }
+
+        /* --- GIỮ NGUYÊN NAVBAR & FLOATING BUTTONS --- */
+        /* ... (Copy lại các đoạn CSS cũ của bạn ở đây) ... */
         .navbar-brand img {
             height: 35px;
             margin-right: 10px;
@@ -65,7 +95,6 @@
             white-space: nowrap;
         }
 
-        /* --- FLOATING BUTTONS --- */
         .floating-contact {
             position: fixed;
             bottom: 30px;
@@ -116,7 +145,6 @@
                 transform: scale(1.1);
             }
 
-        /* --- ANIMATIONS --- */
         @@keyframes ring-alo {
             0% {
                 transform: rotate(0) scale(1) skew(1deg);
@@ -176,11 +204,9 @@
             }
         }
 
-        /* --- RESPONSIVE MOBILE NAVBAR FIX --- */
         @@media (max-width: 991.98px) {
-            /* Căn chỉnh lại container tìm kiếm */
             .search-container {
-                margin: 15px 0 !important; /* Thêm khoảng cách trên dưới */
+                margin: 15px 0 !important;
                 width: 100%;
             }
 
@@ -192,10 +218,10 @@
                 .search-container input {
                     flex-grow: 1;
                 }
-            /* Nút Lịch sử đơn hàng: Full width và căn giữa text */
+
             .order-history-wrapper {
                 width: 100%;
-                margin: 0 0 15px 0 !important; /* Xóa margin trái, thêm margin dưới */
+                margin: 0 0 15px 0 !important;
             }
 
             .btn-order-history {
@@ -203,27 +229,27 @@
                 display: block;
                 text-align: center;
             }
-            /* Các mục trong menu (Trang chủ, Giỏ hàng, Tài khoản) */
+
             .navbar-nav {
                 width: 100%;
             }
 
                 .navbar-nav .nav-item {
                     width: 100%;
-                    margin-bottom: 10px; /* Khoảng cách giữa các mục */
-                    margin-right: 0 !important; /* Xóa margin phải */
+                    margin-bottom: 10px;
+                    margin-right: 0 !important;
                 }
-                /* Nút Giỏ hàng & Dropdown full width */
+
                 .navbar-nav .btn, .navbar-nav .dropdown-toggle {
                     width: 100%;
                     text-align: center;
                     display: block;
                 }
-            /* Dropdown menu căn giữa */
+
             .dropdown-menu {
                 text-align: center;
                 border: none;
-                background-color: #f8f9fa; /* Màu nền nhẹ cho submenu */
+                background-color: #f8f9fa;
             }
         }
     </style>
@@ -248,29 +274,18 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow sticky-top">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center fw-bold text-danger" href="@Url.Action("Index","Home")">
-                <img src="@Url.Content("~/Content/IMG/logo.png")" style="scale: 2.5;" />
+                <img style="scale:2.5;" src="@Url.Content("~/Content/IMG/logo.png")" />
                 <span class="text-center fs-3 fw-bolder" style="font-family: monospace">LogiT</span>
             </a>
-
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
             <div class="collapse navbar-collapse" id="navbarNav">
-
                 <div class="search-container d-flex align-items-center">
                     @using (Html.BeginForm("Results", "Search", FormMethod.Get, new { @class = "d-flex w-100" }))
                     {
-                        <input class="form-control me-2"
-                               type="search"
-                               name="keyword"
-                               placeholder="Tìm kiếm sản phẩm..."
-                               value="@ViewBag.SearchKeyword"
-                               style="border-radius: 25px 0 0 25px;" />
-
-                        <button class="btn btn-outline-dark"
-                                type="submit"
-                                style="border-radius: 0 25px 25px 0;">
+                        <input class="form-control me-2" type="search" name="keyword" placeholder="Tìm kiếm sản phẩm..." value="@ViewBag.SearchKeyword" style="border-radius: 25px 0 0 25px;" />
+                        <button class="btn btn-outline-dark" type="submit" style="border-radius: 0 25px 25px 0;">
                             <i class="bi bi-search"></i>
                         </button>
                     }
@@ -280,13 +295,10 @@
                         <i class="bi bi-clock-history me-1"></i> Lịch sử đặt hàng
                     </a>
                 </div>
-
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 fw-semibold d-flex align-items-lg-center">
-
                     <li class="nav-item d-none d-lg-block">
                         <a class="nav-link" href="@Url.Action("Index", "Home")">TRANG CHỦ</a>
                     </li>
-
                     <li class="nav-item me-lg-2">
                         <a href="@Url.Action("Index", "Cart")" class="btn btn-outline-dark position-relative">
                             <i class="bi bi-cart3"></i> Giỏ hàng
@@ -298,11 +310,9 @@
                             }
                         </a>
                     </li>
-
                     <li class="nav-item dropdown">
                         <a class="dropdown-toggle text-decoration-none text-dark nav-link" href="#" id="adminDropdown" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-fill"></i>
-                            @(Session["Username"] ?? "Tài khoản")
+                            <i class="bi bi-person-fill"></i> @(Session["Username"] ?? "Tài khoản")
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             @if (Session["Username"] != null)
@@ -339,39 +349,65 @@
     </div>
 
     <footer id="footer-about-us" class="bg-dark text-white pt-5 pb-3">
-        <div class="container-fluid">
+        <div>
             <div class="row g-4">
-                <div class="col-md-4 text-start">
-                    <h5 class="fw-bold">LogiT Shop</h5>
-                    <p class="small">Store: 7/38 Thành Thái, Phường 14, Quận 10, TP.HCM</p>
-                    <p class="small">GIẤY PHÉP KINH DOANH: Công Ty TNHH LogiT - 0318537815</p>
-                    <p class="small">Người đại diện: Phan Minh Trí</p>
-                    <p class="small">EMAIL: LogiTShop@gmail.com</p>
-                    <img src="~/Content/IMG/bocongthuong.png" alt="Đã Thông Báo Bộ Công Thương" class="mt-2">
+
+                <div class="col-lg-4 col-md-6 ps-5">
+                    <h5 class="fw-bold text-white mb-3">LogiT Shop</h5>
+                    <p class="small text-white-50 mb-1"><i class="bi bi-geo-alt-fill me-2"></i>7/38 Thành Thái, Phường 14, Quận 10, TP.HCM</p>
+                    <p class="small text-white-50 mb-1"><i class="bi bi-telephone-fill me-2"></i>Hotline: 0903 180 689</p>
+                    <p class="small text-white-50 mb-3"><i class="bi bi-envelope-fill me-2"></i>Email: LogiTShop@gmail.com</p>
+                    <p class="small text-white-50 fw-bold">GPKD: Công Ty TNHH LogiT - 0318537815</p>
+                    <img src="~/Content/IMG/bocongthuong.png" alt="Đã Thông Báo Bộ Công Thương" class="mt-2" style="height: 40px;">
                 </div>
-                <div class="col-md-2 offset-md-1 text-start">
-                    <h5 class="fw-bold">Về Chúng Tôi</h5>
+
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="fw-bold text-white mb-3">Về Chúng Tôi</h5>
                     <ul class="footer-links list-unstyled text-decoration-none">
-                        <li><a href="#">Giới Thiệu</a></li>
-                        <li><a href="#">Tác Giả</a></li>
-                        <li><a href="#">Thành Tựu</a></li>
+                        <li><a href="#" class="text-white-50">Giới Thiệu</a></li>
+                        <li><a href="#" class="text-white-50">Tuyển Dụng</a></li>
+                        <li><a href="#" class="text-white-50">Tin Tức Công Nghệ</a></li>
                     </ul>
                 </div>
-                <div class="col-md-2 text-start">
-                    <h5 class="fw-bold">Chính Sách</h5>
+
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="fw-bold text-white mb-3">Chính Sách Khách Hàng</h5>
                     <ul class="footer-links list-unstyled">
-                        <li><a href="#">Hướng Dẫn Mua Hàng</a></li>
-                        <li><a href="#">Quy Định Bảo Hành</a></li>
-                        <li><a href="#">Chính Sách Bảo Mật</a></li>
+                        <li><a href="#" class="text-white-50">Hướng Dẫn Mua Hàng</a></li>
+                        <li><a href="#" class="text-white-50">Chính Sách Bảo Hành</a></li>
+                        <li><a href="#" class="text-white-50">Chính Sách Đổi Trả</a></li>
+                        <li><a href="#" class="text-white-50">Bảo Mật Thông Tin</a></li>
                     </ul>
                 </div>
-                <div class="col-md-3 text-start">
-                    <h5 class="fw-bold">Thanh Toán</h5>
-                    <div class="fs-1"><i class="bi bi-visa me-2"></i><i class="bi bi-paypal"></i></div>
+
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="fw-bold text-white mb-3">Phương Thức Thanh Toán</h5>
+
+                    <div style="display: grid; grid-template-columns: repeat(3, 50px); gap: 10px;">
+                        <div class="bg-white rounded p-1 d-flex align-items-center justify-content-center" style="height: 35px;">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png" alt="Visa" class="img-fluid" style="max-height: 100%;">
+                        </div>
+                        <div class="bg-white rounded p-1 d-flex align-items-center justify-content-center" style="height: 35px;">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/2560px-PayPal.svg.png" alt="PayPal" class="img-fluid" style="max-height: 100%;">
+                        </div>
+                        <div class="bg-white rounded p-1 d-flex align-items-center justify-content-center" style="height: 35px;">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png" alt="Mastercard" class="img-fluid" style="max-height: 100%;">
+                        </div>
+                        <div class="bg-white rounded p-1 d-flex align-items-center justify-content-center" style="height: 35px;">
+                            <i class="bi bi-cash-coin text-dark fs-5"></i>
+                        </div>
+                        <div class="bg-white rounded p-1 d-flex align-items-center justify-content-center" style="height: 35px;">
+                            <i class="bi bi-qr-code-scan text-dark fs-5"></i>
+                        </div>
+                        <div class="bg-white rounded p-1 d-flex align-items-center justify-content-center" style="height: 35px;">
+                            <i class="bi bi-credit-card text-dark fs-5"></i>
+                        </div>
+                    </div>
                 </div>
+            </div> <hr class="my-4 border-white-50">
+            <div class="text-center small text-white-50">
+                <p class="mb-0">Copyright © 2025 LogiT Shop - CỬA HÀNG SẢN PHẨM MÁY TÍNH. All rights reserved.</p>
             </div>
-            <hr class="my-4">
-            <div class="text-center small"><p class="mb-0">Copyright © 2025 LogiT Shop - CỬA HÀNG SẢN PHẨM MÁY TÍNH</p></div>
         </div>
     </footer>
 
