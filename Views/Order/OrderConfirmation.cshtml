@@ -35,13 +35,13 @@
 
                         <div class="row mb-4">
                             <div class="col-md-6">
-                                <h6 class="fw-bold text-muted small text-uppercase">Thông tin người nhận</h6>
+                                <h6 class="fw-bold fs-5 text-muted small text-uppercase">Thông tin người nhận</h6>
                                 @if (Model.Address != null)
                                 {
-                                    <p class="mb-1 fw-bold">@Model.Address.FullName</p>
-                                    <p class="mb-1">@Model.Address.Phone</p>
+                                    <p class="mb-1 fw-bold">Tên: @Model.Address.FullName</p>
+                                    <p class="mb-1"><b>Sđt:</b> @Model.Address.Phone</p>
                                     <p class="mb-0">
-                                        @Model.Address.Street, @Model.Address.Ward, @Model.Address.District, @Model.Address.City
+                                        <b>Địa chỉ:</b> @Model.Address.Street, @Model.Address.Ward, @Model.Address.District, @Model.Address.City
                                     </p>
                                 }
                                 else
@@ -50,7 +50,7 @@
                                 }
                             </div>
                             <div class="col-md-6 text-md-end mt-3 mt-md-0">
-                                <h6 class="fw-bold text-muted small text-uppercase">Thông tin đơn hàng</h6>
+                                <h6 class="fw-bold fs-5 text-muted small text-uppercase">Thông tin đơn hàng</h6>
                                 <p class="mb-1"><strong>Ngày đặt:</strong> @(Model.OrderDate.HasValue ? Model.OrderDate.Value.ToString("dd/MM/yyyy HH:mm") : "N/A")</p>
                                 <p class="mb-1"><strong>Phương thức:</strong> @Model.PaymentMethod</p>
                                 <p class="mb-0">
@@ -67,9 +67,9 @@
                             <table class="table table-borderless align-middle">
                                 <thead class="table-light small">
                                     <tr>
-                                        <th>Sản phẩm</th>
-                                        <th class="text-center">Số lượng</th>
-                                        <th class="text-end">Đơn giá</th>
+                                        <th class="text-nowrap">Sản phẩm</th>
+                                        <th class="text-center text-nowrap">Số lượng</th>
+                                        <th class="text-end text-nowrap">Đơn giá</th>
                                         <th class="text-end">Thành tiền</th>
                                     </tr>
                                 </thead>
@@ -95,9 +95,9 @@
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td class="text-center">x @item.Quantity</td>
-                                                <td class="text-end">@item.UnitPrice.ToString("N0") đ</td>
-                                                <td class="text-end fw-bold">@((item.Quantity * item.UnitPrice).ToString("N0")) đ</td>
+                                                <td class="text-center text-nowrap">x @item.Quantity</td>
+                                                <td class="text-end text-nowrap">@item.UnitPrice.ToString("N0") đ</td>
+                                                <td class="text-end fw-bold text-nowrap">@((item.Quantity * item.UnitPrice).ToString("N0")) đ</td>
                                             </tr>
                                         }
                                     }
@@ -105,7 +105,7 @@
                                 <tfoot class="border-top">
                                     <tr>
                                         <td colspan="3" class="text-end pt-3"><strong>Tổng tiền:</strong></td>
-                                        <td class="text-end pt-3 text-danger fw-bold fs-5">@Model.TotalAmount.ToString("N0") đ</td>
+                                        <td class="text-end pt-3 text-danger fw-bold fs-5 text-nowrap">@Model.TotalAmount.ToString("N0") đ</td>
                                     </tr>
                                 </tfoot>
                             </table>
