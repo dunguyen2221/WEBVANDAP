@@ -89,9 +89,9 @@
         margin-top: 20px;
     }
 
-    /* Always Show New Address Fields */
+    /* Ẩn form địa chỉ mới mặc định */
     #new-address-fields {
-        display: block;
+        display: none;
     }
 </style>
 
@@ -103,7 +103,14 @@
         @using (Html.BeginForm("PlaceOrder", "Order", FormMethod.Post, new { id = "checkoutForm" }))
         {
             @Html.AntiForgeryToken()
-            @Html.ValidationSummary(false, "", new { @class = "alert alert-danger" })
+
+            @* Hiển thị validation nếu có lỗi *@
+            if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger">
+                    @Html.ValidationSummary(false, "", new { @class = "mb-0" })
+                </div>
+            }
 
             <div class="row g-4">
 
@@ -124,11 +131,9 @@
                                     "--- Nhập Địa chỉ mới ---",
                                     new { @class = "form-select", id = "addressSelect" })
                             </div>
-
-                            <p class="text-center my-3 text-muted">- HOẶC NHẬP MỚI -</p>
                         }
 
-                        <!-- New Address Fields (Always Visible) -->
+                        <!-- New Address Fields -->
                         <div id="new-address-fields">
                             <div class="row g-3">
                                 <div class="col-md-6">
@@ -166,8 +171,21 @@
 
                     <!-- Order Notes -->
                     <div class="card shadow-sm border-0 p-4">
-                        <h5 class="fw-bold text-primary mb-3"><i class="fa fa-sticky-note me-2"></i> Ghi Chú Đơn Hàng</h5>
-                        @Html.TextAreaFor(m => m.Notes, 4, 80, new { @class = "form-control", placeholder = "Yêu cầu về thời gian giao hàng, địa chỉ bổ sung..." })
+                        <div class="mb-3">
+
+                            <label for="Notes" class="form-label fw-bold text-primary">
+                                <i class="fa fa-sticky-note me-2"></i> Ghi Chú Đơn Hàng
+                            </label>
+
+                            @Html.TextAreaFor(m => m.Notes, new
+                            {
+                                @class = "form-control",
+                                placeholder = "Yêu cầu về thời gian giao hàng, địa chỉ bổ sung...",
+                                rows = "4",              // Chiều cao mặc định là 4 dòng
+                                style = "resize: vertical;"  // QUAN TRỌNG: Chặn người dùng kéo giãn khung
+                            })
+
+                        </div>
                     </div>
                 </div>
 
@@ -225,3 +243,25 @@
         }
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        function toggleNewAddressFields() {
+            var selectedValue = $('#addressSelect').val();
+            if (!selectedValue) { // "--- Nhập địa chỉ mới ---"
+                $('#new-address-fields').slideDown();
+            } else {
+                $('#new-address-fields').slideUp();
+            }
+        }
+
+        // Kiểm tra khi load trang
+        toggleNewAddressFields();
+
+        // Kiểm tra khi user đổi dropdown
+        $('#addressSelect').change(function () {
+            toggleNewAddressFields();
+        });
+    });
+</script>

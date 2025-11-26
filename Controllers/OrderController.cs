@@ -162,9 +162,6 @@ public class OrderController : Controller
                     FullName = model.ShippingFullName,
                     Phone = model.ShippingPhone,
                     Street = model.ShippingStreet,
-                    City = "Hà Nội",
-                    District = "Quận Mặc Định", // FIX: Thêm dữ liệu tạm
-                    Ward = "Phường Mặc Định",    // FIX: Thêm dữ liệu tạm
                     IsDefault = false
                 };
                 _context.Addresses.Add(newAddress);
