@@ -93,6 +93,25 @@
     #new-address-fields {
         display: none;
     }
+
+    /* Tùy chỉnh scroll bar cho danh sách sản phẩm */
+    .checkout-products::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .checkout-products::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+
+    .checkout-products::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 3px;
+    }
+
+        .checkout-products::-webkit-scrollbar-thumb:hover {
+            background: #aaa;
+        }
 </style>
 
 <div class="container my-5">
@@ -194,14 +213,14 @@
                     <div class="card shadow-lg border-0 p-4">
                         <h5 class="fw-bold mb-3">Sản Phẩm (@cartItems.Sum(ci => ci.Quantity))</h5>
 
-                        <ul class="list-unstyled small mb-4 border-bottom pb-2" style="max-height: 250px; overflow-y: auto;">
+                        <ul class="list-unstyled small mb-4 border-bottom pb-2 checkout-products" style="max-height: 250px; overflow-y: auto;">
                             @foreach (var item in cartItems)
                             {
                                 string productName = item.Product?.Name ?? $"Sản phẩm #{item.ProductId}";
                                 string defaultImageUrl = Url.Content("~/Content/ProductImages/no-image.png");
                                 string imageUrl = Url.Content(item.Product?.ProductImages?.FirstOrDefault()?.Url ?? defaultImageUrl);
 
-                                <li class="d-flex align-items-start mb-3">
+                                <li class="d-flex align-items-start mb-3 me-1">
                                     <img src="@imageUrl" alt="@productName"
                                          style="width:55px; height:55px; object-fit:cover; border-radius:8px; margin-right:12px; border: 1px solid #eee;" />
                                     <div class="flex-grow-1 pe-2">

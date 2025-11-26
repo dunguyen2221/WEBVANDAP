@@ -1,77 +1,77 @@
-    using BCrypt.Net;
-    using System;
-    using System.Data.Entity;
-    using System.Linq;
-    using System.Web;
-    using System.Web.Mvc;
-    using System.Web.Security;
-    using WEBVANDAP.Models;
+using BCrypt.Net;
+using System;
+using System.Data.Entity;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Security;
+using WEBVANDAP.Models;
 
-    public class AccountController : Controller
+public class AccountController : Controller
+{
+    private readonly ShopPCEntities2 _context = new ShopPCEntities2();
+
+    // ============================== ĐĂNG KÝ ==============================
+    public ActionResult DangKy()
     {
-        private readonly ShopPCEntities2 _context = new ShopPCEntities2();
+        return View();
+    }
 
-        // ============================== ĐĂNG KÝ ==============================
-        public ActionResult DangKy()
+    [HttpPost]
+    public ActionResult DangKy(string username, string email, string password, string confirmPassword)
+    {
+        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(email) ||
+            string.IsNullOrEmpty(password) || string.IsNullOrEmpty(confirmPassword))
         {
+            ViewBag.Error = "Vui lòng điền đầy đủ thông tin!";
             return View();
         }
 
-        [HttpPost]
-        public ActionResult DangKy(string username, string email, string password, string confirmPassword)
+        if (password != confirmPassword)
         {
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(email) ||
-                string.IsNullOrEmpty(password) || string.IsNullOrEmpty(confirmPassword))
-            {
-                ViewBag.Error = "Vui lòng điền đầy đủ thông tin!";
-                return View();
-            }
-
-            if (password != confirmPassword)
-            {
-                ViewBag.Error = "Mật khẩu xác nhận không khớp!";
-                return View();
-            }
-
-            if (_context.AspNetUsers.Any(u => u.Email == email))
-            {
-                ViewBag.Error = "Email này đã được sử dụng!";
-                return View();
-            }
-
-            // HASH PASSWORD BẰNG BCRYPT
-            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
-
-            var user = new AspNetUser
-            {
-                Id = Guid.NewGuid().ToString(),
-                UserName = username,
-                Email = email,
-                PasswordHash = hashedPassword,   // ← LƯU BCRYPT HASH
-                EmailConfirmed = false,
-                PhoneNumberConfirmed = false,
-                TwoFactorEnabled = false,
-                LockoutEnabled = false,
-                AccessFailedCount = 0
-            };
-
-            _context.AspNetUsers.Add(user);
-            _context.SaveChanges();
-
-            // Lưu Session
-            Session["UserId"] = user.Id;
-            Session["Username"] = user.UserName;
-
-            return RedirectToAction("DangNhap");
-        }
-
-
-        // ============================== ĐĂNG NHẬP ==============================
-        public ActionResult DangNhap(string returnUrl = null)
-        {
-            ViewBag.ReturnUrl = returnUrl;
+            ViewBag.Error = "Mật khẩu xác nhận không khớp!";
             return View();
         }
+
+        if (_context.AspNetUsers.Any(u => u.Email == email))
+        {
+            ViewBag.Error = "Email này đã được sử dụng!";
+            return View();
+        }
+
+        // HASH PASSWORD BẰNG BCRYPT
+        string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+
+        var user = new AspNetUser
+        {
+            Id = Guid.NewGuid().ToString(),
+            UserName = username,
+            Email = email,
+            PasswordHash = hashedPassword,   // ← LƯU BCRYPT HASH
+            EmailConfirmed = false,
+            PhoneNumberConfirmed = false,
+            TwoFactorEnabled = false,
+            LockoutEnabled = false,
+            AccessFailedCount = 0
+        };
+
+        _context.AspNetUsers.Add(user);
+        _context.SaveChanges();
+
+        // Lưu Session
+        Session["UserId"] = user.Id;
+        Session["Username"] = user.UserName;
+
+        return RedirectToAction("DangNhap");
+    }
+
+
+    // ============================== ĐĂNG NHẬP ==============================
+    public ActionResult DangNhap(string returnUrl = null)
+    {
+        ViewBag.ReturnUrl = returnUrl;
+        return View();
+    }
 
     [HttpPost]
     public ActionResult DangNhap(string email, string password, string returnUrl = null)
@@ -135,17 +135,19 @@
 
     // ============================== ĐĂNG XUẤT ==============================
     public ActionResult DangXuat()
-        {
-            FormsAuthentication.SignOut();
+    {
+        FormsAuthentication.SignOut();
 
-            var previousUrl = Request.UrlReferrer?.ToString();
+        var previousUrl = Request.UrlReferrer?.ToString();
 
-            Session.Clear();
-            Session.Abandon();
+        Session.Clear();
+        Session.Abandon();
 
-            if (!string.IsNullOrEmpty(previousUrl))
-                return Redirect(previousUrl);
+        if (!string.IsNullOrEmpty(previousUrl))
+            return Redirect(previousUrl);
 
-            return RedirectToAction("Index", "Home");
-        }
+        return RedirectToAction("Index", "Home");
     }
+}
+
+
