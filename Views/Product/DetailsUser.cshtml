@@ -389,9 +389,19 @@
                                 <div>
                                     <label class="fw-bold small mb-1 d-block">Số lượng:</label>
                                     <div class="input-group quantity-input-group">
-                                        <button class="btn btn-outline-secondary" type="button" id="btnMinus"><i class="fas fa-minus"></i></button>
-                                        <input type="number" class="form-control text-center fw-bold" name="quantity" id="txtQuantity" value="1" min="1" max="@Model.Stock" readonly>
-                                        <button class="btn btn-outline-secondary" type="button" id="btnPlus"><i class="fas fa-plus"></i></button>
+                                        <button class="btn btn-outline-secondary" type="button" id="btnMinus">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <input class="form-control text-center fw-bold"
+                                               name="quantity"
+                                               id="txtQuantity"
+                                               value="1"
+                                               min="1"
+                                               onkeydown="return false;"
+                                               style="background-color: #fff;">
+                                        <button class="btn btn-outline-secondary" type="button" id="btnPlus">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="flex-grow-1">
