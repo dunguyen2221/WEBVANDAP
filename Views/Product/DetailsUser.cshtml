@@ -397,7 +397,6 @@
                                                id="txtQuantity"
                                                value="1"
                                                min="1"
-                                               onkeydown="return false;"
                                                style="background-color: #fff;">
                                         <button class="btn btn-outline-secondary" type="button" id="btnPlus">
                                             <i class="fas fa-plus"></i>
@@ -571,7 +570,7 @@
             if (thumbs[index]) thumbs[index].classList.add('active');
         });
 
-        // Logic Tăng/Giảm số lượng
+        // 👇 LOGIC XỬ LÝ SỐ LƯỢNG NÂNG CAO 👇
         document.addEventListener('DOMContentLoaded', function () {
             const btnMinus = document.getElementById('btnMinus');
             const btnPlus = document.getElementById('btnPlus');
@@ -580,14 +579,41 @@
             if (txtQuantity) {
                 const maxStock = parseInt(txtQuantity.getAttribute('max')) || 100;
 
+                // 1. Xử lý nút Trừ
                 btnMinus.addEventListener('click', function () {
                     let val = parseInt(txtQuantity.value) || 1;
                     if (val > 1) txtQuantity.value = val - 1;
                 });
 
+                // 2. Xử lý nút Cộng
                 btnPlus.addEventListener('click', function () {
                     let val = parseInt(txtQuantity.value) || 1;
                     if (val < maxStock) txtQuantity.value = val + 1;
+                });
+
+                // 3. Xử lý khi người dùng TỰ NHẬP (Input)
+                txtQuantity.addEventListener('input', function () {
+                    // Xóa mọi ký tự không phải số
+                    this.value = this.value.replace(/[^0-9]/g, '');
+
+                    let val = parseInt(this.value);
+
+                    // Nếu rỗng hoặc = 0 thì chưa làm gì (để họ gõ tiếp), nhưng nếu blur ra ngoài sẽ fix sau
+                    if (val > maxStock) {
+                        this.value = maxStock; // Không cho nhập quá tồn kho
+                    }
+                });
+
+                // 4. Xử lý khi nhập xong và click ra ngoài (Blur)
+                txtQuantity.addEventListener('blur', function () {
+                    let val = parseInt(this.value);
+
+                    // Nếu để trống hoặc nhập số 0, âm -> Tự về 1
+                    if (isNaN(val) || val < 1) {
+                        this.value = 1;
+                    } else if (val > maxStock) {
+                        this.value = maxStock;
+                    }
                 });
             }
         });
