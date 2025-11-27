@@ -44,11 +44,19 @@
             margin-top: 20px;
             margin-bottom: 30px;
         }
+
+        /* Map Styles */
+        .map-container {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            background: #fff;
+            padding: 10px;
+        }
     </style>
 }
 
-<!-- ====================== BANNER ============================ -->
-<div class="mt-5">
+<div class="container mt-5">
     <div class="row g-4">
 
         <div id="carouselInterval" class="carousel slide carousel-fade col-12 col-lg-8 ps-4" data-bs-ride="carousel"
@@ -57,7 +65,22 @@
                 <div class="carousel-item active h-100" data-bs-interval="3000">
                     <img src="@Url.Content("~/Content/IMG/bannerlefttrue.png")" class="img-fluid rounded-3 h-100">
                 </div>
+                <div class="carousel-item h-100" data-bs-interval="3000">
+                    <img src="@Url.Content("~/Content/IMG/bannerleft2.png")" class="img-fluid rounded-3 h-100">
+                </div>
+                <div class="carousel-item h-100" data-bs-interval="3000">
+                    <img src="@Url.Content("~/Content/IMG/bannerleft3.png")" class="img-fluid rounded-3 h-100">
+                </div>
             </div>
+
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselInterval" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon rounded-3" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselInterval" data-bs-slide="next">
+                <span class="carousel-control-next-icon rounded-3" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
         </div>
 
         <div class="col-12 col-lg-4">
@@ -69,11 +92,10 @@
         </div>
     </div>
 </div>
-<!-- ====================== DANH MỤC + SẢN PHẨM ============================ -->
+
 <div class="my-5 mx-5">
     <div class="row g-4">
 
-        <!-- ========== SIDEBAR LỌC ========== -->
         <div class="col-lg-2 col-md-4">
             <h5 class="fw-bold mb-3">Lọc Sản Phẩm</h5>
 
@@ -111,7 +133,6 @@
             }
         </div>
 
-        <!-- ========== DANH SÁCH SẢN PHẨM ========== -->
         <div class="col-lg-10 col-md-8">
 
             @using (Html.BeginForm("Index", "Home", FormMethod.Get,
@@ -173,7 +194,7 @@
                                 </div>
 
                                 <div class="card-footer d-flex flex-column gap-2">
-                                    <a href="@Url.Action("DetailUser","Product", new { id = product.Id })"
+                                    <a href="@Url.Action("DetailsUser","Product", new { id = product.Id })"
                                        class="btn btn-outline-primary btn-sm">Xem chi tiết</a>
 
                                     @using (Html.BeginForm("AddToCart", "Cart", FormMethod.Post, new { @class = "w-100" }))
@@ -193,7 +214,6 @@
                 }
             </div>
 
-            <!-- PHÂN TRANG -->
             <nav class="mt-5">
                 <ul class="pagination justify-content-center">
                     <li class="page-item @(currentPage == 1 ? "disabled" : "")">
@@ -237,68 +257,73 @@
     </div>
 </div>
 
-<!-- ====================== JS CHO LỌC ============================ -->
+@section FooterMap {
+    <div class="row mt-5 pt-4 border-top border-white-50">
+        <div class="col-12">
+            <h5 class="fw-bold text-white mb-3 text-center text-uppercase">
+                <i class="bi bi-geo-alt-fill text-danger me-2"></i>Bản đồ cửa hàng
+            </h5>
+            <div class="overflow-hidden rounded-3 shadow-lg">
+                <div class="ratio ratio-21x9" style="max-height: 400px;">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d1959.146322031118!2d106.60066400000001!3d10.865332!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752b088de30f3b%3A0xd2140740d360f705!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBOZ2_huqFpIG5n4buvIC0gVGluIGjhu41jIFRow6BuaCBwaOG7kSBI4buTIENow60gTWluaCAoSFVGTElUKSBDxqEgc-G7nyBIw7NjIE3DtG4!5e0!3m2!1svi!2sus!4v1764208465264!5m2!1svi!2sus" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @section Scripts {
     <script>
-$(document).ready(function () {
+        $(document).ready(function () {
+            // ... (Code JS của bạn giữ nguyên) ...
+            var initialCategoryId = parseInt($('#filterCategoryHidden').val() || 0);
+            var initialBrandId = parseInt($('#filterBrandHidden').val() || 0);
 
-    // BIẾN HIDDEN
-    var initialCategoryId = parseInt($('#filterCategoryHidden').val() || 0);
-    var initialBrandId = parseInt($('#filterBrandHidden').val() || 0);
+            function loadBrands(categoryId, selectedBrandId) {
+                var brandList = $('#brand-list');
+                brandList.empty();
 
-    // LOAD BRAND
-    function loadBrands(categoryId, selectedBrandId) {
-        var brandList = $('#brand-list');
-        brandList.empty();
-
-        if (categoryId > 0) {
-
-            $.get('@Url.Action("GetBrandsByCategory", "Home")', { categoryId: categoryId }, function (brands) {
-
-                brandList.append(
-                    `<li class="list-group-item brand-item ${selectedBrandId == 0 ? "active" : ""}"
-                        data-brand-id="0">Tất cả Thương hiệu</li>`
-                );
-
-                $.each(brands, function (_, brand) {
-                    var active = brand.Id == selectedBrandId ? "active" : "";
-                    brandList.append(
-                        `<li class="list-group-item brand-item ${active}" data-brand-id="${brand.Id}">
-                            ${brand.Name}
-                         </li>`
-                    );
-                });
-
-                if (brands.length === 0) {
-                    brandList.append('<li class="list-group-item text-muted">Không tìm thấy Brand nào.</li>');
+                if (categoryId > 0) {
+                    $.get('@Url.Action("GetBrandsByCategory", "Home")', { categoryId: categoryId }, function (brands) {
+                        brandList.append(
+                            `<li class="list-group-item brand-item ${selectedBrandId == 0 ? "active" : ""}"
+                                data-brand-id="0">Tất cả Thương hiệu</li>`
+                        );
+                        $.each(brands, function (_, brand) {
+                            var active = brand.Id == selectedBrandId ? "active" : "";
+                            brandList.append(
+                                `<li class="list-group-item brand-item ${active}" data-brand-id="${brand.Id}">
+                                    ${brand.Name}
+                                 </li>`
+                            );
+                        });
+                        if (brands.length === 0) {
+                            brandList.append('<li class="list-group-item text-muted">Không tìm thấy Brand nào.</li>');
+                        }
+                    });
                 }
+                else {
+                    brandList.append('<li class="list-group-item text-muted">Vui lòng chọn Danh mục</li>');
+                }
+            }
+
+            $('#category-list').on('click', '.category-item', function () {
+                var categoryId = $(this).data('category-id');
+                $('#filterCategoryHidden').val(categoryId);
+                $('#filterBrandHidden').val(0);
+                loadBrands(categoryId, 0);
+                $('#filterForm').submit();
             });
-        }
-        else {
-            brandList.append('<li class="list-group-item text-muted">Vui lòng chọn Danh mục</li>');
-        }
-    }
 
-    // CLICK CATEGORY
-    $('#category-list').on('click', '.category-item', function () {
-        var categoryId = $(this).data('category-id');
-        $('#filterCategoryHidden').val(categoryId);
-        $('#filterBrandHidden').val(0);
-        loadBrands(categoryId, 0);
-        $('#filterForm').submit();
-    });
+            $('#brand-list').on('click', '.brand-item', function () {
+                var brandId = $(this).data('brand-id');
+                $('#filterBrandHidden').val(brandId);
+                $('#filterForm').submit();
+            });
 
-    // CLICK BRAND
-    $('#brand-list').on('click', '.brand-item', function () {
-        var brandId = $(this).data('brand-id');
-        $('#filterBrandHidden').val(brandId);
-        $('#filterForm').submit();
-    });
-
-    // LOAD BRAND KHI VÀO TRANG
-    if (initialCategoryId > 0) {
-        loadBrands(initialCategoryId, initialBrandId);
-    }
-});
+            if (initialCategoryId > 0) {
+                loadBrands(initialCategoryId, initialBrandId);
+            }
+        });
     </script>
 }
