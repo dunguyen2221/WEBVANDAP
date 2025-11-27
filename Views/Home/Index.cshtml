@@ -194,7 +194,7 @@
                                 </div>
 
                                 <div class="card-footer d-flex flex-column gap-2">
-                                    <a href="@Url.Action("DetailsUser","Product", new { id = product.Id })"
+                                    <a href="@Url.Action("DetailUser","Product", new { id = product.Id })"
                                        class="btn btn-outline-primary btn-sm">Xem chi tiết</a>
 
                                     @using (Html.BeginForm("AddToCart", "Cart", FormMethod.Post, new { @class = "w-100" }))
